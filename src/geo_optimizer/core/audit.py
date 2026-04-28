@@ -35,6 +35,7 @@ from geo_optimizer.core.audit_robots import (
 from geo_optimizer.core.audit_schema import audit_schema  # noqa: F401
 from geo_optimizer.core.audit_signals import audit_signals  # noqa: F401
 from geo_optimizer.core.audit_webmcp import _extract_actions, audit_webmcp_readiness  # noqa: F401
+from geo_optimizer.core.intent_mapping import audit_intent_mapping
 from geo_optimizer.core.scoring import (  # noqa: F401 (re-exported for backward compatibility)
     compute_geo_score,
     compute_score_breakdown,
@@ -285,6 +286,7 @@ def _build_audit_result(
     platform_citation=None,  # v4.7: Multi-Platform Citation Profile (#228)
     context_window=None,  # v4.9: Context Window Optimization (#370)
     instruction_readiness=None,  # v4.9: Instruction Following Readiness (#371)
+    intent_mapping=None,  # v4.10: AI Search Intent Mapping (#385)
 ) -> AuditResult:
     """Build AuditResult from sub-audits (fix #97: shared sync/async logic).
 
@@ -395,6 +397,18 @@ def _build_audit_result(
 
         effective_instruction = InstructionReadinessResult()
 
+    # v4.10: AI Search Intent Mapping (#385) — compute if not pre-computed
+    if intent_mapping is not None:
+        effective_intent = intent_mapping
+    elif soup is not None:
+        effective_intent = audit_intent_mapping(
+            soup, "", content, meta, schema
+        )
+    else:
+        from geo_optimizer.models.results import IntentMappingResult
+
+        effective_intent = IntentMappingResult()
+
     # Compute score, breakdown, and band (v4.0: includes signals, ai_discovery)
     score = compute_geo_score(
         robots, llms, schema, meta, content, effective_signals, effective_ai_discovery, effective_brand_entity
@@ -493,6 +507,7 @@ def _build_audit_result(
         content_decay=effective_decay,
         context_window=effective_context_window,
         instruction_readiness=effective_instruction,
+        intent_mapping=effective_intent,
     )
 
     # v4.7: Multi-Platform Citation Profile (#228) — computed post-construction

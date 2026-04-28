@@ -757,6 +757,29 @@ class InstructionReadinessResult:
     readiness_level: str = "none"  # none | basic | ready | advanced
 
 
+# ─── AI Search Intent Mapping (v4.10) ─────────────────────────────────────────
+
+
+@dataclass
+class IntentMappingResult:
+    """AI search intent mapping analysis (#385). Informational — does not affect GEO score."""
+
+    checked: bool = False
+    # Intents detected from page content (informational, navigational, transactional, commercial)
+    intents_found: list[str] = field(default_factory=list)
+    intents_missing: list[str] = field(default_factory=list)
+    # Detailed mapping per category
+    intent_details: dict[str, dict[str, Any]] = field(default_factory=dict)
+    # Coverage score: 0-100 average across detected intent categories
+    score: int = 0
+    band: str = "critical"  # excellent | good | foundation | critical
+    # How many of the detected intents have supporting schema markup
+    ai_ready_count: int = 0
+    ai_unready_count: int = 0
+    total_intents_found: int = 0
+    total_intents_missing: int = 0
+
+
 # ─── Full audit ──────────────────────────────────────────────────────────────
 
 
@@ -816,6 +839,8 @@ class AuditResult:
     context_window: ContextWindowResult = field(default_factory=ContextWindowResult)
     # v4.9: Instruction following readiness (#371)
     instruction_readiness: InstructionReadinessResult = field(default_factory=InstructionReadinessResult)
+    # v4.10: AI Search Intent Mapping (#385)
+    intent_mapping: IntentMappingResult = field(default_factory=IntentMappingResult)
 
 
 # ─── Batch audit ─────────────────────────────────────────────────────────────
