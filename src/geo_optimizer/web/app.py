@@ -1564,25 +1564,48 @@ async def llms_txt():
         "- Python API: `from geo_optimizer import run_full_audit` — programmatic access\n"
         "- Plugin system: Custom checks via `CheckRegistry` — extend without forking\n\n"
         "## Documentation\n\n"
-        "- [Getting Started](https://auriti-labs.github.io/geo-optimizer-skill/getting-started/): Install and first audit\n"
-        "- [GEO Audit](https://auriti-labs.github.io/geo-optimizer-skill/geo-audit/): Full CLI reference\n"
-        "- [Scoring Rubric](https://auriti-labs.github.io/geo-optimizer-skill/scoring-rubric/): All 8 categories explained\n"
-        "- [MCP Server](https://auriti-labs.github.io/geo-optimizer-skill/mcp-server/): AI agent integration\n"
-        "- [CI/CD](https://auriti-labs.github.io/geo-optimizer-skill/ci-cd/): GitHub Actions integration\n"
-        "- [GEO Methods](https://auriti-labs.github.io/geo-optimizer-skill/geo-methods/): 47 research-backed methods\n\n"
+        "- [Getting Started]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/getting-started/): "
+        "Install and first audit\n"
+        "- [GEO Audit]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/geo-audit/): "
+        "Full CLI reference\n"
+        "- [Scoring Rubric]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/scoring-rubric/): "
+        "All 8 categories explained\n"
+        "- [MCP Server]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/mcp-server/): "
+        "AI agent integration\n"
+        "- [CI/CD]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/ci-cd/): "
+        "GitHub Actions integration\n"
+        "- [GEO Methods]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/geo-methods/): "
+        "47 research-backed methods\n\n"
         "## Reference\n\n"
-        "- [AI Bots Reference](https://auriti-labs.github.io/geo-optimizer-skill/ai-bots-reference/): 27 AI crawlers documented\n"
-        "- [Troubleshooting](https://auriti-labs.github.io/geo-optimizer-skill/troubleshooting/): Common issues\n"
-        "- [Changelog](https://github.com/Auriti-Labs/geo-optimizer-skill/blob/main/CHANGELOG.md): Full release history\n"
-        "- [PyPI](https://pypi.org/project/geo-optimizer-skill/): Package and version history\n\n"
+        "- [AI Bots Reference]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/"
+        "ai-bots-reference/): 27 AI crawlers documented\n"
+        "- [Troubleshooting]"
+        "(https://auriti-labs.github.io/geo-optimizer-skill/troubleshooting/): "
+        "Common issues\n"
+        "- [Changelog]"
+        "(https://github.com/Auriti-Labs/geo-optimizer-skill/blob/main/CHANGELOG.md): "
+        "Full release history\n"
+        "- [PyPI](https://pypi.org/project/geo-optimizer-skill/): "
+        "Package and version history\n\n"
         "## Research Foundation\n\n"
         "- GEO: Generative Engine Optimization — Princeton NLP, KDD 2024 — https://arxiv.org/abs/2311.09735\n"
         "- AutoGEO: Automatic GEO — Carnegie Mellon, ICLR 2026 — https://arxiv.org/abs/2510.11438\n"
         "- llms.txt specification — Answer.AI — https://llmstxt.org/\n"
         "- geo-checklist.dev standard — https://geo-checklist.dev/\n\n"
         "## Optional\n\n"
-        "- [GitHub Issues](https://github.com/Auriti-Labs/geo-optimizer-skill/issues): Bug reports and feature requests\n"
-        "- [Releases RSS](https://github.com/Auriti-Labs/geo-optimizer-skill/releases.atom): Subscribe to new releases\n"
+        "- [GitHub Issues]"
+        "(https://github.com/Auriti-Labs/geo-optimizer-skill/issues): "
+        "Bug reports and feature requests\n"
+        "- [Releases RSS]"
+        "(https://github.com/Auriti-Labs/geo-optimizer-skill/releases.atom): "
+        "Subscribe to new releases\n"
     )
     return PlainTextResponse(content=llms, media_type="text/plain")
 
@@ -1603,7 +1626,11 @@ async def ai_summary():
     """Site summary for AI systems."""
     return {
         "name": "GEO Optimizer",
-        "description": "Open-source toolkit to audit and optimize websites for AI search engine visibility. Scores 0-100 based on 47 research-backed methods.",
+        "description": (
+            "Open-source toolkit to audit and optimize websites for AI"
+            " search engine visibility. Scores 0-100 based on 47"
+            " research-backed methods."
+        ),
         "url": "https://geo-optimizer-web.onrender.com",
         "lastModified": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
     }
@@ -1616,11 +1643,20 @@ async def ai_faq():
         "faqs": [
             {
                 "question": "What is GEO Optimizer?",
-                "answer": "An open-source toolkit that audits websites for AI search visibility, scoring 0-100 based on 47 research-backed methods.",
+                "answer": (
+                    "An open-source toolkit that audits websites for AI"
+                    " search visibility, scoring 0-100 based on 47"
+                    " research-backed methods."
+                ),
             },
             {
                 "question": "How is the score calculated?",
-                "answer": "Across 8 categories: robots.txt (18pt), llms.txt (18pt), schema (16pt), meta (14pt), content (12pt), signals (6pt), AI discovery (6pt), brand & entity (10pt).",
+                "answer": (
+                    "Across 8 categories: robots.txt (18pt),"
+                    " llms.txt (18pt), schema (16pt), meta (14pt),"
+                    " content (12pt), signals (6pt), AI discovery (6pt),"
+                    " brand & entity (10pt)."
+                ),
             },
             {"question": "Is it free?", "answer": "Yes, MIT License. Install: pip install geo-optimizer-skill"},
         ]
