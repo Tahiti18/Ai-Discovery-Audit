@@ -402,9 +402,7 @@ def _build_audit_result(
     if intent_mapping is not None:
         effective_intent = intent_mapping
     elif soup is not None:
-        effective_intent = audit_intent_mapping(
-            soup, "", content, meta, schema
-        )
+        effective_intent = audit_intent_mapping(soup, "", content, meta, schema)
     else:
         from geo_optimizer.models.results import IntentMappingResult
 
@@ -416,9 +414,7 @@ def _build_audit_result(
     elif soup is not None:
         from geo_optimizer.core.hallucination_bait import audit_hallucination_bait
 
-        effective_hallucination = audit_hallucination_bait(
-            soup, "", content, meta, schema
-        )
+        effective_hallucination = audit_hallucination_bait(soup, "", content, meta, schema)
     else:
         from geo_optimizer.models.results import HallucinationBaitResult
 

@@ -23,13 +23,15 @@ from geo_optimizer.models.config import GEO_OPTIMIZER_HOME
 
 TELEMETRY_DB_PATH: Path = GEO_OPTIMIZER_HOME / "telemetry.db"
 
-_GEO_EVENT_TYPES: frozenset[str] = frozenset({
-    "geo_audit_run",
-    "geo_score_improved",
-    "geo_suggestion_applied",
-    "geo_api_error",
-    "geo_badge_generated",
-})
+_GEO_EVENT_TYPES: frozenset[str] = frozenset(
+    {
+        "geo_audit_run",
+        "geo_score_improved",
+        "geo_suggestion_applied",
+        "geo_api_error",
+        "geo_badge_generated",
+    }
+)
 
 
 class TelemetryStore:
@@ -89,10 +91,7 @@ class TelemetryStore:
             ValueError: if event_type is not a valid GEO event.
         """
         if event_type not in _GEO_EVENT_TYPES:
-            raise ValueError(
-                f"Unknown event type: {event_type}. "
-                f"Expected one of: {sorted(_GEO_EVENT_TYPES)}"
-            )
+            raise ValueError(f"Unknown event type: {event_type}. Expected one of: {sorted(_GEO_EVENT_TYPES)}")
 
         recorded_at = datetime.now(timezone.utc).isoformat()
         data_json = json.dumps(data or {})

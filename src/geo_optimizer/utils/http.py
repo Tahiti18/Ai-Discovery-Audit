@@ -119,7 +119,7 @@ def with_retry(max_retries: int = _MAX_RETRIES, backoff_base: int = _BACKOFF_BAS
                 except _RETRYABLE_EXCEPTIONS as exc:
                     last_exception = exc
                     if attempt < max_retries:
-                        delay = backoff_base ** attempt
+                        delay = backoff_base**attempt
                         _logger.warning(
                             "Retry %d/%d for %s in %.1fs: %s",
                             attempt + 1,
