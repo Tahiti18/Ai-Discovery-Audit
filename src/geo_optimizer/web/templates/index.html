@@ -231,6 +231,7 @@ footer .credit{font-size:.72rem;color:var(--text-muted)}
 /* ─── Cookie Banner ─── */
 @keyframes cookieSlideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .cookie-banner{
+  display:none;
   position:fixed;bottom:0;left:0;right:0;z-index:9999;
   padding:1.25rem 2rem;
   background:linear-gradient(135deg,rgba(13,17,23,0.97) 0%,rgba(17,24,40,0.97) 100%);
@@ -281,10 +282,11 @@ footer .credit{font-size:.72rem;color:var(--text-muted)}
 /* ─── Cookie Modal ─── */
 .cookie-modal{
   position:fixed;inset:0;z-index:10000;
-  display:flex;align-items:center;justify-content:center;padding:1rem;
-  opacity:0;transition:opacity .3s;
+  display:none;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;transition:opacity .3s;pointer-events:none;
 }
-.cookie-modal:not([hidden]){display:flex}
+.cookie-modal:not([hidden]){display:flex;pointer-events:auto}
+.cookie-modal.active{pointer-events:auto}
 .cookie-modal.active{opacity:1}
 .cookie-modal-overlay{
   position:absolute;inset:0;
@@ -666,7 +668,8 @@ input:disabled + .cookie-slider{opacity:.5;cursor:not-allowed}
       localStorage.setItem(COOKIE_CONSENT, JSON.stringify(obj));
       const exp = new Date();
       exp.setFullYear(exp.getFullYear() + 1);
-      document.cookie = COOKIE_CONSENT + '=' + encodeURIComponent(JSON.stringify(obj)) + ';expires=' + exp.toUTCString() + ';path=/;SameSite=Lax';
+      var secure = location.protocol === 'https:' ? ';Secure' : '';
+      document.cookie = COOKIE_CONSENT + '=' + encodeURIComponent(JSON.stringify(obj)) + ';expires=' + exp.toUTCString() + ';path=/;SameSite=Lax' + secure;
     } catch(e) { console.warn('Cookie consent save error', e); }
   }
 
