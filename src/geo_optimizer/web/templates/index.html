@@ -632,151 +632,82 @@ input:disabled + .cookie-slider{opacity:.5;cursor:not-allowed}
 (function() {
   'use strict';
 
-  // Cookie name constants
   const COOKIE_CONSENT = 'cookie_consent';
-  const COOKIE_PREFERENCES = 'cookie_preferences';
+  const GA_ID = 'G-KV5MQTGFZG';
+  const DEFAULT_CONSENT = { essential: true, analytics: false, marketing: false };
 
-  // Default settings
-  const DEFAULT_CONSENT = {
-    essential: true,
-    analytics: false,
-    marketing: false
-  };
-
-  const COOKIES = {
-    analytics: {
-      name: '_ga',
-      provider: 'Google Analytics',
-      purpose: 'Analisi traffico sito',
-      duration: '2 anni'
-    },
-    marketing: {
-      name: '_gcl_au',
-      provider: 'Google Ads',
-      purpose: 'Tracciamento campagne',
-      duration: '3 mesi'
-    }
-  };
-
-  // DOM elements
   const banner = document.getElementById('cookie-banner');
-  const modal = document.getElementById('cookie-modal');
-  const modalOverlay = document.getElementById('cookie-modal-overlay');
+  const modal  = document.getElementById('cookie-modal');
+  const overlay = document.getElementById('cookie-modal-overlay');
 
-  // State
   let consent = loadConsent();
+  let consentGiven = hasStoredConsent();
 
-  // Load consent from storage
   function loadConsent() {
     try {
-      const stored = localStorage.getItem(COOKIE_CONSENT);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        // Merge with defaults for new fields
-        return { ...DEFAULT_CONSENT, ...parsed };
-      }
-
-      // Check for cookie-based consent (legacy)
-      const cookieConsent = document.cookie.split(';').find(c => c.trim().startsWith(COOKIE_CONSENT + '='));
-      if (cookieConsent) {
-        const parsed = JSON.parse(decodeURIComponent(cookieConsent.split('=')[1]));
-        return { ...DEFAULT_CONSENT, ...parsed };
-      }
-    } catch (e) {
-      console.warn('Cookie consent: failed to load', e);
-    }
-
+      const s = localStorage.getItem(COOKIE_CONSENT);
+      if (s) return { ...DEFAULT_CONSENT, ...JSON.parse(s) };
+      const c = document.cookie.split(';').find(c => c.trim().startsWith(COOKIE_CONSENT + '='));
+      if (c) return { ...DEFAULT_CONSENT, ...JSON.parse(decodeURIComponent(c.split('=')[1])) };
+    } catch(e) { console.warn('Cookie consent load error', e); }
     return { ...DEFAULT_CONSENT };
   }
 
-  // Save consent to both localStorage and cookies
-  function saveConsent(consentObj) {
+  function hasStoredConsent() {
     try {
-      localStorage.setItem(COOKIE_CONSENT, JSON.stringify(consentObj));
-
-      // Also set a cookie for compatibility
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      document.cookie = COOKIE_CONSENT + '=' + encodeURIComponent(JSON.stringify(consentObj)) + ';expires=' + expires.toUTCString() + ';path=/;SameSite=Lax';
-    } catch (e) {
-      console.warn('Cookie consent: failed to save', e);
-    }
+      if (localStorage.getItem(COOKIE_CONSENT)) return true;
+      if (document.cookie.split(';').some(c => c.trim().startsWith(COOKIE_CONSENT + '='))) return true;
+    } catch(e) {}
+    return false;
   }
 
-  // Check if user has given consent
-  function hasConsent() {
-    return consent.analytics || consent.marketing;
+  function saveConsent(obj) {
+    try {
+      localStorage.setItem(COOKIE_CONSENT, JSON.stringify(obj));
+      const exp = new Date();
+      exp.setFullYear(exp.getFullYear() + 1);
+      document.cookie = COOKIE_CONSENT + '=' + encodeURIComponent(JSON.stringify(obj)) + ';expires=' + exp.toUTCString() + ';path=/;SameSite=Lax';
+    } catch(e) { console.warn('Cookie consent save error', e); }
   }
 
-  // Initialize cookie management
-  function init() {
-    // Don't show banner if consent already given
-    if (hasConsent()) {
-      banner.style.display = 'none';
-      loadGoogleAnalytics();
-      return;
-    }
+  function showBanner() { banner.style.display = 'flex'; }
+  function hideBanner()  { banner.style.display = 'none'; }
 
-    // Show banner
-    banner.style.display = 'flex';
-
-    // Setup event listeners
-    document.getElementById('cookie-accept-all').addEventListener('click', acceptAll);
-    document.getElementById('cookie-reject-all').addEventListener('click', rejectAll);
-    document.getElementById('cookie-save').addEventListener('click', savePreferences);
-    document.getElementById('cookie-manage').addEventListener('click', openModal);
-    document.getElementById('cookie-modal-close').addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', closeModal);
-
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && modal.hidden === false) {
-        closeModal();
-      }
-    });
-  }
-
-  // Accept all cookies
-  function acceptAll() {
-    consent = { essential: true, analytics: true, marketing: true };
-    saveConsent(consent);
-    banner.style.display = 'none';
-    loadGoogleAnalytics();
-  }
-
-  // Reject non-essential cookies
-  function rejectAll() {
-    consent = { essential: true, analytics: false, marketing: false };
-    saveConsent(consent);
-    banner.style.display = 'none';
-    disableTracking();
-  }
-
-  // Open settings modal
   function openModal() {
-    // Pre-populate checkboxes based on current consent
     document.getElementById('cookie-essential').checked = true;
     document.getElementById('cookie-analytics').checked = consent.analytics;
     document.getElementById('cookie-marketing').checked = consent.marketing;
-
     modal.hidden = false;
     setTimeout(function() {
       modal.classList.add('active');
-      modalOverlay.style.opacity = '1';
+      if (overlay) overlay.style.opacity = '1';
       document.getElementById('cookie-analytics').focus();
     }, 10);
   }
 
-  // Close settings modal
   function closeModal() {
     modal.classList.remove('active');
-    modalOverlay.style.opacity = '0';
-    setTimeout(function() {
-      modal.hidden = true;
-    }, 300);
+    if (overlay) overlay.style.opacity = '0';
+    setTimeout(function() { modal.hidden = true; }, 300);
   }
 
-  // Save preferences from modal
+  function acceptAll() {
+    consent = { essential: true, analytics: true, marketing: true };
+    saveConsent(consent);
+    consentGiven = true;
+    hideBanner();
+    loadGA();
+  }
+
+  function rejectAll() {
+    consent = { essential: true, analytics: false, marketing: false };
+    saveConsent(consent);
+    consentGiven = true;
+    closeModal();
+    hideBanner();
+    disableTracking();
+  }
+
   function savePreferences() {
     consent = {
       essential: true,
@@ -784,50 +715,59 @@ input:disabled + .cookie-slider{opacity:.5;cursor:not-allowed}
       marketing: document.getElementById('cookie-marketing').checked
     };
     saveConsent(consent);
+    consentGiven = true;
     closeModal();
-
-    if (consent.analytics) {
-      loadGoogleAnalytics();
-    } else {
-      disableTracking();
-    }
+    hideBanner();
+    if (consent.analytics) loadGA(); else disableTracking();
   }
 
-  // Load Google Analytics (or alternative tracking)
-  function loadGoogleAnalytics() {
-    // Only load if analytics consent is given
+  function loadGA() {
     if (!consent.analytics) return;
-
-    // Google Analytics 4 (GA4) measurement ID
-    const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // TODO: Replace with your actual ID
-
-    // Load GA4
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', GA_MEASUREMENT_ID, { 'anonymize_ip': true });
-
-    var script = document.createElement('script');
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
-    script.async = true;
-    document.head.appendChild(script);
+    gtag('config', GA_ID, { anonymize_ip: true });
+    var s = document.createElement('script');
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    s.async = true;
+    document.head.appendChild(s);
   }
 
-  // Disable all tracking (for reject all)
   function disableTracking() {
-    // Remove existing GA
-    var gaScript = document.querySelector('script[src*="google-analytics.com"]');
-    if (gaScript) gaScript.remove();
-
-    // Clear Google Analytics cookies
-    document.cookie.split(";").forEach(function(c) {
-      if (c.trim().startsWith("_ga") || c.trim().startsWith("_gcl")) {
-        document.cookie = c.trim() + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    var s = document.querySelector('script[src*="googletagmanager.com"]');
+    if (s) s.remove();
+    document.cookie.split(';').forEach(function(c) {
+      var n = c.trim().split('=')[0];
+      if (n.startsWith('_ga') || n.startsWith('_gcl')) {
+        document.cookie = n + '=;expires=Thu,01 Jan 1970 00:00:00 GMT;path=/;domain=' + location.hostname;
+        document.cookie = n + '=;expires=Thu,01 Jan 1970 00:00:00 GMT;path=/;domain=.' + location.hostname;
       }
     });
   }
 
-  // Run initialization
+  function init() {
+    // Attach listeners always (regardless of prior consent)
+    document.getElementById('cookie-accept-all').addEventListener('click', acceptAll);
+    document.getElementById('cookie-manage').addEventListener('click', openModal);
+    document.getElementById('cookie-reject-all').addEventListener('click', rejectAll);
+    document.getElementById('cookie-save').addEventListener('click', savePreferences);
+    document.getElementById('cookie-modal-close').addEventListener('click', closeModal);
+    if (overlay) overlay.addEventListener('click', closeModal);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    if (consentGiven) {
+      hideBanner();
+      loadGA();
+    } else {
+      showBanner();
+    }
+  }
+
+  // Expose globally for floating button
+  window.openCookieModal = openModal;
+
   init();
 })();
 </script>
@@ -1088,10 +1028,8 @@ document.addEventListener('click',function(){
   // Al click apre il modal cookie se disponibile
   if (floatBtn) {
     floatBtn.addEventListener('click', function() {
-      if (typeof openModal === 'function') {
-        openModal();
-      } else if (typeof openCookieSettings === 'function') {
-        openCookieSettings();
+      if (typeof window.openCookieModal === 'function') {
+        window.openCookieModal();
       }
     });
   }
