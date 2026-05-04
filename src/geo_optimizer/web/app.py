@@ -365,6 +365,16 @@ async def manifesto_page(request: Request):
     return HTMLResponse(html.replace("__NONCE_ATTR__", nonce_attr))
 
 
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy_page(request: Request):
+    """Privacy Policy page - GDPR compliant."""
+    nonce = getattr(request.state, "csp_nonce", "")
+    nonce_attr = f' nonce="{nonce}"' if nonce else ""
+    template_path = Path(__file__).parent / "templates" / "privacy.html"
+    html = template_path.read_text(encoding="utf-8")
+    return HTMLResponse(html.replace("__NONCE_ATTR__", nonce_attr))
+
+
 # ─── Documentazione online (Markdown → HTML) ─────────────────────────────────
 
 # Mappa slug → titolo per la sidebar e i meta tag
@@ -1688,6 +1698,7 @@ def _render_homepage(nonce: str = "") -> str:
     Fix #89: HTML moved to templates/index.html instead of being inline.
     Fix #75: accepts the CSP nonce and replaces the __NONCE_ATTR__ placeholder.
     The template uses '__NONCE_ATTR__' as a placeholder in the <script> tag attribute.
+    Fix #GDPR: cookie banner integration - the banner is now inline in index.html.
     """
     template_path = Path(__file__).parent / "templates" / "index.html"
     html = template_path.read_text(encoding="utf-8")

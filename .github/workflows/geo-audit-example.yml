@@ -26,7 +26,7 @@ jobs:
         id: geo
         uses: ./
         with:
-          url: https://agencypilot.it
+          url: https://geoready.dev
           min-score: 40
           format: json
 
@@ -61,5 +61,5 @@ jobs:
       - name: Run GEO Audit (SARIF)
         uses: ./
         with:
-          url: https://agencypilot.it
+          url: https://geoready.dev
           format: sarif

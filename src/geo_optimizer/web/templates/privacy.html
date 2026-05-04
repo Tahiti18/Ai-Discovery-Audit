@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy - GEO Optimizer</title>
+<meta name="description" content="Privacy policy for geoready.dev - GEO Optimizer">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06080f;
+  --bg-card: #0d1117;
+  --border: #1b2332;
+  --text: #e2e8f0;
+  --text-dim: #64748b;
+  --text-muted: #475569;
+  --accent: #3b82f6;
+  --accent2: #8b5cf6;
+  --radius: 12px;
+  --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Layout ─── */
+.wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* ─── Nav ─── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 2.5rem;
+  background: rgba(6, 8, 15, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.nav-logo .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+.nav-links { display: flex; align-items: center; gap: 1.75rem; }
+.nav-links a {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-cta:hover { color: var(--text); border-color: var(--border-hover); }
+.nav-cta svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* ─── Content ─── */
+.page-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.page-header p {
+  color: var(--text-dim);
+  font-size: 1.05rem;
+}
+
+.legal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.legal-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.legal-content h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.legal-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.legal-content p {
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+.legal-content ul,
+.legal-content ol {
+  margin: 0.75rem 0 0.75rem 1.5rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+.legal-content li {
+  margin-bottom: 0.5rem;
+}
+
+.legal-content a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.legal-content a:hover { color: var(--accent2); }
+
+/* ─── Table ─── */
+.legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.legal-table th,
+.legal-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.legal-table th {
+  color: var(--text);
+  font-weight: 600;
+  background: var(--bg-card-hover);
+}
+
+.legal-table td {
+  color: var(--text-dim);
+}
+
+/* ─── Info Box ─── */
+.info-box {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.info-box p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ─── Footer ─── */
+footer {
+  text-align: center;
+  padding: 2rem 0 1rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+footer .links {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+footer .links a {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  nav { flex-wrap: wrap; gap: 0.5rem; padding: 0.6rem 0.75rem; }
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 0.55rem 0.25rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .nav-sep { display: none; }
+  .nav-dropdown { width: 100%; }
+  .nav-dropdown-toggle { padding: 0.55rem 0.25rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; width: 100%; }
+  .nav-dropdown-menu { position: static; border: none; box-shadow: none; background: transparent; padding: 0 0 0 1rem; display: none; }
+  .nav-dropdown.open .nav-dropdown-menu { display: block; }
+  .nav-dropdown-menu a { padding: 0.45rem 0.25rem; border-bottom: 1px solid var(--border); border-radius: 0; }
+  .nav-hamburger { display: block; }
+  .page-header h1 { font-size: 1.75rem; }
+  .legal-content { padding: 1.5rem; }
+}
+
+/* ─── Utility ─── */
+.text-muted { color: var(--text-muted); }
+.text-accent { color: var(--accent); }
+.text-bold { font-weight: 600; }
+.gdpr-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--green);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">
+    <span class="dot"></span>
+    <span>GEO Optimizer</span>
+  </a>
+  <button class="nav-hamburger" id="nav-ham" aria-label="Menu">&#9776;</button>
+  <div class="nav-links">
+    <a href="/">Audit</a>
+    <a href="/compare">Compare</a>
+    <a href="https://auriti-labs.github.io/geo-optimizer-skill/">Docs</a>
+    <span class="nav-sep"></span>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-toggle" aria-expanded="false">More <svg viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="nav-dropdown-menu">
+        <a href="/research">Research</a>
+        <a href="/roadmap">Roadmap</a>
+        <a href="/manifesto">Manifesto</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+    </div>
+  </div>
+  <a class="nav-cta" href="https://github.com/Auriti-Labs/geo-optimizer-skill" target="_blank" rel="noopener">
+    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" fill="currentColor"/></svg>
+    GitHub
+  </a>
+</nav>
+
+<div class="wrapper">
+  <div class="page-header">
+    <h1>Privacy Policy</h1>
+    <div>
+      <span class="gdpr-badge">GDPR Compliant</span>
+    </div>
+    <p class="text-muted" style="margin-top: 1rem; max-width: 540px; margin-inline: auto;">
+      Ultima modifica: <span class="text-bold">4 maggio 2026</span><br>
+      Titolare del trattamento: <span class="text-bold">Auriti Labs</span>
+    </p>
+  </div>
+
+  <div class="legal-content">
+    <h2 id="intro">1. Introduzione</h2>
+    <p>
+      Questa Privacy Policy descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali
+      quando utilizzi il sito web <strong>geoready.dev</strong> (il "Sito"), appartenente a
+      <strong>Auriti Labs</strong>.
+    </p>
+    <p>
+      Il rispetto della tua privacy è la nostra priorità assoluta. Questa politica è conforme al
+      <strong>Regolamento Generale sulla Protezione dei Dati (GDPR)</strong> dell'Unione Europea
+      e a tutte le normative vigenti in materia di privacy.
+    </p>
+    <p>
+      Se hai domande su questa Privacy Policy, contattaci a:
+      <a href="mailto:juancamilo.auriti@gmail.com">juancamilo.auriti@gmail.com</a>
+    </p>
+
+    <h2 id="data-collection">2. Dati che Raccogliamo</h2>
+    <p>
+      Raccogliamo solo i dati strettamente necessari al funzionamento del Sito e alla fornitura
+      dei nostri servizi.
+    </p>
+
+    <h3>2.1 Dati di navigazione automatici</h3>
+    <p>
+      Quando visiti il Sito, raccogliamo automaticamente alcune informazioni di navigazione:
+    </p>
+    <ul>
+      <li><strong>Cookie tecnici:</strong> per mantenere la sessione e le tue preferenze</li>
+      <li><strong>Indirizzo IP:</strong> (solo per finalità di sicurezza, non per tracciamento)</li>
+      <li><strong>Informazioni sul dispositivo:</strong> tipo di browser, sistema operativo</li>
+      <li><strong>Dati di log:</strong> pagine visitate, orario di accesso, durata della visita</li>
+    </ul>
+
+    <h3>2.2 Dati forniti dall'utente</h3>
+    <p>
+      Quando utilizzi i nostri servizi, possono essere raccolti:
+    </p>
+    <ul>
+      <li><strong>URL da auditare:</strong> per fornire il servizio di analisi SEO</li>
+      <li><strong>Commenti e feedback:</strong> inviati tramite form di contatto</li>
+      <li><strong>Dati di contatto:</strong> se ci contatti, solo se自愿 forniti</li>
+    </ul>
+
+    <h2 id="cookies">3. Cookie e Tracciamento</h2>
+    <p>
+      Utilizziamo cookie tecnici e di analisi per migliorare la tua esperienza di navigazione.
+    </p>
+    <p>
+      <strong> cookie essenziali (necessari):</strong>
+      <span class="text-muted">
+        Questi cookie sono indispensabili per il funzionamento del Sito e non possono essere
+        disattivati. includono cookie per l'autenticazione, la sicurezza e le preferenze di sessione.
+      </span>
+    </p>
+    <p>
+      <strong> cookie analytics (Google Analytics):</strong>
+      <span class="text-muted">
+        Utilizziamo Google Analytics per analizzare l'uso del Sito. I dati sono aggregati e
+        anonimizzati. Non eseguiamo alcuna identificazione personale.
+        Puoi disabilitare questi cookie tramite il banner dei cookie in basso a sinistra.
+      </span>
+    </p>
+    <p>
+      <strong> cookie di marketing (Google Ads):</strong>
+      <span class="text-muted">
+        Utilizzati solo con tuo esplicito consenso per mostrare annunci personalizzati.
+        Disabilitabili in qualsiasi momento.
+      </span>
+    </p>
+    <div class="info-box">
+      <strong>Come gestire i cookie:</strong>
+      <p class="text-muted">
+        Puoi accettare, rifiutare o gestire i tuoi preferenze cookie in qualsiasi momento
+        cliccando sul link "Gestisci" nel banner in basso a sinistra quando visiti il Sito.
+      </p>
+    </div>
+
+    <h2 id="google-analytics">4. Google Analytics</h2>
+    <p>
+      Il Sito utilizza Google Analytics, un servizio di analisi web fornito da Google LLC
+      ("Google"). Google utilizza i cookie raccolti per analizzare il comportamento degli
+      utenti sul Sito.
+    </p>
+    <p>
+      <strong>Cosa raccogliamo:</strong>
+      <span class="text-muted">
+        - Pagine visitate<br>
+        - Tempo trascorso sulle pagine<br>
+        - Pagina di provenienza (referral)<br>
+        - Tipo di dispositivo e browser<br>
+        - Luogo geografico (solo a livello di paese/regione, non indirizzo IP completo)
+      </span>
+    </p>
+    <p>
+      <strong>Cos' NON raccogliamo:</strong>
+      <span class="text-muted">
+        - Indirizzi IP completi (vengono anonimizzati)<br>
+        - Dati di identificazione personale<br>
+        - Informazioni finanziarie o bancarie<br>
+        - Dati sensibili (salute, religione, politica, ecc.)
+      </span>
+    </p>
+    <p>
+      <strong>Anonimizzazione:</strong>
+      <span class="text-muted">
+        Google Analytics è configurato per anonimizzare l'indirizzo IP degli utenti prima
+        che venga trasmesso a Google. I dati sono conservati per 24 mesi.
+      </span>
+    </p>
+    <p>
+      <strong>Opt-out:</strong>
+      <span class="text-muted">
+        Puoi disabilitare Google Analytics installando l'<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">
+        add-on di disabilitazione di Google Analytics</a> per il tuo browser.
+      </span>
+    </p>
+
+    <h2 id="security">5. Sicurezza dei Dati</h2>
+    <p>
+      Adottiamo misure tecniche e organizzative appropriate per proteggere i tuoi dati
+      personali contro:
+    </p>
+    <ul>
+      <li><strong>Accesso non autorizzato:</strong> protezione con autenticazione a due fattori</li>
+      <li><strong>Divulgazione o distruzione:</strong> crittografia TLS 1.3 per tutte le connessioni</li>
+      <li><strong>Alterazione:</strong> verifica dell'integrità dei dati tramite checksum</li>
+      <li><strong>Perdita:</strong> backup regolari e procedure di disaster recovery</li>
+    </ul>
+    <p>
+      I dati vengono conservati sui server di <strong>Render.com</strong> e <strong>GitHub Pages</strong>,
+      entrambi conformi al GDPR con sedi nell'Unione Europea.
+    </p>
+
+    <h2 id="retention">6. Conservazione dei Dati</h2>
+    <table class="legal-table">
+      <thead>
+        <tr>
+          <th>Tipo di dato</th>
+          <th>Periodo di conservazione</th>
+          <th>Base giuridica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-bold">Dati di navigazione</td>
+          <td>6 mesi</td>
+          <td>Interesse legittimo (art. 6 GDPR)</td>
+        </tr>
+        <tr>
+          <td class="text-bold">Cookie analytics</td>
+          <td>24 mesi</td>
+          <td>Consenso (art. 9 GDPR)</td>
+        </tr>
+        <tr>
+          <td class="text-bold">Feedback utente</td>
+          <td>24 mesi</td>
+          <td>Interesse legittimo</td>
+        </tr>
+        <tr>
+          <td class="text-bold">URL auditati</td>
+          <td>24 mesi (anonymized)</td>
+          <td>Interesse legittimo</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="third-party">7. Condivisione con Terze Parti</h2>
+    <p>
+      Non vendiamo né affittiamo i tuoi dati personali a terzi.
+      Condividiamo dati solo nei seguenti casi:
+    </p>
+    <table class="legal-table">
+      <thead>
+        <tr>
+          <th>Destinatario</th>
+          <th>Finalità</th>
+          <th>Paese</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-bold">Google LLC</td>
+          <td>Google Analytics (analisi traffico)</td>
+          <td>UE (data center</td>
+        </tr>
+        <tr>
+          <td class="text-bold">GitHub Inc.</td>
+          <td>Ospitazione Sito (GitHub Pages)</td>
+          <td>UE (Francia)</td>
+        </tr>
+        <tr>
+          <td class="text-bold">Render.com</td>
+          <td>Ospitazione Backend (API)</td>
+          <td>UE (Germania)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Tutti i soggetti sopra indicati sono <strong>subprocessori</strong> registrati
+      e garantiscono livelli di protezione dei dati conformi al GDPR.
+    </p>
+
+    <h2 id="rights">8. I Tuoi Diritti (GDPR)</h2>
+    <p>
+      Secondo il GDPR, hai il diritto di:
+    </p>
+    <ul>
+      <li><strong>Accesso:</strong> ottenere conferma dell'esistenza dei tuoi dati e chiederne l'accesso</li>
+      <li><strong>Rettifica:</strong> richiedere la correzione di dati inesatti o incompleti</li>
+      <li><strong>Cancellazione:</strong> chiedere la cancellazione dei tuoi dati (diritto all'oblio)</li>
+      <li><strong>Limitazione:</strong> limitare l'elaborazione dei tuoi dati in determinate circostanze</li>
+      <li><strong>Portabilità:</strong> ricevere i tuoi dati in formato strutturato, comune e di uso comune</li>
+      <li><strong>Opposizione:</strong> opporsi al trattamento dei tuoi dati per motivi legittimi</li>
+      <li><strong>Revoca consenso:</strong> revocare il consenso in qualsiasi momento (non pregiudica la legalità delle basi precedenti)</li>
+      <li><strong>Reclamo:</strong> presentare un reclamo all'Autorità di controllo (Garante per la protezione dei dati personali in Italia)</li>
+    </ul>
+    <p>
+      Per esercitare i tuoi diritti, scrivi a: <a href="mailto:juancamilo.auriti@gmail.com">juancamilo.auriti@gmail.com</a>
+    </p>
+    <p>
+      Risponderemo entro <strong>30 giorni</strong> dalla ricezione della richiesta.
+      Potremmo richiederti la verifica della tua identità per motivi di sicurezza.
+    </p>
+
+    <h2 id="children">9. Minorenni</h2>
+    <p>
+      Il Sito non è rivolto a persone di età inferiore ai 16 anni.
+      Non raccogliamo intenzionalmente dati personali di minori.
+      Se scopriamo di aver raccolto dati di un minore, procederemo alla loro cancellazione entro 30 giorni.
+    </p>
+
+    <h2 id="changes">10. Modifiche alla Policy</h2>
+    <p>
+      Ci riserviamo il diritto di modificare questa Privacy Policy in qualsiasi momento.
+      Le modifiche diventeranno effettive alla pubblicazione sulla pagina.
+    </p>
+    <p>
+      Ti informeremo via email (se hai fornito un indirizzo) o tramite avviso sul Sito
+      in caso di modifiche significative.
+    </p>
+    <p>
+      Ti invitiamo a rileggere periodicamente questa policy per rimanere informato su come
+      proteggiamo i tuoi dati.
+    </p>
+
+    <h2 id="contact">11. Contatti</h2>
+    <p>
+      Per qualsiasi domanda riguardante questa Privacy Policy o il trattamento dei tuoi dati:
+    </p>
+    <div class="info-box">
+      <strong>Auriti Labs</strong><br>
+      <span class="text-muted">Titolare del trattamento</span><br><br>
+      Email: <a href="mailto:juancamilo.auriti@gmail.com">juancamilo.auriti@gmail.com</a><br>
+      GitHub: <a href="https://github.com/Auriti-Labs" target="_blank" rel="noopener">github.com/Auriti-Labs</a>
+    </div>
+
+    <p style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center;">
+      <span class="text-muted">Questa Privacy Policy è stata creata il 4 maggio 2026.</span><br>
+      <span class="text-muted">Ultima modifica: 4 maggio 2026</span>
+    </p>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/Auriti-Labs/geo-optimizer-skill">GitHub</a>
+      <a href="https://pypi.org/project/geo-optimizer-skill/">PyPI</a>
+    </div>
+    <div class="text-muted">
+      &copy; 2026 Auriti Labs. Tutti i diritti riservati.
+    </div>
+  </footer>
+</div>
+
+<script>
+document.getElementById('nav-ham').addEventListener('click', function() {
+  document.querySelector('.nav-links').classList.toggle('open');
+  this.textContent = this.textContent === '☰' ? '✕' : '☰';
+});
+document.querySelectorAll('.nav-dropdown-toggle').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var dd = this.closest('.nav-dropdown');
+    dd.classList.toggle('open');
+    this.setAttribute('aria-expanded', dd.classList.contains('open'));
+  });
+});
+document.addEventListener('click', function() {
+  document.querySelectorAll('.nav-dropdown.open').forEach(function(dd) {
+    dd.classList.remove('open');
+    dd.querySelector('.nav-dropdown-toggle').setAttribute('aria-expanded', 'false');
+  });
+});
+</script>
+</body>
+</html>

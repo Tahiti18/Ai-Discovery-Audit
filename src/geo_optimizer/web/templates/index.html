@@ -378,10 +378,314 @@ footer .credit{font-size:.72rem;color:var(--text-muted)}
       <a href="https://pypi.org/project/geo-optimizer-skill/">PyPI</a>
       <a href="https://auriti-labs.github.io/geo-optimizer-skill/">Docs</a>
       <a href="https://github.com/auriti-labs/geo-optimizer-skill/issues">Issues</a>
+      <a href="/privacy">Privacy</a>
     </div>
     <div class="credit">Built by Auriti Labs &#183; Powered by Princeton KDD 2024 + AutoGEO ICLR 2026 research</div>
   </footer>
 </div>
+
+<!-- Cookie Consent Banner - GDPR Compliant -->
+<div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite">
+  <div class="cookie-banner-content">
+    <div class="cookie-banner-icon">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <path d="M9 10h.01"></path>
+        <path d="M15 10h.01"></path>
+        <path d="M12 14h.01"></path>
+      </svg>
+    </div>
+    <div class="cookie-banner-text">
+      <p class="cookie-banner-title">Noi rispettiamo la tua privacy</p>
+      <p class="cookie-banner-description">
+        Questo sito utilizza cookie tecnici e di analisi per fornire una migliore esperienza di navigazione.
+        <a href="/privacy" class="cookie-banner-link">Scopri di più</a>
+      </p>
+    </div>
+    <div class="cookie-banner-actions">
+      <button type="button" class="cookie-btn cookie-btn-secondary" id="cookie-manage">
+        Gestisci
+      </button>
+      <button type="button" class="cookie-btn cookie-btn-primary" id="cookie-accept-all">
+        Accetta tutto
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie Settings Modal -->
+<div id="cookie-modal" class="cookie-modal" role="dialog" aria-modal="true" hidden>
+  <div class="cookie-modal-overlay" id="cookie-modal-overlay"></div>
+  <div class="cookie-modal-content">
+    <div class="cookie-modal-header">
+      <h2>Impostazioni Cookie</h2>
+      <button type="button" class="cookie-modal-close" id="cookie-modal-close">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="cookie-modal-body">
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3>Cookie Essenziali (Necessari)</h3>
+          <label class="cookie-switch">
+            <input type="checkbox" id="cookie-essential" checked disabled>
+            <span class="cookie-slider"></span>
+          </label>
+        </div>
+        <p class="cookie-category-desc">
+          Questi cookie sono strettamente necessari per il funzionamento del sito e non possono essere disattivati.
+          includono cookie per l'autenticazione, la sicurezza e le preferenze di sessione.
+        </p>
+      </div>
+
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3>Cookie Analitici (Google Analytics)</h3>
+          <label class="cookie-switch">
+            <input type="checkbox" id="cookie-analytics">
+            <span class="cookie-slider"></span>
+          </label>
+        </div>
+        <p class="cookie-category-desc">
+          Aiutano a capire come i visitatori interagiscono con il sito. I dati sono aggregati e anonimi,
+          senza alcuna identificazione personale. Disabilitandoli, non verrà caricato Google Analytics.
+        </p>
+      </div>
+
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3>Cookie Marketing/Targeting</h3>
+          <label class="cookie-switch">
+            <input type="checkbox" id="cookie-marketing">
+            <span class="cookie-slider"></span>
+          </label>
+        </div>
+        <p class="cookie-category-desc">
+          Utilizzati per mostrare annunci rilevanti. Disabilitandoli, vedrai annunci meno personalizzati.
+        </p>
+      </div>
+    </div>
+
+    <div class="cookie-modal-footer">
+      <button type="button" class="cookie-btn cookie-btn-secondary" id="cookie-save">
+        Salva preferenze
+      </button>
+      <button type="button" class="cookie-btn cookie-btn-primary" id="cookie-reject-all">
+        Rifiuta tutto
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie Consent Styles (injected via script) -->
+<script nonce="__NONCE_ATTR__">
+/* ─── Cookie Consent Management ─── */
+(function() {
+  'use strict';
+
+  // Cookie name constants
+  const COOKIE_CONSENT = 'cookie_consent';
+  const COOKIE_PREFERENCES = 'cookie_preferences';
+
+  // Default settings
+  const DEFAULT_CONSENT = {
+    essential: true,
+    analytics: false,
+    marketing: false
+  };
+
+  const COOKIES = {
+    analytics: {
+      name: '_ga',
+      provider: 'Google Analytics',
+      purpose: 'Analisi traffico sito',
+      duration: '2 anni'
+    },
+    marketing: {
+      name: '_gcl_au',
+      provider: 'Google Ads',
+      purpose: 'Tracciamento campagne',
+      duration: '3 mesi'
+    }
+  };
+
+  // DOM elements
+  const banner = document.getElementById('cookie-banner');
+  const modal = document.getElementById('cookie-modal');
+  const modalOverlay = document.getElementById('cookie-modal-overlay');
+
+  // State
+  let consent = loadConsent();
+
+  // Load consent from storage
+  function loadConsent() {
+    try {
+      const stored = localStorage.getItem(COOKIE_CONSENT);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Merge with defaults for new fields
+        return { ...DEFAULT_CONSENT, ...parsed };
+      }
+
+      // Check for cookie-based consent (legacy)
+      const cookieConsent = document.cookie.split(';').find(c => c.trim().startsWith(COOKIE_CONSENT + '='));
+      if (cookieConsent) {
+        const parsed = JSON.parse(decodeURIComponent(cookieConsent.split('=')[1]));
+        return { ...DEFAULT_CONSENT, ...parsed };
+      }
+    } catch (e) {
+      console.warn('Cookie consent: failed to load', e);
+    }
+
+    return { ...DEFAULT_CONSENT };
+  }
+
+  // Save consent to both localStorage and cookies
+  function saveConsent(consentObj) {
+    try {
+      localStorage.setItem(COOKIE_CONSENT, JSON.stringify(consentObj));
+
+      // Also set a cookie for compatibility
+      const expires = new Date();
+      expires.setFullYear(expires.getFullYear() + 1);
+      document.cookie = COOKIE_CONSENT + '=' + encodeURIComponent(JSON.stringify(consentObj)) + ';expires=' + expires.toUTCString() + ';path=/;SameSite=Lax';
+    } catch (e) {
+      console.warn('Cookie consent: failed to save', e);
+    }
+  }
+
+  // Check if user has given consent
+  function hasConsent() {
+    return consent.analytics || consent.marketing;
+  }
+
+  // Initialize cookie management
+  function init() {
+    // Don't show banner if consent already given
+    if (hasConsent()) {
+      banner.style.display = 'none';
+      loadGoogleAnalytics();
+      return;
+    }
+
+    // Show banner
+    banner.style.display = 'flex';
+
+    // Setup event listeners
+    document.getElementById('cookie-accept-all').addEventListener('click', acceptAll);
+    document.getElementById('cookie-reject-all').addEventListener('click', rejectAll);
+    document.getElementById('cookie-save').addEventListener('click', savePreferences);
+    document.getElementById('cookie-manage').addEventListener('click', openModal);
+    document.getElementById('cookie-modal-close').addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', closeModal);
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.hidden === false) {
+        closeModal();
+      }
+    });
+  }
+
+  // Accept all cookies
+  function acceptAll() {
+    consent = { essential: true, analytics: true, marketing: true };
+    saveConsent(consent);
+    banner.style.display = 'none';
+    loadGoogleAnalytics();
+  }
+
+  // Reject non-essential cookies
+  function rejectAll() {
+    consent = { essential: true, analytics: false, marketing: false };
+    saveConsent(consent);
+    banner.style.display = 'none';
+    disableTracking();
+  }
+
+  // Open settings modal
+  function openModal() {
+    // Pre-populate checkboxes based on current consent
+    document.getElementById('cookie-essential').checked = true;
+    document.getElementById('cookie-analytics').checked = consent.analytics;
+    document.getElementById('cookie-marketing').checked = consent.marketing;
+
+    modal.hidden = false;
+    setTimeout(function() {
+      modal.classList.add('active');
+      modalOverlay.style.opacity = '1';
+      document.getElementById('cookie-analytics').focus();
+    }, 10);
+  }
+
+  // Close settings modal
+  function closeModal() {
+    modal.classList.remove('active');
+    modalOverlay.style.opacity = '0';
+    setTimeout(function() {
+      modal.hidden = true;
+    }, 300);
+  }
+
+  // Save preferences from modal
+  function savePreferences() {
+    consent = {
+      essential: true,
+      analytics: document.getElementById('cookie-analytics').checked,
+      marketing: document.getElementById('cookie-marketing').checked
+    };
+    saveConsent(consent);
+    closeModal();
+
+    if (consent.analytics) {
+      loadGoogleAnalytics();
+    } else {
+      disableTracking();
+    }
+  }
+
+  // Load Google Analytics (or alternative tracking)
+  function loadGoogleAnalytics() {
+    // Only load if analytics consent is given
+    if (!consent.analytics) return;
+
+    // Google Analytics 4 (GA4) measurement ID
+    const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // TODO: Replace with your actual ID
+
+    // Load GA4
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', GA_MEASUREMENT_ID, { 'anonymize_ip': true });
+
+    var script = document.createElement('script');
+    script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
+    script.async = true;
+    document.head.appendChild(script);
+  }
+
+  // Disable all tracking (for reject all)
+  function disableTracking() {
+    // Remove existing GA
+    var gaScript = document.querySelector('script[src*="google-analytics.com"]');
+    if (gaScript) gaScript.remove();
+
+    // Clear Google Analytics cookies
+    document.cookie.split(";").forEach(function(c) {
+      if (c.trim().startsWith("_ga") || c.trim().startsWith("_gcl")) {
+        document.cookie = c.trim() + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      }
+    });
+  }
+
+  // Run initialization
+  init();
+})();
+</script>
 
 <script__NONCE_ATTR__>
 /* ─── Constants ─── */
