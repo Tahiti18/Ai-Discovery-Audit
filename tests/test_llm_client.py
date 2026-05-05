@@ -129,6 +129,14 @@ class TestDetectProvider:
         assert provider == "openai"
         assert api_key == "env_key"
 
+    def test_detect_provider_with_GEO_LLM_PROVIDER(self, _mock_env, monkeypatch) -> None:
+        """detect_provider con GEO_LLM_PROVIDER + GEO_LLM_API_KEY (linee 57-58)."""
+        monkeypatch.setenv("GEO_LLM_PROVIDER", "openai")
+        monkeypatch.setenv("GEO_LLM_API_KEY", "explicit_key")
+        provider, api_key = llm_client.detect_provider()
+        assert provider == "openai"
+        assert api_key == "explicit_key"
+
 
 class TestQueryLLM:
     """Test query_llm()."""
@@ -162,8 +170,8 @@ class TestQueryLLM:
         assert resp.provider == "anthropic"
 
     def test_query_llm_groq_success(self, _mock_env, monkeypatch) -> None:
-        """Groq success (linee 104-105, 167-194, 104-107)."""
+        """Groq success con system param (linee 104-105, 167-194, 104-107, 180)."""
         monkeypatch.setenv("GROQ_API_KEY", "groq_key")
-        resp = llm_client.query_llm("test", provider="groq", api_key="groq_key")
+        resp = llm_client.query_llm("test", provider="groq", api_key="groq_key", system="system prompt")
         assert resp.text == "Groq response"
         assert resp.provider == "groq"
