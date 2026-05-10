@@ -558,6 +558,9 @@ def format_batch_audit_json(result: BatchAuditResult) -> str:
         "worst_pages": [asdict(page) for page in result.worst_pages],
         "pages": [asdict(page) for page in result.pages],
     }
+    # gap #6: include truncation warning when present
+    if result.truncated_warning:
+        data["truncated_warning"] = result.truncated_warning
     return json.dumps(data, indent=2)
 
 
@@ -578,6 +581,9 @@ def format_batch_audit_text(result: BatchAuditResult) -> str:
         f"Success: {result.successful_urls} | "
         f"Failed: {result.failed_urls}"
     )
+    # gap #6: show truncation warning in text output
+    if result.truncated_warning:
+        lines.append(f"   WARNING: {result.truncated_warning}")
     lines.append(f"   Average score: {result.average_score:.2f}/100 ({result.average_band.upper()})")
 
     lines.append("")

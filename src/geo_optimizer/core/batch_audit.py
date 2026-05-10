@@ -72,10 +72,12 @@ async def run_batch_audit_async(
 
 
 def _select_urls(sitemap_entries, *, max_urls: int) -> list[str]:
-    """Deduplica gli URL della sitemap preservando l'ordine originale."""
+    """Deduplica gli URL della sitemap, ordinando per priority discendente (gap #6)."""
+    # Sort by <priority> descending so higher-priority pages are audited first
+    sorted_entries = sorted(sitemap_entries, key=lambda e: getattr(e, "priority", 0.5), reverse=True)
     seen: set[str] = set()
     selected: list[str] = []
-    for entry in sitemap_entries:
+    for entry in sorted_entries:
         if entry.url in seen:
             continue
         seen.add(entry.url)
@@ -168,6 +170,14 @@ def _aggregate_batch_result(
 
     ranked_pages = sorted(successful_pages, key=lambda page: page.score, reverse=True)
 
+    # gap #6: warn when sitemap has more URLs than the cap
+    truncated_warning = ""
+    if discovered_urls > len(page_results):
+        truncated_warning = (
+            f"Sitemap contains {discovered_urls} URLs but only {len(page_results)} were audited "
+            f"(cap: --max-urls). Use --max-urls to increase the limit."
+        )
+
     return BatchAuditResult(
         sitemap_url=sitemap_url,
         discovered_urls=discovered_urls,
@@ -181,6 +191,7 @@ def _aggregate_batch_result(
         pages=page_results,
         top_pages=ranked_pages[:_TOP_PAGE_LIMIT],
         worst_pages=list(reversed(ranked_pages[-_TOP_PAGE_LIMIT:])),
+        truncated_warning=truncated_warning,
     )
 
 
