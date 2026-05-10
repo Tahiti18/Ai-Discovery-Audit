@@ -29,6 +29,12 @@ def cli(lang):
         from geo_optimizer.i18n import set_lang
 
         set_lang(lang)
+        # gap #12: i18n strings not yet active — warn the user to avoid silent no-op
+        click.echo(
+            f"Note: --lang={lang} accepted. Full CLI localization is planned for a future release; "
+            "output is currently in English regardless of this flag.",
+            err=True,
+        )
 
 
 # Import and register subcommands
