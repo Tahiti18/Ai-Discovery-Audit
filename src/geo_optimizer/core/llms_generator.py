@@ -212,6 +212,11 @@ def fetch_sitemap(
             except ValueError:
                 pass
 
+        # gap #11: parse <changefreq> for freshness-aware URL ordering
+        changefreq = url_tag.find("changefreq")
+        if changefreq:
+            entry.changefreq = changefreq.text.strip().lower()
+
         urls.append(entry)
         _total_count[0] += 1
 
@@ -363,11 +368,17 @@ def generate_llms_txt(
     if not description:
         description = f"Website {site_name} available at {base_url}"
 
+    # gap #11: freshness rank — lower value = fresher content (higher priority in llms.txt)
+    _CHANGEFREQ_RANK = {"always": 0, "hourly": 1, "daily": 2, "weekly": 3, "monthly": 4, "yearly": 5, "never": 6}
+
+    def _sort_key(u):
+        return (-u.priority, _CHANGEFREQ_RANK.get(u.changefreq or "", 7))
+
     # Filter and categorize URLs
     categorized = defaultdict(list)
     seen: set = set()
 
-    for url_data in sorted(urls, key=lambda x: -x.priority):
+    for url_data in sorted(urls, key=_sort_key):
         url = url_data.url
 
         # Normalize URL
