@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import copy
 
+from geo_optimizer.models.config import JS_CRITICAL_WORDS, JS_EMPTY_ROOT_CHARS, JS_EMPTY_ROOT_WORDS, JS_SPA_WORDS
 from geo_optimizer.models.results import JsRenderingResult
 
 
@@ -67,7 +68,7 @@ def audit_js_rendering(soup, raw_html: str) -> JsRenderingResult:
         if el:
             # Check if element is essentially empty (< 50 chars of text)
             inner_text = el.get_text(strip=True)
-            if len(inner_text) < 50:
+            if len(inner_text) < JS_EMPTY_ROOT_CHARS:
                 result.has_empty_root = True
                 break
 
@@ -99,21 +100,21 @@ def audit_js_rendering(soup, raw_html: str) -> JsRenderingResult:
 
     # Determine if content depends on JS
     # Thresholds: < 100 words in body AND 0 headings → likely SPA
-    if result.raw_word_count < 100 and result.raw_heading_count == 0:
+    if result.raw_word_count < JS_SPA_WORDS and result.raw_heading_count == 0:
         result.js_dependent = True
         result.details = (
             f"Only {result.raw_word_count} words and 0 headings in raw HTML. "
             "Content likely requires JavaScript to render. "
             "AI crawlers won't see it. Consider SSR/SSG or pre-rendering."
         )
-    elif result.has_empty_root and result.raw_word_count < 200:
+    elif result.has_empty_root and result.raw_word_count < JS_EMPTY_ROOT_WORDS:
         result.js_dependent = True
         result.details = (
             f"Empty SPA root container detected with only {result.raw_word_count} words. "
             f"Framework: {result.framework_detected or 'unknown'}. "
             "Implement server-side rendering for AI crawler accessibility."
         )
-    elif result.raw_word_count < 50:
+    elif result.raw_word_count < JS_CRITICAL_WORDS:
         result.js_dependent = True
         result.details = (
             f"Critically low content: {result.raw_word_count} words in raw HTML. "

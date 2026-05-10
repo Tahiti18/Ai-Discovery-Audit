@@ -2,12 +2,25 @@ from __future__ import annotations
 
 import json
 import logging
+from typing import TYPE_CHECKING
 
-from geo_optimizer.models.config import ARTICLE_TYPES, SCHEMA_RICHNESS_HIGH, SCHEMA_RICHNESS_LOW, SCHEMA_RICHNESS_MED
+from geo_optimizer.models.config import (
+    ARTICLE_TYPES,
+    SCHEMA_JSONLD_MAX_BYTES,
+    SCHEMA_RAW_SCHEMAS_CAP,
+    SCHEMA_RICHNESS_HIGH,
+    SCHEMA_RICHNESS_LOW,
+    SCHEMA_RICHNESS_MED,
+)
 from geo_optimizer.models.results import SchemaResult
 
+if TYPE_CHECKING:
+    from bs4 import BeautifulSoup
 
-def audit_schema(soup, url: str) -> SchemaResult:
+_logger = logging.getLogger(__name__)
+
+
+def audit_schema(soup: BeautifulSoup | None, url: str) -> SchemaResult:
     """Check JSON-LD schema on homepage. Returns SchemaResult."""
     result = SchemaResult()
 
@@ -24,8 +37,8 @@ def audit_schema(soup, url: str) -> SchemaResult:
             if not raw or not raw.strip():
                 continue
             # Size limit: prevent DoS from oversized JSON-LD (fix #182)
-            if len(raw) > 512 * 1024:
-                logging.debug("JSON-LD too large (%d bytes), skipping", len(raw))
+            if len(raw) > SCHEMA_JSONLD_MAX_BYTES:
+                _logger.debug("JSON-LD too large (%d bytes), skipping", len(raw))
                 continue
             data = json.loads(raw)
             # Fix: support @graph format (used by Yoast SEO, RankMath, etc.)
@@ -48,7 +61,7 @@ def audit_schema(soup, url: str) -> SchemaResult:
                     schema_types = [schema_type]
 
                 # Add the raw schema (cap at 50 to prevent memory bloat — fix #191)
-                if len(result.raw_schemas) < 50:
+                if len(result.raw_schemas) < SCHEMA_RAW_SCHEMAS_CAP:
                     result.raw_schemas.append(schema)
 
                 for t in schema_types:
@@ -89,7 +102,7 @@ def audit_schema(soup, url: str) -> SchemaResult:
 
         except (json.JSONDecodeError, AttributeError, TypeError) as exc:
             # Parsing failed: log at debug (not critical, third-party scripts) — fix #81
-            logging.debug("Invalid JSON schema ignored: %s", exc)
+            _logger.debug("Invalid JSON schema ignored: %s", exc)
             result.json_parse_errors += 1  # fix #399: track errors for recommendations
 
     # Schema richness (Growth Marshal Feb 2026): count attributes per schema

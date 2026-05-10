@@ -147,6 +147,10 @@ BOT_TIERS = {
 # Critical citation bots (search-tier, directly cite sources in AI responses)
 CITATION_BOTS = {"OAI-SearchBot", "ClaudeBot", "Claude-SearchBot", "PerplexityBot"}
 
+# Human-readable bot labels for user-facing recommendation messages
+ROBOTS_KEY_BOTS_DISPLAY: str = "GPTBot, ClaudeBot, PerplexityBot"
+CITATION_BOTS_DISPLAY: str = "OAI-SearchBot, ClaudeBot, PerplexityBot"
+
 # ─── Brand normalization ──────────────────────────────────────────────────────
 
 # Legal suffixes stripped from brand names before comparison (#397).
@@ -467,8 +471,22 @@ SCHEMA_RICHNESS_HIGH = 5  # avg >= 5 attrs → full points (3pt)
 SCHEMA_RICHNESS_MED = 4  # avg >= 4 attrs → 2pt
 SCHEMA_RICHNESS_LOW = 3  # avg >= 3 attrs → 1pt
 
+# JSON-LD safety caps (fix #182, #191)
+SCHEMA_JSONLD_MAX_BYTES: int = 512 * 1024  # skip scripts larger than 512 KiB
+SCHEMA_RAW_SCHEMAS_CAP: int = 50  # max raw schemas stored per page
+
 # Minimum word threshold for content_word_count (300 words = substantial content)
 CONTENT_MIN_WORDS = 300
+
+# Negative-signals thresholds
+BOILERPLATE_RATIO_THRESHOLD: float = 0.6  # page flagged as boilerplate-heavy above this ratio
+MIXED_SIGNALS_WORD_THRESHOLD: int = 1000  # H1 promises depth but body is below this word count
+
+# JS rendering thresholds — used in audit_js to detect SPA / JS-only pages
+JS_EMPTY_ROOT_CHARS: int = 50    # SPA root element considered empty below this char count
+JS_SPA_WORDS: int = 100          # body word count + 0 headings → likely SPA
+JS_EMPTY_ROOT_WORDS: int = 200   # empty root + low word count → JS-dependent
+JS_CRITICAL_WORDS: int = 50      # critically low content threshold
 
 # Content freshness thresholds in days (#401)
 # AutoGEO ICLR 2026: tech content < 3 months strongly preferred by AI search engines

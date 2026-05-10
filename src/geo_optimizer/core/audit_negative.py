@@ -10,7 +10,12 @@ from __future__ import annotations
 import re
 from collections import Counter
 
-from geo_optimizer.models.config import KEYWORD_STUFFING_THRESHOLD
+from geo_optimizer.models.config import (
+    BOILERPLATE_RATIO_THRESHOLD,
+    CONTENT_MIN_WORDS,
+    KEYWORD_STUFFING_THRESHOLD,
+    MIXED_SIGNALS_WORD_THRESHOLD,
+)
 from geo_optimizer.models.results import ContentResult, MetaResult, NegativeSignalsResult, SchemaResult
 
 
@@ -68,7 +73,7 @@ def audit_negative_signals(
 
     # ── 3. Thin content ──────────────────────────────────────────
     # < 300 words AND an H1 that promises substantial content
-    if content_result.word_count < 300:
+    if content_result.word_count < CONTENT_MIN_WORDS:
         h1 = content_result.h1_text.lower() if content_result.h1_text else ""
         # H1 that promises complex content
         complex_patterns = [
@@ -207,7 +212,7 @@ def audit_negative_signals(
             nav_footer_len += len(tag.get_text(separator=" ", strip=True))
         if nav_footer_len > 0:
             result.boilerplate_ratio = round(nav_footer_len / total_text_len, 2)
-    result.boilerplate_high = result.boilerplate_ratio > 0.6
+    result.boilerplate_high = result.boilerplate_ratio > BOILERPLATE_RATIO_THRESHOLD
 
     # ── 8. Mixed signals ─────────────────────────────────────────
     # H1 promises a lot, but the content is thin
@@ -223,7 +228,7 @@ def audit_negative_signals(
         "in-depth",
         "approfondita",
     ]
-    if any(w in h1 for w in big_promise_words) and content_result.word_count < 1000:
+    if any(w in h1 for w in big_promise_words) and content_result.word_count < MIXED_SIGNALS_WORD_THRESHOLD:
         result.has_mixed_signals = True
         result.mixed_signal_detail = f"H1 promises depth but only {content_result.word_count} words"
 

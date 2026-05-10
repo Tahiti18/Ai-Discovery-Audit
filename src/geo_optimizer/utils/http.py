@@ -46,6 +46,7 @@ _RETRYABLE_EXCEPTIONS: tuple[type[Exception], ...] = (
 )
 _MAX_RETRIES: int = 3
 _BACKOFF_BASE: int = 2
+_RETRYABLE_STATUS_CODES: list[int] = [408, 429, 500, 502, 503, 504]
 
 
 def create_session_with_retry(
@@ -70,7 +71,7 @@ def create_session_with_retry(
         requests.Session: Configured session with retry adapter
     """
     if status_forcelist is None:
-        status_forcelist = [408, 429, 500, 502, 503, 504]
+        status_forcelist = _RETRYABLE_STATUS_CODES
     if allowed_methods is None:
         allowed_methods = ["GET", "HEAD"]
 
@@ -342,7 +343,7 @@ def _fetch_with_manual_redirects(
                 session = create_session_with_retry(
                     total_retries=3,
                     backoff_factor=1.0,
-                    status_forcelist=[408, 429, 500, 502, 503, 504],
+                    status_forcelist=_RETRYABLE_STATUS_CODES,
                     pinned_ips=current_ips if current_ips else None,
                 )
             continue

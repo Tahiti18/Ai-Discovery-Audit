@@ -23,7 +23,7 @@ from geo_optimizer.cli.scoring_helpers import (
     robots_score,
     schema_score,
 )
-from geo_optimizer.models.config import SCORING
+from geo_optimizer.models.config import CITATION_BOTS_DISPLAY, SCORING
 from geo_optimizer.models.results import AuditResult
 
 # Per-category max scores computed dynamically from SCORING (avoids hardcoding — v4.3)
@@ -185,7 +185,7 @@ def _robots_findings(result: AuditResult) -> list[dict]:
         findings.append(
             {
                 "level": "error",
-                "message": "Critical citation bots (OAI-SearchBot, ClaudeBot, PerplexityBot) not properly configured",
+                "message": f"Critical citation bots ({CITATION_BOTS_DISPLAY}) not properly configured",
             }
         )
     return findings

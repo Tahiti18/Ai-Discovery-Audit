@@ -48,6 +48,7 @@ from geo_optimizer.models.config import (  # noqa: F401 (VALUABLE_SCHEMAS re-exp
     CITATION_BOTS,
     CONTENT_MIN_WORDS,
     KEYWORD_STUFFING_THRESHOLD,
+    ROBOTS_KEY_BOTS_DISPLAY,
     SCORE_BANDS,
     SCORING,
     VALUABLE_SCHEMAS,
@@ -64,6 +65,7 @@ from geo_optimizer.models.results import (
     LlmsTxtResult,
     MetaResult,
     NegativeSignalsResult,
+    PromptInjectionResult,
     RobotsResult,
     SchemaResult,
     SignalsResult,
@@ -73,27 +75,27 @@ from geo_optimizer.utils.http import fetch_url
 
 
 def build_recommendations(
-    base_url,
-    robots,
-    llms,
-    schema,
-    meta,
-    content,
-    ai_discovery=None,
-    signals=None,
-    brand_entity=None,
-    webmcp=None,
-    negative_signals=None,
-    prompt_injection=None,
-) -> list:
+    base_url: str,
+    robots: RobotsResult,
+    llms: LlmsTxtResult,
+    schema: SchemaResult,
+    meta: MetaResult,
+    content: ContentResult,
+    ai_discovery: AiDiscoveryResult | None = None,
+    signals: SignalsResult | None = None,
+    brand_entity: BrandEntityResult | None = None,
+    webmcp: WebMcpResult | None = None,
+    negative_signals: NegativeSignalsResult | None = None,
+    prompt_injection: PromptInjectionResult | None = None,
+) -> list[str]:
     """Build a prioritized list of recommendations based on audit results."""
     recommendations = []
 
     # Fix #453: split robots recommendation — create vs update
     if not robots.found:
-        recommendations.append("Create robots.txt with Allow rules for AI bots (GPTBot, ClaudeBot, PerplexityBot)")
+        recommendations.append(f"Create robots.txt with Allow rules for AI bots ({ROBOTS_KEY_BOTS_DISPLAY})")
     elif not robots.citation_bots_ok:
-        recommendations.append("Update robots.txt to include all AI bots (GPTBot, ClaudeBot, PerplexityBot)")
+        recommendations.append(f"Update robots.txt to include all AI bots ({ROBOTS_KEY_BOTS_DISPLAY})")
     if not llms.found:
         recommendations.append(
             f"Create /llms.txt for AI indexing: geo llms --base-url {base_url}. "
@@ -137,7 +139,7 @@ def build_recommendations(
         recommendations.append("Add Open Graph tags (og:title, og:description, og:image) for AI and social previews")
     if not content.has_h1:
         recommendations.append("Add a single H1 heading that clearly states the page topic")
-    if content.word_count < 300:
+    if content.word_count < CONTENT_MIN_WORDS:
         recommendations.append("Expand content to 300+ words — AI engines need substance to cite")
     if not content.has_numbers:
         recommendations.append("Add numerical data and concrete statistics (+40% AI visibility)")
@@ -480,7 +482,7 @@ def _build_audit_result(
         cdn_name = effective_cdn.cdn_detected or "CDN/WAF"
         recommendations.append(
             f"⚠️ {cdn_name.upper()} blocks AI crawlers: {', '.join(blocked_bots)}. "
-            "Configure your CDN to allow AI bot User-Agents (GPTBot, ClaudeBot, PerplexityBot)."
+            f"Configure your CDN to allow AI bot User-Agents ({ROBOTS_KEY_BOTS_DISPLAY})."
         )
 
     if effective_js.checked and effective_js.js_dependent:
@@ -722,6 +724,9 @@ async def run_full_audit_async(url: str, project_config=None) -> AuditResult:
 
     Runs homepage, robots.txt and llms.txt in parallel for a
     2-3x speedup compared to the synchronous version.
+
+    Note: disk cache (``use_cache``) is not supported in the async path.
+    Use ``run_full_audit(url, use_cache=True)`` when caching is needed.
 
     Args:
         url: URL of the site to analyze.
