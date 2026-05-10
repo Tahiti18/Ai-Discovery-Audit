@@ -88,177 +88,220 @@ def build_recommendations(
     negative_signals: NegativeSignalsResult | None = None,
     prompt_injection: PromptInjectionResult | None = None,
 ) -> list[str]:
-    """Build a prioritized list of recommendations based on audit results."""
-    recommendations = []
+    """Build a prioritized list of recommendations sorted by score impact (gap #5).
 
-    # Fix #453: split robots recommendation — create vs update
-    if not robots.found:
-        recommendations.append(f"Create robots.txt with Allow rules for AI bots ({ROBOTS_KEY_BOTS_DISPLAY})")
-    elif not robots.citation_bots_ok:
-        recommendations.append(f"Update robots.txt to include all AI bots ({ROBOTS_KEY_BOTS_DISPLAY})")
-    if not llms.found:
-        recommendations.append(
-            f"Create /llms.txt for AI indexing: geo llms --base-url {base_url}. "
-            "Note: llms.txt is an organizational signal, not a proven ranking factor. "
-            "It helps structure content for AI systems."
+    Priority buckets (returned in order):
+      critical → HIGH (robots 18pt, llms 18pt, meta 14pt)
+      → MEDIUM (brand 10pt, schema 13pt, content 12pt, negative penalty)
+      → LOW (signals 6pt, ai_discovery 6pt, webmcp, product)
+    """
+    _critical: list[str] = []
+    _high: list[str] = []
+    _medium: list[str] = []
+    _low: list[str] = []
+
+    # ── CRITICAL — blocking signals ─────────────────────────────────────────
+    # gap #2: X-Robots-Tag: noindex via HTTP header
+    if getattr(meta, "x_robots_noindex", False):
+        _critical.append(
+            f"CRITICAL: X-Robots-Tag: {meta.x_robots_tag} detected in HTTP response headers — "
+            "AI crawlers will skip this page entirely. Remove the header or set it to 'all'."
         )
-    elif llms.found:
-        # #247: llms.txt Policy Intelligence — recommendations on content quality
-        if llms.sections_count == 0:
-            recommendations.append(
-                "Add H2 sections to llms.txt to organize content by topic (e.g. ## Features, ## Documentation, ## API)"
-            )
-        if llms.links_count < 3:
-            recommendations.append(
-                f"llms.txt has only {llms.links_count} links. "
-                "Add more markdown links to key pages for better AI indexing coverage."
-            )
-        # #39: add validation warnings to recommendations
-        if hasattr(llms, "validation_warnings"):
-            for warning in llms.validation_warnings:
-                recommendations.append(warning)
-    # Fix #399: report JSON-LD parse errors
-    if schema.json_parse_errors > 0:
-        recommendations.append(
-            f"Found {schema.json_parse_errors} JSON-LD script(s) with parse errors — validate at schema.org/validator"
+    # gap #7: noai in meta robots
+    if getattr(meta, "has_noai", False):
+        _critical.append(
+            f"noai directive detected in meta robots ({meta.noai_value}) — "
+            "some AI search engines respect this and may refuse to cite your content. "
+            "Remove 'noai' to maximize AI citability."
         )
-    if not schema.has_website:
-        recommendations.append("Add WebSite JSON-LD schema to homepage")
-    if not schema.has_faq:
-        recommendations.append("Add FAQPage schema with site FAQs")
-    # Fix #453: missing recommendations for key SCORING signals
-    if not schema.has_organization:
-        recommendations.append("Add Organization JSON-LD schema with name, url, and logo")
-    if not meta.has_title:
-        recommendations.append("Add a <title> tag — the strongest on-page signal for AI search (5 pts)")
-    if not meta.has_description:
-        recommendations.append("Add optimized meta description (150-160 characters)")
-    if not meta.has_canonical:
-        recommendations.append('Add <link rel="canonical"> to prevent duplicate content issues in AI indexing')
-    if not meta.has_og_title or not meta.has_og_description:
-        recommendations.append("Add Open Graph tags (og:title, og:description, og:image) for AI and social previews")
-    if not content.has_h1:
-        recommendations.append("Add a single H1 heading that clearly states the page topic")
-    if content.word_count < CONTENT_MIN_WORDS:
-        recommendations.append("Expand content to 300+ words — AI engines need substance to cite")
-    if not content.has_numbers:
-        recommendations.append("Add numerical data and concrete statistics (+40% AI visibility)")
-    if not content.has_links:
-        recommendations.append("Cite authoritative sources with external links (increase AI credibility)")
-    if hasattr(content, "has_heading_hierarchy") and not content.has_heading_hierarchy:
-        recommendations.append("Add H2/H3 subheadings to structure content for AI extraction")
-    if hasattr(content, "has_front_loading") and not content.has_front_loading:
-        recommendations.append("Front-load key information in the first 30% of content for AI snippet selection")
-
-    # Fix #453: lang attribute recommendation (3 pts)
-    if signals is not None and not signals.has_lang:
-        recommendations.append('Add lang attribute to <html> tag (e.g., lang="en") for AI language detection')
-
-    # #263: Machine-Readable Presence recommendations (RSS + sitemap)
-    if signals is not None and not signals.has_rss:
-        recommendations.append(
-            "Add RSS/Atom feed and link it in <head> with "
-            '<link rel="alternate" type="application/rss+xml"> for AI discovery'
-        )
-
-    # AI discovery recommendations (geo-checklist.dev)
-    if ai_discovery is not None:
-        if not ai_discovery.has_well_known_ai:
-            recommendations.append("Create /.well-known/ai.txt to define AI crawler permissions")
-        if not ai_discovery.has_summary or not ai_discovery.summary_valid:
-            recommendations.append("Create /ai/summary.json with site name and description for AI engines")
-        if not ai_discovery.has_faq:
-            recommendations.append("Create /ai/faq.json with structured FAQ for AI search visibility")
-        if not ai_discovery.has_service:
-            recommendations.append("Create /ai/service.json to describe service capabilities for AI")
-
-    # #232: E-commerce recommendation when Product schema is incomplete
-    if schema.has_product and hasattr(schema, "ecommerce_signals"):
-        signals_dict = schema.ecommerce_signals
-        missing_fields = [k for k, v in signals_dict.items() if not v and k != "complete"]
-        if missing_fields:
-            recommendations.append(
-                f"Complete Product schema: missing {', '.join(missing_fields)}. "
-                "Rich Product schema improves AI shopping visibility."
-            )
-
-    # Brand & Entity recommendations (v4.3)
-    if brand_entity is not None:
-        if not brand_entity.brand_name_consistent and len(brand_entity.names_found) >= 2:
-            recommendations.append("Use consistent brand name across title, og:title, H1, and schema Organization")
-        if brand_entity.kg_pillar_count == 0:
-            recommendations.append(
-                "Add sameAs links in Organization schema to Wikipedia, Wikidata, LinkedIn, or Crunchbase "
-                "for Knowledge Graph disambiguation"
-            )
-        elif brand_entity.kg_pillar_count < 3:
-            recommendations.append(
-                f"Add more sameAs links to Knowledge Graph pillars "
-                f"(currently {brand_entity.kg_pillar_count}/4: Wikipedia, Wikidata, LinkedIn, Crunchbase)"
-            )
-        if not brand_entity.has_about_link:
-            recommendations.append("Add a visible /about or /chi-siamo link to build trust signals for AI")
-        if not brand_entity.has_contact_info:
-            recommendations.append(
-                "Add address, telephone or contactPoint to Organization schema for entity validation"
-            )
-
-    # WebMCP recommendations (#233)
-    if webmcp is not None and webmcp.checked:
-        if webmcp.readiness_level == "none":
-            recommendations.append("Add potentialAction (SearchAction) to WebSite schema for AI agent discoverability")
-        if not webmcp.has_labeled_forms and not webmcp.has_tool_attributes:
-            recommendations.append(
-                "Add descriptive labels to forms (label, aria-label) to make them usable by AI agents"
-            )
-        if not webmcp.has_register_tool and not webmcp.has_tool_attributes:
-            recommendations.append(
-                "Consider adding WebMCP toolname/tooldescription attributes to interactive elements "
-                "for Chrome AI agent support"
-            )
-
-    # Negative Signals recommendations (v4.3)
-    if negative_signals is not None and negative_signals.checked:
-        if negative_signals.cta_density_high:
-            recommendations.append(
-                f"Reduce promotional CTAs ({negative_signals.cta_count} found) "
-                "— AI engines deprioritize overly promotional content"
-            )
-        if negative_signals.is_thin_content:
-            recommendations.append(
-                "Content is thin for the topic promised by H1 — expand to 500+ words for AI citation eligibility"
-            )
-        if negative_signals.has_keyword_stuffing:
-            recommendations.append(
-                f"Keyword stuffing detected: '{negative_signals.stuffed_word}' "
-                f"at {negative_signals.stuffed_density}% density — diversify vocabulary"
-            )
-        if negative_signals.boilerplate_high:
-            recommendations.append(
-                f"High boilerplate ratio ({int(negative_signals.boilerplate_ratio * 100)}%) "
-                "— use <main> tag to help AI extract core content"
-            )
-        if negative_signals.has_mixed_signals:
-            recommendations.append(f"Mixed signals: {negative_signals.mixed_signal_detail}")
-
-    # v4.4: Prompt Injection raccomandazioni (#276)
+    # v4.4: Prompt Injection — critical manipulation patterns
     if prompt_injection is not None and prompt_injection.checked and prompt_injection.severity != "clean":
         if prompt_injection.llm_instruction_found:
-            recommendations.append(
+            _critical.append(
                 "⚠️ CRITICAL: LLM prompt instructions detected in page content — "
                 "this is a manipulation pattern that AI engines actively penalize"
             )
         if prompt_injection.html_comment_injection_found:
-            recommendations.append(
+            _critical.append(
                 "⚠️ Prompt injection in HTML comments detected — AI crawlers read comments, remove them"
             )
         if prompt_injection.hidden_text_found:
-            recommendations.append(
+            _critical.append(
                 "Hidden text detected (display:none/visibility:hidden with content) — "
                 "AI crawlers can read it and may penalize this cloaking pattern"
             )
 
-    return recommendations
+    # ── HIGH — robots(18pt), llms(18pt), meta title(5pt) ──────────────────
+    # Fix #453: split robots recommendation — create vs update
+    if not robots.found:
+        _high.append(f"Create robots.txt with Allow rules for AI bots ({ROBOTS_KEY_BOTS_DISPLAY})")
+    elif not robots.citation_bots_ok:
+        _high.append(f"Update robots.txt to include all AI bots ({ROBOTS_KEY_BOTS_DISPLAY})")
+    # gap #8: Crawl-delay slows AI crawlers — flag when > 10s
+    _crawl_delay = getattr(robots, "crawl_delay", None)
+    if _crawl_delay is not None and _crawl_delay > 10:
+        _high.append(
+            f"robots.txt Crawl-delay: {int(_crawl_delay)}s is very aggressive — "
+            "AI crawlers may skip re-indexing your content. Reduce to ≤5s or remove the directive."
+        )
+    if not llms.found:
+        _high.append(
+            f"Create /llms.txt for AI indexing: geo llms --base-url {base_url}. "
+            "Note: llms.txt is an organizational signal, not a proven ranking factor. "
+            "It helps structure content for AI systems."
+        )
+    if not meta.has_title:
+        _high.append("Add a <title> tag — the strongest on-page signal for AI search (5 pts)")
+
+    # ── MEDIUM — meta(9pt), schema(13pt), brand(10pt), content(12pt), negatives ──
+    if llms.found:
+        # #247: llms.txt Policy Intelligence — content quality
+        if llms.sections_count == 0:
+            _medium.append(
+                "Add H2 sections to llms.txt to organize content by topic (e.g. ## Features, ## Documentation, ## API)"
+            )
+        if llms.links_count < 3:
+            _medium.append(
+                f"llms.txt has only {llms.links_count} links. "
+                "Add more markdown links to key pages for better AI indexing coverage."
+            )
+        if hasattr(llms, "validation_warnings"):
+            for warning in llms.validation_warnings:
+                _medium.append(warning)
+
+    # Meta tags (canonical 3pt, og 4pt, description 2pt)
+    if not meta.has_canonical:
+        _medium.append('Add <link rel="canonical"> to prevent duplicate content issues in AI indexing')
+    if not meta.has_og_title or not meta.has_og_description:
+        _medium.append("Add Open Graph tags (og:title, og:description, og:image) for AI and social previews")
+    if not meta.has_description:
+        _medium.append("Add optimized meta description (150-160 characters)")
+
+    # Brand & Entity (up to 10pt)
+    if brand_entity is not None:
+        if not brand_entity.brand_name_consistent and len(brand_entity.names_found) >= 2:
+            _medium.append("Use consistent brand name across title, og:title, H1, and schema Organization")
+        if brand_entity.kg_pillar_count == 0:
+            _medium.append(
+                "Add sameAs links in Organization schema to Wikipedia, Wikidata, LinkedIn, or Crunchbase "
+                "for Knowledge Graph disambiguation"
+            )
+        elif brand_entity.kg_pillar_count < 3:
+            _medium.append(
+                f"Add more sameAs links to Knowledge Graph pillars "
+                f"(currently {brand_entity.kg_pillar_count}/4: Wikipedia, Wikidata, LinkedIn, Crunchbase)"
+            )
+        if not brand_entity.has_about_link:
+            _medium.append("Add a visible /about or /chi-siamo link to build trust signals for AI")
+        if not brand_entity.has_contact_info:
+            _medium.append(
+                "Add address, telephone or contactPoint to Organization schema for entity validation"
+            )
+
+    # Schema JSON-LD (up to 13pt)
+    if schema.json_parse_errors > 0:
+        _medium.append(
+            f"Found {schema.json_parse_errors} JSON-LD script(s) with parse errors — validate at schema.org/validator"
+        )
+    if not schema.has_website:
+        _medium.append("Add WebSite JSON-LD schema to homepage")
+    if not schema.has_organization:
+        _medium.append("Add Organization JSON-LD schema with name, url, and logo")
+    if not schema.has_faq:
+        _medium.append("Add FAQPage schema with site FAQs")
+    # gap #3: schema completeness
+    for schema_type, missing_fields in getattr(schema, "schema_missing_fields", {}).items():
+        _medium.append(
+            f"Incomplete {schema_type} schema: add required fields {', '.join(missing_fields)} "
+            f"(see schema.org/{schema_type} for the full spec)"
+        )
+
+    # Content (up to 12pt)
+    if not content.has_h1:
+        _medium.append("Add a single H1 heading that clearly states the page topic")
+    if content.word_count < CONTENT_MIN_WORDS:
+        _medium.append("Expand content to 300+ words — AI engines need substance to cite")
+    if hasattr(content, "has_heading_hierarchy") and not content.has_heading_hierarchy:
+        _medium.append("Add H2/H3 subheadings to structure content for AI extraction")
+    if hasattr(content, "has_front_loading") and not content.has_front_loading:
+        _medium.append("Front-load key information in the first 30% of content for AI snippet selection")
+
+    # Negative signals (score penalty reduction)
+    if negative_signals is not None and negative_signals.checked:
+        if negative_signals.cta_density_high:
+            _medium.append(
+                f"Reduce promotional CTAs ({negative_signals.cta_count} found) "
+                "— AI engines deprioritize overly promotional content"
+            )
+        if negative_signals.is_thin_content:
+            _medium.append(
+                "Content is thin for the topic promised by H1 — expand to 500+ words for AI citation eligibility"
+            )
+        if negative_signals.has_keyword_stuffing:
+            _medium.append(
+                f"Keyword stuffing detected: '{negative_signals.stuffed_word}' "
+                f"at {negative_signals.stuffed_density}% density — diversify vocabulary"
+            )
+        if negative_signals.boilerplate_high:
+            _medium.append(
+                f"High boilerplate ratio ({int(negative_signals.boilerplate_ratio * 100)}%) "
+                "— use <main> tag to help AI extract core content"
+            )
+        if negative_signals.has_mixed_signals:
+            _medium.append(f"Mixed signals: {negative_signals.mixed_signal_detail}")
+
+    # ── LOW — signals(6pt), ai_discovery(6pt), content details(2pt), webmcp ──
+    # Signals (lang 3pt, rss 2pt)
+    if signals is not None and not signals.has_lang:
+        _low.append('Add lang attribute to <html> tag (e.g., lang="en") for AI language detection')
+    if signals is not None and not signals.has_rss:
+        _low.append(
+            "Add RSS/Atom feed and link it in <head> with "
+            '<link rel="alternate" type="application/rss+xml"> for AI discovery'
+        )
+
+    # Content details (numbers 1pt, links 1pt)
+    if not content.has_numbers:
+        _low.append("Add numerical data and concrete statistics (+40% AI visibility)")
+    if not content.has_links:
+        _low.append("Cite authoritative sources with external links (increase AI credibility)")
+
+    # AI discovery (up to 6pt)
+    if ai_discovery is not None:
+        if not ai_discovery.has_well_known_ai:
+            _low.append("Create /.well-known/ai.txt to define AI crawler permissions")
+        if not ai_discovery.has_summary or not ai_discovery.summary_valid:
+            _low.append("Create /ai/summary.json with site name and description for AI engines")
+        if not ai_discovery.has_faq:
+            _low.append("Create /ai/faq.json with structured FAQ for AI search visibility")
+        if not ai_discovery.has_service:
+            _low.append("Create /ai/service.json to describe service capabilities for AI")
+
+    # Product schema (informational)
+    if schema.has_product and hasattr(schema, "ecommerce_signals"):
+        signals_dict = schema.ecommerce_signals
+        missing_fields = [k for k, v in signals_dict.items() if not v and k != "complete"]
+        if missing_fields:
+            _low.append(
+                f"Complete Product schema: missing {', '.join(missing_fields)}. "
+                "Rich Product schema improves AI shopping visibility."
+            )
+
+    # WebMCP (informational)
+    if webmcp is not None and webmcp.checked:
+        if webmcp.readiness_level == "none":
+            _low.append("Add potentialAction (SearchAction) to WebSite schema for AI agent discoverability")
+        if not webmcp.has_labeled_forms and not webmcp.has_tool_attributes:
+            _low.append(
+                "Add descriptive labels to forms (label, aria-label) to make them usable by AI agents"
+            )
+        if not webmcp.has_register_tool and not webmcp.has_tool_attributes:
+            _low.append(
+                "Consider adding WebMCP toolname/tooldescription attributes to interactive elements "
+                "for Chrome AI agent support"
+            )
+
+    return _critical + _high + _medium + _low
 
 
 def _build_audit_result(
@@ -422,12 +465,14 @@ def _build_audit_result(
 
         effective_hallucination = HallucinationBaitResult()
 
-    # Compute score, breakdown, and band (v4.0: includes signals, ai_discovery)
+    # Compute score, breakdown, and band (v4.0: includes signals, ai_discovery, negative_penalty)
     score = compute_geo_score(
-        robots, llms, schema, meta, content, effective_signals, effective_ai_discovery, effective_brand_entity
+        robots, llms, schema, meta, content, effective_signals, effective_ai_discovery, effective_brand_entity,
+        effective_negative_signals,
     )
     breakdown = compute_score_breakdown(
-        robots, llms, schema, meta, content, effective_signals, effective_ai_discovery, effective_brand_entity
+        robots, llms, schema, meta, content, effective_signals, effective_ai_discovery, effective_brand_entity,
+        effective_negative_signals,
     )
     band = get_score_band(score)
 
@@ -645,6 +690,15 @@ def run_full_audit(url: str, use_cache: bool = False, project_config=None) -> Au
     llms = _audit_llms_from_response(r_llms, r_full=r_llms_full)
     schema = audit_schema(soup, base_url)
     meta = audit_meta_tags(soup, base_url)
+    # gap #2: X-Robots-Tag HTTP header — blocks AI indexing even when robots.txt allows it
+    try:
+        _x_robots = dict(r.headers).get("x-robots-tag") or dict(r.headers).get("X-Robots-Tag") or ""
+    except (TypeError, AttributeError):
+        _x_robots = ""
+    if _x_robots:
+        meta.x_robots_tag = _x_robots
+        if "noindex" in _x_robots.lower():
+            meta.x_robots_noindex = True
     content = audit_content_quality(soup, base_url, soup_clean=soup_clean)
 
     # v4.1: AI discovery endpoints audit (usa risposte pre-scaricate)
@@ -711,6 +765,19 @@ def run_full_audit(url: str, use_cache: bool = False, project_config=None) -> Au
         prompt_injection=prompt_injection_result,
         trust_stack=trust_stack_result,
     )
+
+    # gap #10: brand sentiment analysis — opt-in, requires project_config.brand_name
+    _brand_name = getattr(project_config, "brand_name", None)
+    if _brand_name:
+        from geo_optimizer.core.audit_sentiment import audit_brand_sentiment
+
+        result.brand_sentiment = audit_brand_sentiment(
+            _brand_name,
+            provider=getattr(project_config, "llm_provider", None),
+            api_key=getattr(project_config, "llm_api_key", None),
+            model=getattr(project_config, "llm_model", None),
+        )
+
     result.audit_duration_ms = int((time.perf_counter() - _t0) * 1000)
     if result.audit_duration_ms > AUDIT_TIMEOUT_SECONDS * 1000:
         logging.getLogger(__name__).warning(
@@ -823,6 +890,17 @@ async def run_full_audit_async(url: str, project_config=None) -> AuditResult:
     # Sub-audits that work on the DOM (no additional fetch required)
     schema = audit_schema(soup, base_url)
     meta = audit_meta_tags(soup, base_url)
+    # gap #2: X-Robots-Tag HTTP header — blocks AI indexing even when robots.txt allows it
+    try:
+        _x_robots_async = (
+            dict(r_home.headers).get("x-robots-tag") or dict(r_home.headers).get("X-Robots-Tag") or ""
+        )
+    except (TypeError, AttributeError):
+        _x_robots_async = ""
+    if _x_robots_async:
+        meta.x_robots_tag = _x_robots_async
+        if "noindex" in _x_robots_async.lower():
+            meta.x_robots_noindex = True
     content = audit_content_quality(soup, base_url, soup_clean=soup_clean)
 
     # v4.1: AI discovery from pre-fetched responses
@@ -890,6 +968,20 @@ async def run_full_audit_async(url: str, project_config=None) -> AuditResult:
         prompt_injection=prompt_injection_result,
         trust_stack=trust_stack_result,
     )
+
+    # gap #10: brand sentiment analysis — opt-in, requires project_config.brand_name
+    _brand_name = getattr(project_config, "brand_name", None)
+    if _brand_name:
+        from geo_optimizer.core.audit_sentiment import audit_brand_sentiment
+
+        result.brand_sentiment = await asyncio.to_thread(
+            audit_brand_sentiment,
+            _brand_name,
+            provider=getattr(project_config, "llm_provider", None),
+            api_key=getattr(project_config, "llm_api_key", None),
+            model=getattr(project_config, "llm_model", None),
+        )
+
     result.audit_duration_ms = int((time.perf_counter() - _t0) * 1000)
     if result.audit_duration_ms > AUDIT_TIMEOUT_SECONDS * 1000:
         logging.getLogger(__name__).warning(
