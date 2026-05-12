@@ -3,6 +3,98 @@ import Shell from '../components/Shell.astro';
 import AnalyzeCompetitorsContainer from '../components/compare/AnalyzeCompetitorsContainer';
 ---
 
-<Shell title="Analyze Competitors — GEO Optimizer">
-  <AnalyzeCompetitorsContainer client:only="react" />
+<Shell
+  title="Competitor AI Visibility Analysis — GEO Optimizer"
+  description="Analyze competitor AI visibility with GEO Optimizer. Compare multiple websites across GEO scores, citability, technical readiness, and AI search signals."
+  canonical="https://geoready.dev/analyze-competitors"
+>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-16">
+    {/* Static hero — visible to crawlers */}
+    <header class="max-w-2xl mb-8">
+      <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted uppercase tracking-wider">
+        <span>GEO Optimizer</span>
+        <span class="w-1 h-1 rounded-full bg-text-muted" />
+        <span>Competitors</span>
+      </div>
+
+      <h1 class="mt-3 font-display text-3xl md:text-4xl font-bold text-text-primary leading-tight tracking-tight">
+        Competitor AI Visibility Analysis
+      </h1>
+
+      <p class="mt-4 text-base text-text-secondary leading-relaxed max-w-2xl">
+        Enter multiple competitor URLs and run a batch GEO audit. See how each site scores for AI search visibility, citability, and technical readiness.
+      </p>
+
+      <p class="mt-2 text-xs text-text-muted font-mono">Last updated: May 2026</p>
+    </header>
+
+    {/* Static info section — visible to crawlers */}
+    <section class="mb-10 max-w-2xl">
+      <h2 class="text-sm font-mono font-semibold uppercase tracking-wider text-text-muted mb-3">
+        What competitor analysis checks
+      </h2>
+      <p class="text-sm text-text-secondary leading-relaxed mb-3">
+        The batch audit evaluates every competitor across the same 8 signal categories and surfaces relative strengths and weaknesses.
+      </p>
+      <ul class="space-y-2">
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          GEO Score across 8 signal categories
+        </li>
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          Citability score (47-method suite)
+        </li>
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          Technical signal readiness
+        </li>
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          AI search visibility for ChatGPT, Perplexity, and Claude
+        </li>
+      </ul>
+    </section>
+
+    {/* Interactive tool — hydrated by React */}
+    <AnalyzeCompetitorsContainer client:only="react" />
+  </main>
+
+  {/* Page-specific schema */}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Competitor AI Visibility Analysis — GEO Optimizer",
+    "description": "Analyze competitor AI visibility with GEO Optimizer. Compare multiple websites across GEO scores, citability, technical readiness, and AI search signals.",
+    "url": "https://geoready.dev/analyze-competitors",
+    "author": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://github.com/Auriti-Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://github.com/Auriti-Labs"
+    },
+    "datePublished": "2026-05-12",
+    "dateModified": "2026-05-12",
+    "mainEntity": {
+      "@type": "SoftwareApplication",
+      "name": "GEO Optimizer Competitor Analysis Tool",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Batch competitor GEO audit",
+        "Citability benchmarking",
+        "Technical signal comparison",
+        "AI visibility scoring"
+      ]
+    }
+  })} />
 </Shell>

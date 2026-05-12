@@ -3,6 +3,98 @@ import Shell from '../components/Shell.astro';
 import CompareContainer from '../components/compare/CompareContainer';
 ---
 
-<Shell title="Compare GEO Scores — GEO Optimizer">
-  <CompareContainer client:only="react" />
+<Shell
+  title="Compare AI Visibility Scores — GEO Optimizer"
+  description="Compare two websites side by side with GEO Optimizer. Benchmark AI search visibility, citability, and technical signals for ChatGPT, Perplexity, and Claude."
+  canonical="https://geoready.dev/compare"
+>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-16">
+    {/* Static hero — visible to crawlers */}
+    <header class="max-w-2xl mb-8">
+      <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted uppercase tracking-wider">
+        <span>GEO Optimizer</span>
+        <span class="w-1 h-1 rounded-full bg-text-muted" />
+        <span>Compare</span>
+      </div>
+
+      <h1 class="mt-3 font-display text-3xl md:text-4xl font-bold text-text-primary leading-tight tracking-tight">
+        Compare AI Visibility Scores
+      </h1>
+
+      <p class="mt-4 text-base text-text-secondary leading-relaxed max-w-2xl">
+        Side-by-side analysis. Enter two URLs and run a head-to-head GEO audit to see who is more visible to AI search engines.
+      </p>
+
+      <p class="mt-2 text-xs text-text-muted font-mono">Last updated: May 2026</p>
+    </header>
+
+    {/* Static info section — visible to crawlers */}
+    <section class="mb-10 max-w-2xl">
+      <h2 class="text-sm font-mono font-semibold uppercase tracking-wider text-text-muted mb-3">
+        How comparison works
+      </h2>
+      <p class="text-sm text-text-secondary leading-relaxed mb-3">
+        The comparison benchmarks each site across the same 8 signal categories used in the standard GEO audit.
+      </p>
+      <ul class="space-y-2">
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          GEO Score across 8 signal categories
+        </li>
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          Citability score (47-method suite)
+        </li>
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          Technical signal readiness
+        </li>
+        <li class="text-sm text-text-secondary flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-teal mt-1.5 shrink-0" aria-hidden="true" />
+          AI search visibility for ChatGPT, Perplexity, and Claude
+        </li>
+      </ul>
+    </section>
+
+    {/* Interactive tool — hydrated by React */}
+    <CompareContainer client:only="react" />
+  </main>
+
+  {/* Page-specific schema */}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Compare AI Visibility Scores — GEO Optimizer",
+    "description": "Compare two websites side by side with GEO Optimizer. Benchmark AI search visibility, citability, and technical signals for ChatGPT, Perplexity, and Claude.",
+    "url": "https://geoready.dev/compare",
+    "author": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://github.com/Auriti-Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://github.com/Auriti-Labs"
+    },
+    "datePublished": "2026-05-12",
+    "dateModified": "2026-05-12",
+    "mainEntity": {
+      "@type": "SoftwareApplication",
+      "name": "GEO Optimizer Comparison Tool",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Side-by-side GEO score comparison",
+        "Citability benchmarking",
+        "Technical signal analysis",
+        "AI visibility scoring"
+      ]
+    }
+  })} />
 </Shell>

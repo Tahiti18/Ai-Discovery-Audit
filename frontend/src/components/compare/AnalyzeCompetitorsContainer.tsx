@@ -188,13 +188,8 @@ export default function AnalyzeCompetitorsContainer() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <div className="max-w-2xl">
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">Analyze Competitive Narratives</h1>
-        <p className="mt-4 text-text-secondary">See how AI search engines describe your competitors vs your brand.</p>
-      </div>
-
-      <div className="mt-10 p-6 md:p-8 rounded-xl border border-border bg-bg-surface">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="p-6 md:p-8 rounded-xl border border-border bg-bg-surface">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="urls" className="block text-sm font-medium mb-2">Competitor URLs (comma-separated, max 5)</label>
