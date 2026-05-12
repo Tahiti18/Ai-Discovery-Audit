@@ -141,7 +141,7 @@ export default function AuditReportContainer({ reportId }: AuditReportContainerP
 
           <div className="p-4 rounded-xl border border-border bg-bg-surface">
             <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted mb-3">Export Report</h3>
-            <ExportActions reportId={report.id} />
+            <ExportActions reportUrl={report.url} />
           </div>
         </div>
 

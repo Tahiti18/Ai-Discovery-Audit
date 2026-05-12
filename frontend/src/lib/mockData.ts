@@ -103,7 +103,7 @@ export const mockAuditReport: AuditReport = {
     },
     {
       name: 'Brand & Entity',
-      slug: 'brand',
+      slug: 'brand_entity',
       score: 2,
       maxScore: 10,
       grade: 'critical',

@@ -1,10 +1,11 @@
 import React from 'react';
+import { buildApiUrl } from '../../lib/api';
 
 interface ExportActionsProps {
-  reportId: string;
+  reportUrl: string;
 }
 
-export default function ExportActions({ reportId }: ExportActionsProps) {
+export default function ExportActions({ reportUrl }: ExportActionsProps) {
   const actions = [
     {
       label: 'PDF',
@@ -15,7 +16,7 @@ export default function ExportActions({ reportId }: ExportActionsProps) {
           <line x1="12" y1="15" x2="12" y2="3" />
         </svg>
       ),
-      href: `/api/audit/pdf?id=${reportId}`,
+      href: buildApiUrl('/audit/pdf', { url: reportUrl }),
     },
     {
       label: 'JSON',
@@ -25,7 +26,7 @@ export default function ExportActions({ reportId }: ExportActionsProps) {
           <polyline points="8 6 2 12 8 18" />
         </svg>
       ),
-      href: `/api/audit?id=${reportId}&format=json`,
+      href: buildApiUrl('/audit', { url: reportUrl, format: 'json' }),
     },
     {
       label: 'Copy',
@@ -36,7 +37,7 @@ export default function ExportActions({ reportId }: ExportActionsProps) {
         </svg>
       ),
       onClick: () => {
-        navigator.clipboard.writeText(`${window.location.origin}/report/${reportId}`);
+        navigator.clipboard.writeText(`${window.location.origin}/report/audit?url=${encodeURIComponent(reportUrl)}`);
       },
     },
   ];

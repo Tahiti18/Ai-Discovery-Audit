@@ -4,7 +4,7 @@
 
 - **Frontend**: Astro 5 + React islands + Tailwind CSS 4 (porta 4321)
 - **Backend**: FastAPI esistente (porta 8000)
-- **Proxy**: Vite proxy in astro.config.mjs inoltra `/api`, `/report`, `/badge` al backend
+- **Proxy**: Vite proxy in astro.config.mjs inoltra `/api` e `/badge` al backend
 
 ## Prerequisiti
 
@@ -57,10 +57,14 @@ In produzione (build statico) il frontend non ha un server proxy. Servono due op
 
 Il frontend statico **non deve assumere** che `/api` sia disponibile sullo stesso dominio senza una di queste due configurazioni.
 
+**Nota su `PUBLIC_API_BASE`**: la variabile deve contenere il **prefisso API completo**.
+- Con reverse proxy sotto lo stesso dominio: `PUBLIC_API_BASE=/api`
+- Con backend su dominio esterno: `PUBLIC_API_BASE=https://api.geoready.dev` (se l'API e servita da root) oppure `PUBLIC_API_BASE=https://api.geoready.dev/api` (se il backend monta le route sotto `/api`).
+
 ## Mock data (senza backend)
 
-Se il backend non e attivo, il form audit mostrera un errore di rete.
-Per testare l'UI senza backend, modifica `src/components/AuditForm.tsx` per usare mock data.
+Se il backend non e attivo, la pagina report mostrera un errore di rete dopo la navigazione.
+Per testare l'UI senza backend, usa `/report/demo` che carica dati mock statici.
 
 ## Build produzione
 
