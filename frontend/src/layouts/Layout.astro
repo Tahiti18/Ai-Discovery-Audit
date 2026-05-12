@@ -38,6 +38,38 @@ const {
   <meta name="twitter:description" content={description}>
   <meta name="twitter:image" content={ogImage}>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate" type="application/atom+xml" title="GEO Optimizer Releases" href="https://github.com/Auriti-Labs/geo-optimizer-skill/releases.atom">
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "Auriti Labs",
+        "url": "https://github.com/Auriti-Labs",
+        "sameAs": [
+          "https://github.com/Auriti-Labs",
+          "https://pypi.org/project/geo-optimizer-skill/"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "name": "GEO Optimizer",
+        "url": canonical,
+        "publisher": { "@id": "https://github.com/Auriti-Labs" }
+      },
+      {
+        "@type": "WebApplication",
+        "name": "GEO Optimizer",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    ]
+  })} />
 </head>
 <body class="bg-bg-base text-text-primary">
   <slot />

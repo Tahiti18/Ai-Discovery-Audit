@@ -24,7 +24,7 @@ export const CONSENT_VERSION = 'v1.0';
 export const cookieRegistry: CookieEntry[] = [
   {
     name: 'geo_cookie_consent',
-    provider: 'GeoReady',
+    provider: 'GEO Optimizer',
     domain: 'geoready.dev',
     category: 'necessary',
     purpose: 'Memorizza le preferenze cookie/privacy dell\'utente per evitare di richiedere il consenso ad ogni visita.',
@@ -34,7 +34,7 @@ export const cookieRegistry: CookieEntry[] = [
     firstOrThirdParty: 'first',
     isEssential: true,
     isCurrentlyUsed: true,
-    service: 'GeoReady Consent Manager',
+    service: 'GEO Optimizer Consent Manager',
     notes: 'Storage locale usato per persistere la scelta privacy. Nessun dato personale raccolto.',
   },
   {

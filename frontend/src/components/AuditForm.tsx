@@ -21,12 +21,12 @@ export default function AuditForm() {
 
     const trimmed = url.trim();
     if (!trimmed) {
-      setErrorMsg('Inserisci un URL da analizzare.');
+      setErrorMsg('Enter a URL to audit.');
       return;
     }
 
     if (!isValidUrl(trimmed)) {
-      setErrorMsg('Inserisci un URL valido (es. https://example.com).');
+      setErrorMsg('Enter a valid URL, for example https://example.com.');
       return;
     }
 

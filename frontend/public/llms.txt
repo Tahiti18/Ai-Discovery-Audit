@@ -1,0 +1,30 @@
+# GEO Optimizer
+
+> Open-source toolkit to audit, fix, and optimize websites for AI search engine visibility. Score 0-100 based on 47 research-backed methods.
+
+## Main sections
+
+- [Audit](https://geoready.dev/): Run a GEO audit on any URL. Get an 8-category score with actionable fixes.
+- [Compare](https://geoready.dev/compare/): Side-by-side comparison of two URLs.
+- [Analyze Competitors](https://geoready.dev/analyze-competitors/): Multi-URL competitor analysis.
+- [Research](https://geoready.dev/research/): Peer-reviewed research foundation (Princeton KDD 2024, AutoGEO ICLR 2026).
+- [Roadmap](https://geoready.dev/roadmap/): Planned and in-progress features.
+- [Manifesto](https://geoready.dev/manifesto/): Why GEO Optimizer exists and what it stands for.
+- [Privacy Policy](https://geoready.dev/privacy/): GDPR-compliant privacy policy.
+- [Cookie Policy](https://geoready.dev/cookie-policy/): Cookie and storage inventory.
+
+## Key facts
+
+- GEO Optimizer is MIT licensed and free.
+- Install via pip: `pip install geo-optimizer-skill`
+- Source code: https://github.com/Auriti-Labs/geo-optimizer-skill
+- PyPI package: https://pypi.org/project/geo-optimizer-skill/
+- Documentation: https://auriti-labs.github.io/geo-optimizer-skill/
+- 8 scoring categories: robots.txt, llms.txt, schema, meta tags, content, signals, AI discovery, brand & entity.
+- CLI commands: `geo audit`, `geo fix`, `geo llms`, `geo schema`.
+- Also available as an MCP server for integration with AI coding assistants.
+
+## Contact
+
+- Technical issues: https://github.com/Auriti-Labs/geo-optimizer-skill/issues
+- Author: Auriti Labs (https://github.com/Auriti-Labs)
