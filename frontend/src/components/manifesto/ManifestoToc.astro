@@ -13,9 +13,9 @@ const { sections } = Astro.props;
   aria-label="Manifesto contents"
 >
   <div class="rounded-xl border border-border bg-bg-surface p-5">
-    <h2 class="text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted mb-4">
+    <p class="text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted mb-4">
       Contents
-    </h2>
+    </p>
     <ol class="space-y-2.5">
       {sections.map((s) => (
         <li>
@@ -39,9 +39,9 @@ const { sections } = Astro.props;
 <!-- Mobile TOC: visibile solo su schermi piccoli -->
 <nav class="lg:hidden mb-10" aria-label="Manifesto contents">
   <div class="rounded-xl border border-border bg-bg-surface p-5">
-    <h2 class="text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted mb-4">
+    <p class="text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted mb-4">
       Contents
-    </h2>
+    </p>
     <ol class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {sections.map((s) => (
         <li>

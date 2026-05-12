@@ -5,7 +5,7 @@ import ManifestoToc from '../components/manifesto/ManifestoToc.astro';
 import { manifestoSections } from '../lib/manifestoContent';
 ---
 
-<Shell title="Manifesto — GEO Optimizer" description="The GEO Optimizer Manifesto: why AI search visibility should be auditable, open, and accessible to every website.">
+<Shell title="The GEO Optimizer Manifesto — AI Search Visibility" description="The GEO Optimizer Manifesto explains why AI search visibility must be auditable, open, and accessible through research-backed GEO signals.">
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-16">
     {/* Header editoriale */}
     <header class="max-w-3xl mb-14 md:mb-20">
@@ -25,6 +25,7 @@ import { manifestoSections } from '../lib/manifestoContent';
         <span class="text-text-primary font-medium">open</span>, and
         <span class="text-text-primary font-medium">accessible</span> to every website on the internet.
       </p>
+      <p class="mt-2 text-xs text-text-muted font-mono">Published May 2026 · Last updated May 2026</p>
     </header>
 
     {/* Layout a due colonne: contenuto + TOC sticky */}
@@ -40,4 +41,32 @@ import { manifestoSections } from '../lib/manifestoContent';
       </div>
     </div>
   </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The GEO Optimizer Manifesto",
+    "description": "The GEO Optimizer Manifesto explains why AI search visibility must be auditable, open, and accessible through research-backed GEO signals.",
+    "author": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://github.com/Auriti-Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://github.com/Auriti-Labs"
+    },
+    "datePublished": "2026-05-12",
+    "dateModified": "2026-05-12",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://geoready.dev/manifesto"
+    },
+    "about": [
+      "AI search visibility",
+      "Generative Engine Optimization",
+      "website auditability"
+    ]
+  })} />
 </Shell>

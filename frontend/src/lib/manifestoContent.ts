@@ -6,6 +6,7 @@ export interface ManifestoSection {
   paragraphs?: string[];
   items?: { title: string; description: string; points?: string[] }[];
   quote?: string;
+  references?: { label: string; href: string }[];
 }
 
 export const manifestoSections: ManifestoSection[] = [
@@ -23,10 +24,16 @@ export const manifestoSections: ManifestoSection[] = [
     number: '02',
     title: 'The visibility gap is a tooling problem.',
     paragraphs: [
-      'Academic studies (Princeton KDD 2024, AutoGEO ICLR 2026) have quantified the factors that increase citations: source citations, inclusion of quotations, statistical claims, and authoritative prose.',
+      'Academic studies have quantified the factors that increase citations: source citations, inclusion of quotations, statistical claims, and authoritative prose.',
       'Yet these findings are trapped inside expensive, opaque enterprise platforms. Every piece of data analyzed is public and inspectable. The visibility gap is not a data problem. It is an access problem. It is a tooling problem.',
     ],
     quote: 'The visibility gap is not a data problem. It is an access problem. It is a tooling problem.',
+    references: [
+      {
+        label: 'GEO: Generative Engine Optimization — KDD 2024',
+        href: 'https://arxiv.org/abs/2311.09701',
+      },
+    ],
   },
   {
     id: 'values',
