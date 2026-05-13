@@ -6,6 +6,7 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  twitterImage?: string;
   robots?: string;
 }
 
@@ -14,6 +15,7 @@ const {
   description = "Audit your website's visibility to ChatGPT, Perplexity, Claude & Gemini",
   canonical = "https://geoready.dev",
   ogImage = "https://geoready.dev/assets/og-image.png",
+  twitterImage = "https://geoready.dev/assets/twitter-image.png",
   robots = "index, follow"
 } = Astro.props;
 ---
@@ -39,8 +41,18 @@ const {
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content={title}>
   <meta name="twitter:description" content={description}>
-  <meta name="twitter:image" content={ogImage}>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="twitter:image" content={twitterImage}>
+  <meta name="twitter:image:alt" content={description}>
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#6366f1">
   <link rel="alternate" type="application/atom+xml" title="GEO Optimizer Releases" href="https://github.com/Auriti-Labs/geo-optimizer-skill/releases.atom">
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KV5MQTGFZG"></script>
