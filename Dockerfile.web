@@ -13,6 +13,7 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend/ ./
+ENV PUBLIC_GA_MEASUREMENT_ID=G-KV5MQTGFZG
 RUN npm run build
 
 # ─── Stage 1: Python build ────────────────────────────────────────────────────
