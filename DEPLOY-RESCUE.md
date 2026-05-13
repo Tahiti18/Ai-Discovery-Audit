@@ -102,13 +102,41 @@ curl -SL https://github.com/docker/compose/releases/download/v2.24.0/docker-comp
 chmod +x /usr/local/bin/docker-compose
 ```
 
-## Passo 7: Esegui lo script di deploy
+## Passo 7: Esegui lo script di deploy (prima installazione)
 
 ```bash
 cd /tmp
 wget https://raw.githubusercontent.com/Auriti-Labs/geo-optimizer-skill/main/deploy-geoready.sh
 chmod +x deploy-geoready.sh
 bash deploy-geoready.sh
+```
+
+### Deploy rapido (aggiornamento codice esistente)
+
+Se il server è già configurato (Docker, Nginx, SSL attivi):
+
+```bash
+cd /home/debian/geo-optimizer-skill   # o /home/geoapp/geo-optimizer-skill
+git pull origin main
+docker build -t geo-optimizer-web -f Dockerfile.web .
+
+# Ferma container vecchio
+docker stop geo-web 2>/dev/null; docker rm geo-web 2>/dev/null
+
+# Ferma eventuale uvicorn diretto sull'host (vecchio deploy)
+sudo kill $(ss -tlnp | grep ':8000' | grep 'uvicorn' | awk '{print $6}' | cut -d',' -f2 | cut -d'=' -f2) 2>/dev/null || true
+
+# Avvia nuovo container
+docker run -d --name geo-web \
+  -e ALLOWED_ORIGINS=https://geoready.dev \
+  -e GEO_LANG=it \
+  -e PORT=8000 \
+  -p 8000:8000 \
+  --restart unless-stopped \
+  geo-optimizer-web
+
+# Verifica
+curl -s http://localhost:8000/health
 ```
 
 ---
@@ -175,6 +203,33 @@ ufw status
 netstat -tlnp | grep -E ':80|:443'
 ```
 
+### Frontend Astro non carica (404 su asset JS/CSS)
+```bash
+# Verifica che GEO_STATIC_DIR punti alla directory corretta
+docker exec geo-web ls -la /home/geo/static/_astro/ | head -5
+
+# Se manca, il build Astro è fallito nel Dockerfile
+# Ricostruisci l'immagine e controlla i log del build Node
+docker build --no-cache -t geo-optimizer-web -f Dockerfile.web .
+```
+
+### Gli strumenti interattivi non funzionano (audit, compare)
+```bash
+# Verifica CSP: il middleware FastAPI deve usare 'unsafe-inline' per script-src
+# Non nonce-based (incompatibile con Astro hydration scripts)
+curl -sI https://geoready.dev/ | grep -i content-security-policy
+
+# Output atteso: script-src 'self' 'unsafe-inline'
+```
+
+### Porta 8000 già occupata (uvicorn vecchio)
+```bash
+# Trova e ferma il processo uvicorn sull'host
+sudo ss -tlnp | grep :8000
+sudo kill <PID>
+# Poi riavvia il container Docker
+```
+
 ---
 
 ## Verifica finale
@@ -188,10 +243,13 @@ systemctl status nginx
 systemctl status docker
 
 # Test l'app
-curl https://geoready.dev/
+curl -s https://geoready.dev/ | head -c 100
 curl https://geoready.dev/health
 curl https://geoready.dev/robots.txt
 curl https://geoready.dev/llms.txt
+curl -s -o /dev/null -w "%{http_code}" https://geoready.dev/compare/
+curl -s -o /dev/null -w "%{http_code}" https://geoready.dev/analyze-competitors/
+curl -s -o /dev/null -w "%{http_code}" https://geoready.dev/report/demo
 
 # Verifica SSL
 openssl s_client -connect geoready.dev:443 -servername geoready.dev < /dev/null | openssl x509 -noout -dates
