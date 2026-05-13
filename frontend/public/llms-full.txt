@@ -1,0 +1,91 @@
+# GEO Optimizer — Full LLM Context
+
+> Extended machine-readable context for GEO Optimizer, an open-source toolkit to audit, fix, and optimize websites for AI search engine visibility.
+
+## Product identity
+
+- **Product**: GEO Optimizer
+- **Website**: https://geoready.dev
+- **Maintainer**: Auriti Labs (https://github.com/Auriti-Labs)
+- **Repository**: https://github.com/Auriti-Labs/geo-optimizer-skill
+- **Package**: https://pypi.org/project/geo-optimizer-skill/
+- **Documentation**: https://auriti-labs.github.io/geo-optimizer-skill/
+- **License**: MIT
+- **Version**: 4.10.4
+
+## What GEO Optimizer does
+
+GEO Optimizer scores websites across 8 signal categories to measure how discoverable, readable, and citable they are to AI search engines such as ChatGPT, Perplexity, Claude, and Gemini.
+
+The 8 scoring categories (max 100 points):
+
+1. **robots.txt** (max 18 points): authorization for AI crawlers (OAI-SearchBot, ClaudeBot, PerplexityBot, etc.)
+2. **llms.txt** (max 18 points): machine-readable standard for AI discovery
+3. **Schema JSON-LD** (max 16 points): structured data markup (Organization, WebSite, Article, FAQ)
+4. **Meta Tags** (max 14 points): title, description, canonical, Open Graph
+5. **Content Quality** (max 12 points): heading hierarchy, concrete numbers, lists, front-loaded information
+6. **Technical Signals** (max 6 points): language declaration, RSS/Atom feeds, freshness indicators
+7. **AI Discovery** (max 6 points): /.well-known/ai.txt, /ai/summary.json, /ai/faq.json, /ai/service.json
+8. **Brand & Entity Signals** (max 10 points): brand consistency, knowledge graph readiness, contact pages
+
+Additional checks (no score impact):
+
+- Prompt Injection Detection: 8 manipulation patterns
+- Trust Stack Score: technical, identity, social, academic, consistency
+- Negative Signals: excessive CTAs, thin content, broken links, keyword stuffing
+- CDN Crawler Access: Cloudflare, Akamai, Vercel blocking detection
+- JS Rendering: essential content requiring JavaScript
+- WebMCP Readiness: machine-readable context for MCP-compatible agents
+
+## CLI commands
+
+- `geo audit --url <URL>`: run a full GEO audit
+- `geo fix --url <URL>`: auto-generate fixes (robots.txt, llms.txt, schema, meta)
+- `geo llms --url <URL>`: check llms.txt readiness
+- `geo schema --url <URL>`: validate JSON-LD schema markup
+
+Also available as an MCP server for integration with AI coding assistants.
+
+## Core principles
+
+- Auditability over opacity: every calculation is documented and inspectable
+- Scientific foundation over marketing claims: every signal derives from published research
+- Universality over platform bias: compatible with any public URL
+- Open source over gatekeeping: MIT licensed, public algorithms and weights
+- Precision over noise: concrete, actionable, quantifiable suggestions
+- Developer experience as a first-class concern: CLI before dashboard, JSON before PDF
+
+## Research foundation
+
+### Peer-reviewed papers
+
+- **GEO: Generative Engine Optimization** (KDD 2024). Tested 9 optimization strategies across 10,000 queries on GEO-bench. Demonstrated that structural and authoritative signals significantly increase LLM citation rates. https://arxiv.org/abs/2311.09701
+- **AutoGEO: Automatic Generative Engine Optimization** (ICLR 2026). Automated pipelines for generative engine optimization using reinforcement learning from LLM feedback. https://openreview.net/forum?id=K8EinVWtUB
+
+### Industry reports
+
+- **AI Citations Report 2026**: aggregated data from major AI search platforms on citation patterns, domain diversity, and the rise of generative answer engines.
+
+### Internal / product analysis
+
+- **C-SEO Bench: Conversational SEO Methods**: internal benchmark for evaluating web content retrieval and citation in conversational search systems.
+- **Schema Markup & AI Citations**: analysis of how JSON-LD Schema.org markup improves citation probability in AI-generated answers.
+- **AI Mode Citation Factors**: identification of on-page and technical factors influencing AI source selection.
+
+## Web interface pages
+
+- https://geoready.dev/ — homepage and audit tool
+- https://geoready.dev/compare/ — side-by-side GEO score comparison
+- https://geoready.dev/analyze-competitors/ — multi-URL competitor analysis
+- https://geoready.dev/research/ — research foundation and sources
+- https://geoready.dev/roadmap/ — planned and in-progress features
+- https://geoready.dev/manifesto/ — project philosophy and commitments
+- https://geoready.dev/privacy/ — privacy policy
+- https://geoready.dev/cookie-policy/ — cookie and storage inventory
+
+## Notes for AI crawlers
+
+- /report/demo and /report/audit are noindex routes for audit reports and demo previews
+- These are not primary editorial content and should not be indexed
+- All editorial content is static HTML rendered server-side at build time
+- robots.txt explicitly allows all major AI crawlers and disallows /report/ only

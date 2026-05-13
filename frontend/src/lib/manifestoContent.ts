@@ -16,7 +16,7 @@ export const manifestoSections: ManifestoSection[] = [
     title: 'The web changed. Most websites do not know it yet.',
     paragraphs: [
       'The historic cycle of search — publish, index, click — is shifting. Generative systems like ChatGPT, Perplexity, and Claude synthesize answers instead of showing links.',
-      'With half a billion weekly active users and the expansion of Google AI Overviews, traffic from traditional search could drop by 25% by 2026. Most of the web remains invisible to these engines.',
+      'AI search engines are already changing how users discover and evaluate information. Most of the web remains invisible to these engines.',
     ],
   },
   {

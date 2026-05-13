@@ -24,6 +24,19 @@
 - CLI commands: `geo audit`, `geo fix`, `geo llms`, `geo schema`.
 - Also available as an MCP server for integration with AI coding assistants.
 
+## Research sources
+
+- GEO: Generative Engine Optimization — KDD 2024 (https://arxiv.org/abs/2311.09701)
+- AutoGEO: Automatic Generative Engine Optimization — ICLR 2026 (https://openreview.net/forum?id=K8EinVWtUB)
+- AI Citations Report 2026 — industry report
+- C-SEO Bench — internal benchmark
+- Schema Markup & AI Citations — product analysis
+- AI Mode Citation Factors — product analysis
+
+## Full context
+
+- [Full LLM context](https://geoready.dev/llms-full.txt): Extended machine-readable context for GEO Optimizer.
+
 ## Contact
 
 - Technical issues: https://github.com/Auriti-Labs/geo-optimizer-skill/issues

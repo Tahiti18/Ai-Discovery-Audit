@@ -62,8 +62,7 @@ export const researchSources: ResearchSource[] = [
       'Benchmark for evaluating how well web content is retrieved and cited in conversational search systems. Covers passage retrieval, answer grounding, and source attribution.',
     howWeUseIt:
       'Used to validate the citability score (47-method suite) and to weight signals such as front-loaded information, heading hierarchy, and structured lists.',
-    link: 'https://geoready.dev/research',
-    linkLabel: 'Read summary',
+    linkLabel: 'Internal benchmark',
   },
   {
     id: 'schema-ai-citations',
@@ -75,6 +74,7 @@ export const researchSources: ResearchSource[] = [
       'JSON-LD Schema.org markup (FAQ, Article, Organization, WebSite) directly improves the probability of being cited as a source in AI-generated answers.',
     howWeUseIt:
       'Drives the Schema JSON-LD scoring category (max 16 points) and the structured-data fixer that generates complete @context + @type + sameAs blocks.',
+    linkLabel: 'Internal analysis',
   },
   {
     id: 'ai-citations-report-2026',
@@ -86,6 +86,7 @@ export const researchSources: ResearchSource[] = [
       'Aggregated data from major AI search platforms showing citation patterns, domain diversity, and the rise of generative answer engines over traditional link lists.',
     howWeUseIt:
       'Provides the empirical baseline for the trust stack score and negative-signal detection (excessive CTAs, thin content, broken links, keyword stuffing).',
+    linkLabel: 'Industry report',
   },
   {
     id: 'ai-mode-citation-factors',
@@ -97,6 +98,7 @@ export const researchSources: ResearchSource[] = [
       'Identification of the specific on-page and technical factors that influence whether an AI system selects a source for citation: crawlability, content structure, entity resolution, and freshness.',
     howWeUseIt:
       'Mapped directly into the 8 scoring categories and the technical-signal checks (X-Robots-Tag, noai directives, crawl-delay, canonical, HTTPS).',
+    linkLabel: 'Internal analysis',
   },
 ];
 
