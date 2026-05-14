@@ -2,38 +2,99 @@
 import Shell from '../components/Shell.astro';
 import AuditForm from '../components/AuditForm';
 
-const features = [
+const trustCards = [
   {
-    title: 'Auditability',
-    desc: 'Every signal is scored against published research. No black boxes.',
+    title: 'Open source (MIT)',
+    desc: 'Full methodology, scoring weights, and source code on GitHub. No proprietary scoring.',
+    link: { label: 'View on GitHub', href: 'https://github.com/Auriti-Labs/geo-optimizer-skill' },
   },
   {
-    title: 'Scientific Foundation',
-    desc: 'Built on Princeton KDD 2024, AutoGEO ICLR 2026, and SE Ranking 2025.',
+    title: 'Research-backed',
+    desc: 'Scoring grounded in Princeton KDD 2024 and AutoGEO ICLR 2026 research on AI search retrieval.',
+    link: { label: 'Read the research', href: '/research' },
   },
   {
-    title: 'Open Source',
-    desc: 'MIT licensed. Full transparency in methodology and scoring weights.',
+    title: 'Auditable scoring',
+    desc: 'Every signal is traceable to a published rule. Score breakdowns show per-category contributions.',
+    link: null,
   },
   {
-    title: 'Precision',
-    desc: '47 citability methods, 8 audit categories, 100-point scoring system.',
+    title: 'Machine-readable output',
+    desc: 'JSON format designed for CI/CD pipelines, integrations, and the GeoReady platform API.',
+    link: null,
+  },
+];
+
+const actions = [
+  {
+    label: 'Run a free audit',
+    desc: 'Enter any public URL above — no account required.',
+    href: '#audit-form',
+    badge: 'Available now',
+    badgeStyle: 'bg-accent-success/10 text-accent-success',
+  },
+  {
+    label: 'Use the open-source CLI',
+    desc: 'pip install geo-optimizer-skill — MIT licensed, unlimited audits.',
+    href: 'https://github.com/Auriti-Labs/geo-optimizer-skill',
+    badge: 'Free forever',
+    badgeStyle: 'bg-accent-success/10 text-accent-success',
+  },
+  {
+    label: 'Read the research',
+    desc: 'Princeton KDD 2024 and AutoGEO ICLR 2026 behind the scoring methodology.',
+    href: '/research',
+    badge: 'Documentation',
+    badgeStyle: 'bg-bg-subtle text-text-muted border border-border',
+  },
+  {
+    label: 'Join early access',
+    desc: 'Pro monitoring, history, and alerts — planned, not yet available.',
+    href: '/early-access',
+    badge: 'Early access',
+    badgeStyle: 'bg-accent-teal/10 text-accent-teal',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is Generative Engine Optimization?',
+    a: 'GEO is the practice of making websites discoverable, readable, and citable by AI search engines such as ChatGPT, Perplexity, Claude, and Gemini. It focuses on structured data, content hierarchy, and technical signals that AI crawlers prioritize.',
+  },
+  {
+    q: 'What does GEO Optimizer check?',
+    a: 'The tool audits 8 categories: robots.txt, llms.txt, JSON-LD schema, meta tags, content quality, technical signals, AI discovery paths, and brand entity signals. It also detects prompt injection patterns and negative signals.',
+  },
+  {
+    q: 'How is GEO different from traditional SEO?',
+    a: 'Traditional SEO optimizes for keyword rankings and backlinks in conventional search engines. GEO optimizes for AI citation signals: structured data, clear content architecture, AI crawler permissions, and self-contained answer blocks. The two complement rather than replace each other.',
+  },
+  {
+    q: 'Is the Pro plan available now?',
+    a: 'No. GeoReady Pro — which adds weekly monitoring, score history, and regression alerts — is in early access planning. You can join the waitlist at geoready.dev/early-access to be notified when it launches. No payment is collected until the plan goes live.',
+  },
+  {
+    q: 'Is GEO Optimizer open source?',
+    a: 'Yes. The core toolkit is MIT licensed. Source code, scoring weights, and methodology are publicly available on GitHub. The CLI and web audit remain free.',
   },
 ];
 ---
 
 <Shell
-  title="GEO Optimizer — AI Search Visibility Audit"
-  description="Audit your website's AI search visibility. GEO Optimizer scores your site across 8 categories with actionable fixes for ChatGPT, Perplexity, Claude, and Gemini."
+  title="GEO Optimizer — AI Search Visibility & Citability Audit"
+  description="Audit your website's AI search visibility and citability. GEO Optimizer scores your site across 8 categories with actionable recommendations — free, no account required."
+  canonical="https://geoready.dev"
 >
-  <section class="bg-bg-dark text-text-inverse">
+  {/* Hero */}
+  <section id="audit-form" class="bg-bg-dark text-text-inverse">
     <div class="max-w-7xl mx-auto px-6 py-20 md:py-28">
       <div class="max-w-3xl">
         <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
-          Audit your website's visibility to AI search engines
+          Is your website visible to AI search engines?
         </h1>
         <p class="mt-6 text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl">
-          GEO Optimizer scores your site across 8 categories so you know exactly how discoverable you are to ChatGPT, Perplexity, Claude, and Gemini.
+          GEO Optimizer audits whether a website can be crawled, understood, and cited by AI answer engines.
+          Get a 0–100 score across 8 signal categories — free, no account required.
         </p>
 
         <div class="mt-10">
@@ -67,28 +128,30 @@ const features = [
           </div>
         </div>
         <p class="mt-2 text-xs text-text-muted font-mono">Snapshot: May 2026 — not live data</p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
+          <a href="/pricing" class="text-text-muted hover:text-text-inverse transition-colors">View pricing</a>
+          <span class="text-text-muted/40">·</span>
+          <a href="/early-access" class="text-text-muted hover:text-text-inverse transition-colors">Join early access</a>
+        </div>
       </div>
     </div>
   </section>
 
+  {/* What is AI search visibility */}
   <section class="max-w-7xl mx-auto px-6 py-16">
     <div class="max-w-3xl">
-      <h2 class="text-2xl md:text-3xl font-bold text-text-primary">What is Generative Engine Optimization?</h2>
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary">What is AI search visibility?</h2>
       <p class="mt-4 text-text-secondary leading-relaxed">
-        Generative Engine Optimization (GEO) is the practice of making websites
-        discoverable, readable, and citable by AI search engines such as ChatGPT,
-        Perplexity, Claude, and Gemini. Unlike traditional SEO, which optimizes
-        for keyword rankings and backlinks, GEO focuses on signals that AI crawlers
-        prioritize when selecting content to cite: structured data markup,
-        clear content hierarchy, technical accessibility, and trust signals.
+        Traditional SEO optimizes for ranking in conventional search result pages — crawlability, backlinks, keyword signals.
+        AI search visibility is a different question: whether an AI answer engine can read, parse, understand, and <em>cite</em> your content when generating a response.
       </p>
       <p class="mt-4 text-text-secondary leading-relaxed">
-        Key GEO signals include a well-configured <code class="font-mono text-sm bg-bg-subtle px-1 rounded">robots.txt</code> that allows
-        AI crawlers, an <code class="font-mono text-sm bg-bg-subtle px-1 rounded">llms.txt</code> file that guides crawlers through your content,
-        complete JSON-LD schema for entity disambiguation, and self-contained answer
-        blocks that AI models can quote directly. GEO Optimizer audits every one of
-        these signals and produces a 0-100 score with specific, research-backed
-        recommendations.
+        A site can rank well on Google and still be largely opaque to AI systems.
+        The relevant signals are different: a well-configured <code class="font-mono text-sm bg-bg-subtle px-1 rounded">robots.txt</code> that permits AI crawlers,
+        an <code class="font-mono text-sm bg-bg-subtle px-1 rounded">llms.txt</code> file that guides them through your content,
+        complete JSON-LD schema for entity disambiguation, factual density, and brand coherence.
+        GEO Optimizer audits every one of these signals and produces a 0–100 score with per-category breakdown.
       </p>
       <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
         <a href="/research" class="text-accent-teal hover:text-accent-teal-dark transition-colors">Read the research</a>
@@ -100,6 +163,7 @@ const features = [
     </div>
   </section>
 
+  {/* How it works */}
   <section class="max-w-7xl mx-auto px-6 py-16">
     <div class="max-w-3xl">
       <h2 class="text-2xl md:text-3xl font-bold text-text-primary">How GEO Optimizer works</h2>
@@ -116,7 +180,7 @@ const features = [
           <p class="mt-2 text-text-secondary leading-relaxed">
             The audit evaluates 8 signal categories — robots.txt, llms.txt, schema, meta tags,
             content quality, technical signals, AI discovery, and brand entity — producing a
-            0-100 score with per-category breakdown.
+            0–100 score with per-category breakdown.
           </p>
         </div>
         <div>
@@ -130,103 +194,169 @@ const features = [
     </div>
   </section>
 
-  <section class="max-w-7xl mx-auto px-6 py-16">
-    <div class="max-w-3xl">
-      <h2 class="text-2xl md:text-3xl font-bold text-text-primary">Preview the audit report</h2>
-      <p class="mt-4 text-text-secondary leading-relaxed">
-        A GEO Optimizer report contains the GEO score, category breakdown, technical signal status,
-        citability analysis, and prioritized recommendations. The demo report below shows a representative
-        example. Real reports are generated on demand for any submitted URL.
-      </p>
-      <a
-        href="/report/demo"
-        class="inline-flex items-center gap-2 mt-6 text-sm font-medium text-accent-teal hover:text-accent-teal-dark transition-colors"
-      >
-        View demo report
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"/>
-          <path d="m12 5 7 7-7 7"/>
-        </svg>
-      </a>
-    </div>
-  </section>
-
+  {/* Trust cards */}
   <section class="max-w-7xl mx-auto px-6 py-20">
-    <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-8">What GEO Optimizer checks</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      {features.map((f) => (
-        <div class="p-6 rounded-xl border border-border bg-bg-surface hover:border-accent-teal/40 transition-colors">
-          <h3 class="font-display text-base font-semibold">{f.title}</h3>
-          <p class="mt-2 text-sm text-text-secondary leading-relaxed">{f.desc}</p>
+    <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-8">Why trust this tool</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {trustCards.map((c) => (
+        <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface hover:border-accent-teal/40 transition-colors flex flex-col">
+          <h3 class="font-display text-base font-semibold text-text-primary">{c.title}</h3>
+          <p class="mt-2 text-sm text-text-secondary leading-relaxed flex-1">{c.desc}</p>
+          {c.link && (
+            <a
+              href={c.link.href}
+              target={c.link.href.startsWith('http') ? '_blank' : undefined}
+              rel={c.link.href.startsWith('http') ? 'noopener' : undefined}
+              class="mt-4 text-xs font-mono text-accent-teal hover:underline"
+            >
+              {c.link.label} →
+            </a>
+          )}
         </div>
       ))}
     </div>
   </section>
 
-  <section class="max-w-7xl mx-auto px-6 py-16">
+  {/* What you can do today */}
+  <section class="max-w-7xl mx-auto px-6 py-16 border-t border-border">
+    <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-8">What you can do today</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {actions.map((a) => (
+        <a
+          href={a.href}
+          target={a.href.startsWith('http') ? '_blank' : undefined}
+          rel={a.href.startsWith('http') ? 'noopener' : undefined}
+          class="group flex items-start gap-4 p-5 rounded-[--radius-lg] border border-border bg-bg-surface hover:border-accent-teal/40 transition-colors"
+        >
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <p class="text-sm font-semibold text-text-primary group-hover:text-accent-teal transition-colors">{a.label}</p>
+              <span class={`text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full ${a.badgeStyle}`}>{a.badge}</span>
+            </div>
+            <p class="text-sm text-text-secondary leading-relaxed">{a.desc}</p>
+          </div>
+          <svg class="mt-0.5 w-4 h-4 shrink-0 text-text-muted group-hover:text-accent-teal transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+          </svg>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {/* From audit to monitoring */}
+  <section class="max-w-7xl mx-auto px-6 py-16 border-t border-border">
+    <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-2">From audit to monitoring</h2>
+    <p class="text-sm text-text-secondary mb-8 max-w-2xl">
+      The free audit is a point-in-time diagnosis. Monitoring is what turns it into an ongoing signal.
+    </p>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent-success/10 text-accent-success inline-block mb-4">
+          Available now
+        </span>
+        <h3 class="text-base font-semibold text-text-primary mb-3">Free audit</h3>
+        <ul class="space-y-2 text-sm text-text-secondary">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+            GEO score 0–100 for any public URL
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+            Free report preview with top recommendations
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+            No account, no credit card
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+            CLI (MIT, unlimited) via pip
+          </li>
+        </ul>
+      </div>
+      <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent-teal/10 text-accent-teal inline-block mb-4">
+          Early access — planned
+        </span>
+        <h3 class="text-base font-semibold text-text-primary mb-3">Pro monitoring</h3>
+        <ul class="space-y-2 text-sm text-text-secondary">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+            Weekly monitoring — score tracked automatically
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+            Full 8-category report history
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+            Regression alerts when score drops
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+            PDF export and agency reporting
+          </li>
+        </ul>
+        <a href="/early-access" class="mt-5 inline-block text-sm text-accent-teal hover:underline font-medium">
+          Join the early access list →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* FAQ */}
+  <section class="max-w-7xl mx-auto px-6 py-16 border-t border-border">
     <div class="max-w-3xl">
       <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-8">Frequently asked questions</h2>
       <div class="space-y-6">
-        <div>
-          <h3 class="text-base font-semibold text-text-primary">What is Generative Engine Optimization?</h3>
-          <p class="mt-2 text-sm text-text-secondary leading-relaxed">
-            GEO is the practice of making websites discoverable, readable, and citable by AI search engines such as ChatGPT, Perplexity, Claude, and Gemini. It focuses on structured data, content hierarchy, and technical signals that AI crawlers prioritize.
-          </p>
-        </div>
-        <div>
-          <h3 class="text-base font-semibold text-text-primary">How is GEO different from traditional SEO?</h3>
-          <p class="mt-2 text-sm text-text-secondary leading-relaxed">
-            Traditional SEO optimizes for keyword rankings and backlinks in conventional search engines. GEO optimizes for AI citation signals: structured data, clear content architecture, AI crawler permissions, and self-contained answer blocks.
-          </p>
-        </div>
-        <div>
-          <h3 class="text-base font-semibold text-text-primary">What does GEO Optimizer check?</h3>
-          <p class="mt-2 text-sm text-text-secondary leading-relaxed">
-            The tool audits 8 categories: robots.txt, llms.txt, JSON-LD schema, meta tags, content quality, technical signals, AI discovery paths, and brand entity signals. It also detects prompt injection patterns and negative signals.
-          </p>
-        </div>
-        <div>
-          <h3 class="text-base font-semibold text-text-primary">Does GEO Optimizer replace SEO tools?</h3>
-          <p class="mt-2 text-sm text-text-secondary leading-relaxed">
-            No. GEO Optimizer complements traditional SEO tools by adding an AI-specific visibility layer. It does not replace keyword research, backlink analysis, or rank tracking.
-          </p>
-        </div>
-        <div>
-          <h3 class="text-base font-semibold text-text-primary">Is GEO Optimizer open source?</h3>
-          <p class="mt-2 text-sm text-text-secondary leading-relaxed">
-            Yes. The core toolkit is MIT licensed. Source code, scoring weights, and methodology are publicly available on GitHub.
-          </p>
-        </div>
+        {faqs.map((faq) => (
+          <div>
+            <h3 class="text-base font-semibold text-text-primary">{faq.q}</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">{faq.a}</p>
+          </div>
+        ))}
         <div>
           <h3 class="text-base font-semibold text-text-primary">Does the audit store submitted URLs?</h3>
           <p class="mt-2 text-sm text-text-secondary leading-relaxed">
-            URLs are processed in real time. No persistent storage of submitted URLs is declared unless explicitly configured in the backend. See the <a href="/privacy" class="text-accent-teal hover:underline">Privacy Policy</a> for details.
+            URLs are processed in real time. No persistent storage of submitted URLs is declared unless
+            explicitly configured in the backend. See the <a href="/privacy" class="text-accent-teal hover:underline">Privacy Policy</a> for details.
           </p>
         </div>
       </div>
     </div>
   </section>
 
+  {/* Final CTA */}
   <section class="max-w-7xl mx-auto px-6 pb-20">
-    <div class="p-8 md:p-12 rounded-2xl border border-border bg-bg-surface">
+    <div class="p-8 md:p-12 rounded-[--radius-xl] border border-border bg-bg-surface">
       <div class="max-w-3xl">
-        <h2 class="text-2xl md:text-3xl font-bold">Why this tool exists</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-text-primary">
+          AI search is already deciding which sites get cited.
+        </h2>
         <p class="mt-4 text-text-secondary leading-relaxed">
-          AI search is already deciding which websites get cited and which do not.
-          The signals are documented, the research is published, but most of the web has no idea.
-          GEO Optimizer exists to make AI visibility auditable, transparent, and accessible to every developer,
+          The signals are documented, the research is published, and the audit is free.
+          GEO Optimizer exists to make AI visibility auditable and accessible to every developer —
           not just teams with enterprise budgets.
         </p>
-        <a
-          href="/manifesto"
-          class="inline-flex items-center gap-2 mt-6 text-sm font-medium text-accent-teal hover:text-accent-teal-dark transition-colors"
-        >
-          Read the full manifesto
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"/>
-            <path d="m12 5 7 7-7 7"/>
-          </svg>
-        </a>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            href="#audit-form"
+            class="inline-block py-2.5 px-6 rounded-[--radius-md] bg-accent-teal text-white text-sm font-semibold hover:bg-accent-teal-dark transition-colors"
+          >
+            Start free audit
+          </a>
+          <a
+            href="/early-access"
+            class="inline-block py-2.5 px-6 rounded-[--radius-md] border border-border text-sm font-semibold text-text-primary hover:bg-bg-subtle transition-colors"
+          >
+            Join early access →
+          </a>
+        </div>
+        <p class="mt-4 text-xs text-text-muted">
+          Or <a href="/manifesto" class="hover:text-text-secondary transition-colors underline">read the manifesto</a>
+          <span class="mx-1">·</span>
+          <a href="/pricing" class="hover:text-text-secondary transition-colors underline">view pricing</a>
+        </p>
       </div>
     </div>
   </section>
