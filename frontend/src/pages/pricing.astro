@@ -1,0 +1,624 @@
+---
+import Shell from '../components/Shell.astro';
+
+const selfServePlans = [
+  {
+    id: 'free',
+    name: 'Free',
+    price: '€0',
+    period: 'forever',
+    status: 'Available now',
+    statusStyle: 'bg-accent-success/10 text-accent-success',
+    description: 'Single-URL audit with a full GEO score, top recommendations, and partial category breakdown. No account required.',
+    cta: 'Start free audit',
+    ctaHref: '/',
+    ctaStyle: 'border border-border text-text-primary hover:bg-bg-subtle',
+    recommended: false,
+    features: [
+      '5 audits per day',
+      'GEO score 0–100',
+      'Partial report — 3 of 8 categories',
+      'Top 3 recommendations',
+      'CLI (MIT, unlimited)',
+    ],
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    price: '€19',
+    period: '/month',
+    status: 'Early access',
+    statusStyle: 'bg-accent-teal/10 text-accent-teal',
+    description: 'Full reports, weekly monitoring for one domain, score history, and regression alerts. For developers and consultants managing one site.',
+    cta: 'Join early access',
+    ctaHref: '/early-access',
+    ctaStyle: 'bg-accent-teal text-white hover:bg-accent-teal-dark',
+    recommended: true,
+    features: [
+      'Unlimited audits',
+      'Full 8-category GEO report',
+      '1 domain — weekly monitoring',
+      '30-audit score history',
+      'Regression alerts (±5 points)',
+      'PDF export',
+      'API access (Bearer token)',
+    ],
+  },
+  {
+    id: 'studio',
+    name: 'Studio',
+    price: '€49',
+    period: '/month',
+    status: 'Early access',
+    statusStyle: 'bg-accent-teal/10 text-accent-teal',
+    description: 'Multi-site monitoring, white-label PDF exports, and competitor comparison. For consultants and agencies managing a portfolio.',
+    cta: 'Join early access',
+    ctaHref: '/early-access',
+    ctaStyle: 'border border-border text-text-primary hover:bg-bg-subtle',
+    recommended: false,
+    features: [
+      'Everything in Pro',
+      '15 domains monitored',
+      '12-month score history',
+      'White-label PDF (client logo)',
+      'Competitor comparison',
+      'Batch audit — 50 URLs',
+      'Priority support',
+    ],
+  },
+];
+
+const scalePlans = [
+  {
+    id: 'agency',
+    name: 'Agency',
+    price: '€89',
+    period: '/month',
+    status: 'Early access',
+    statusStyle: 'bg-accent-teal/10 text-accent-teal',
+    description: 'Team workspace, 50-domain portfolio monitoring, AI search snapshots, and unlimited batch audits.',
+    cta: 'Join early access',
+    ctaHref: '/early-access',
+    features: [
+      'Everything in Studio',
+      '50 domains monitored',
+      '24-month score history',
+      'Team workspace (owner / editor / viewer)',
+      'Unlimited batch audits',
+      'AI search snapshots (ChatGPT, Perplexity, Google AI)',
+      'Citation quality scoring',
+    ],
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 'Custom',
+    period: '',
+    status: 'Coming later',
+    statusStyle: 'bg-bg-subtle text-text-muted border border-border',
+    description: 'SLA, dedicated account manager, on-premise deployment, hourly monitoring, and custom integrations.',
+    cta: 'Join early access',
+    ctaHref: '/early-access',
+    features: [
+      'Everything in Agency',
+      'Unlimited domains',
+      'Hourly monitoring',
+      'SLA',
+      'On-premise deployment',
+      'Webhooks / Slack / CMS integrations',
+      'Dedicated account manager',
+      'Custom onboarding',
+    ],
+  },
+];
+
+const comparisonRows: [string, string, string, string, string][] = [
+  ['GEO score (0–100)',      '✓',       '✓',        '✓',        '✓'],
+  ['Partial report (3/8)',   '✓',       '—',        '—',        '—'],
+  ['Full 8-category report', '—',       '✓',        '✓',        '✓'],
+  ['Audits per day',         '5',       '∞',        '∞',        '∞'],
+  ['Domain monitoring',      '—',       '1 / week', '15 / week','50 / week'],
+  ['Score history',          '—',       '30 audits','12 months','24 months'],
+  ['Regression alerts',      '—',       '✓',        '✓',        '✓'],
+  ['PDF export',             '—',       '✓',        '✓',        '✓'],
+  ['White-label PDF',        '—',       '—',        '✓',        '✓'],
+  ['Competitor comparison',  '—',       '—',        '✓',        '✓'],
+  ['Bulk audit',             '—',       '—',        '50 URLs',  '∞'],
+  ['Team workspace',         '—',       '—',        '—',        '✓'],
+  ['AI search snapshots',    '—',       '—',        '—',        '✓'],
+  ['API access',             '—',       '✓',        '✓',        '✓'],
+  ['CLI (MIT)',               '✓',       '✓',        '✓',        '✓'],
+];
+
+const faqs = [
+  {
+    q: 'Is the free audit really free?',
+    a: 'Yes. The web audit requires no account, no credit card, and no signup. You get a full GEO score and three category breakdowns immediately. The CLI is MIT-licensed and free to use without limits.',
+  },
+  {
+    q: 'Do I need to register to use the free audit?',
+    a: 'No. Just enter a URL and run the audit. Email capture is optional and only used to unlock the full 8-category report.',
+  },
+  {
+    q: 'What does Pro add that Free does not?',
+    a: 'Pro adds continuity. The free audit is a one-shot snapshot. Pro monitors your domain weekly, tracks score history over time, and sends alerts when your GEO score drops. It also includes PDF export and API access.',
+  },
+  {
+    q: 'Are paid plans available right now?',
+    a: 'No. Pro, Studio, and Agency are in early access. You can join the waitlist to be notified when access opens. No payment is collected until plans officially launch.',
+  },
+  {
+    q: 'Will pricing change before launch?',
+    a: 'It may. The prices shown are planned pricing for early access. Early access members will be notified of any changes before billing begins.',
+  },
+  {
+    q: 'Will the CLI remain open source?',
+    a: 'Yes. The CLI (geo-optimizer-skill on PyPI) is MIT-licensed and will remain free forever. SaaS plans add server-side continuity features the CLI cannot provide on its own.',
+  },
+  {
+    q: 'Is there a free trial for paid plans?',
+    a: 'There is no time-limited trial. The Free plan is the permanent baseline — it returns real audit results without commitment. Paid plans add monitoring and team features on top.',
+  },
+  {
+    q: 'Can I cancel at any time?',
+    a: 'Yes. When plans launch, you will be able to cancel from your account settings at any time, with no lock-in or penalties.',
+  },
+];
+---
+
+<Shell
+  title="GEO Optimizer Pricing — Free Audit, Pro Monitoring, Agency Reporting"
+  description="The GEO audit is free, no account required. Pro adds weekly monitoring, full reports, score history, and alerts. Studio and Agency add multi-site workflows and white-label exports."
+  canonical="https://geoready.dev/pricing"
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 md:py-16">
+
+    {/* Hero */}
+    <header class="max-w-3xl mb-14">
+      <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted uppercase tracking-wider">
+        <span>GEO Optimizer</span>
+        <span class="w-1 h-1 rounded-full bg-text-muted"></span>
+        <span>Pricing</span>
+      </div>
+      <h1 class="mt-3 font-display text-3xl md:text-4xl font-bold text-text-primary leading-tight tracking-tight">
+        Measure what AI search engines can read.<br class="hidden sm:block" /> Monitor it over time.
+      </h1>
+      <p class="mt-4 text-base text-text-secondary leading-relaxed max-w-2xl">
+        The free audit requires no account and returns a GEO score with actionable recommendations.
+        Pro adds continuity: weekly monitoring, score history, regression alerts, and exports for client deliverables.
+      </p>
+      <p class="mt-3 text-sm text-text-muted leading-relaxed">
+        The web audit and CLI are MIT-licensed and will always remain free.
+        No trial periods. No credit card required for the Free plan.
+      </p>
+    </header>
+
+    {/* Plan cards */}
+    <section aria-labelledby="plans-heading">
+      <h2 id="plans-heading" class="sr-only">Plans</h2>
+
+      <p class="mb-6 text-xs text-text-muted font-mono">
+        Paid plans are in early access. Pricing may evolve before public launch.
+      </p>
+
+      {/* Self-serve row */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {selfServePlans.map((plan) => (
+          <div class={`relative flex flex-col p-6 rounded-[--radius-lg] border bg-bg-surface ${plan.recommended ? 'border-accent-teal ring-1 ring-accent-teal/20' : 'border-border'}`}>
+            {plan.recommended && (
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span class="px-3 py-1 text-[10px] font-mono font-semibold uppercase tracking-wider bg-accent-teal text-white rounded-full whitespace-nowrap">
+                  Recommended
+                </span>
+              </div>
+            )}
+
+            <div class="mb-4">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-semibold text-text-primary font-mono">{plan.name}</span>
+                <span class={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full ${plan.statusStyle}`}>
+                  {plan.status}
+                </span>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="font-display text-3xl font-bold text-text-primary">{plan.price}</span>
+                {plan.period && <span class="text-sm text-text-muted">{plan.period}</span>}
+              </div>
+              <p class="mt-3 text-sm text-text-secondary leading-relaxed">{plan.description}</p>
+            </div>
+
+            <ul class="flex-1 space-y-2 mb-6">
+              {plan.features.map((f) => (
+                <li class="flex items-start gap-2 text-sm text-text-secondary">
+                  <svg class="mt-0.5 w-3.5 h-3.5 shrink-0 text-accent-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={plan.ctaHref}
+              class={`block text-center py-2.5 px-4 rounded-[--radius-md] text-sm font-semibold transition-colors ${plan.ctaStyle}`}
+            >
+              {plan.cta}
+            </a>
+          </div>
+        ))}
+      </div>
+
+      {/* Scale row */}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {scalePlans.map((plan) => (
+          <div class="flex flex-col p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
+            <div class="mb-4">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-semibold text-text-primary font-mono">{plan.name}</span>
+                <span class={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full ${plan.statusStyle}`}>
+                  {plan.status}
+                </span>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="font-display text-3xl font-bold text-text-primary">{plan.price}</span>
+                {plan.period && <span class="text-sm text-text-muted">{plan.period}</span>}
+              </div>
+              <p class="mt-3 text-sm text-text-secondary leading-relaxed">{plan.description}</p>
+            </div>
+
+            <ul class="flex-1 space-y-2 mb-6">
+              {plan.features.map((f) => (
+                <li class="flex items-start gap-2 text-sm text-text-secondary">
+                  <svg class="mt-0.5 w-3.5 h-3.5 shrink-0 text-accent-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={plan.ctaHref}
+              class="block text-center py-2.5 px-4 rounded-[--radius-md] text-sm font-semibold border border-border text-text-primary hover:bg-bg-subtle transition-colors"
+            >
+              {plan.cta}
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* Free vs Pro */}
+    <section class="mt-20 md:mt-24" aria-labelledby="free-vs-pro-heading">
+      <h2 id="free-vs-pro-heading" class="font-display text-2xl font-bold text-text-primary mb-2">
+        Free vs Pro — what changes
+      </h2>
+      <p class="text-sm text-text-secondary mb-8 max-w-2xl">
+        The free audit is a single-URL, point-in-time snapshot. Pro turns it into an ongoing signal.
+      </p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
+          <span class="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider px-2 py-0.5 rounded-full bg-bg-subtle border border-border inline-block mb-4">
+            Free — available now
+          </span>
+          <ul class="space-y-3 text-sm text-text-secondary">
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+              Full GEO score (0–100) for any public URL
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+              3 of 8 category breakdowns (robots, meta, signals)
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+              Top 3 actionable recommendations
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+              Up to 5 audits per day, no account needed
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
+              CLI unlimited via pip (MIT license, forever)
+            </li>
+          </ul>
+        </div>
+        <div class="p-6 rounded-[--radius-lg] border border-accent-teal/30 bg-bg-surface">
+          <span class="text-xs font-mono font-semibold text-accent-teal uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent-teal/10 inline-block mb-4">
+            Pro — early access
+          </span>
+          <ul class="space-y-3 text-sm text-text-secondary">
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+              Full 8-category report (all signals, all categories)
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+              Weekly monitoring — score tracked automatically
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+              Score history — 30 audits, see trends over time
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+              Regression alerts — notified when score drops ≥5 points
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 text-accent-teal shrink-0">+</span>
+              PDF export + API access (Bearer token)
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* Why not a traditional SEO tool? */}
+    <section class="mt-20 md:mt-24" aria-labelledby="geo-vs-seo-heading">
+      <h2 id="geo-vs-seo-heading" class="font-display text-2xl font-bold text-text-primary mb-2">
+        Why not a traditional SEO tool?
+      </h2>
+      <p class="text-sm text-text-secondary mb-8 max-w-2xl">
+        SEO tools measure ranking signals. GEO Optimizer measures citation signals — a different question entirely.
+      </p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="p-5 rounded-[--radius-lg] border border-border bg-bg-surface">
+          <p class="text-sm font-semibold text-text-primary mb-2">Ranking vs. being cited</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Traditional SEO predicts whether Google ranks your page. GEO predicts whether ChatGPT,
+            Perplexity, or Claude cites your content in an answer. These are correlated but not the same.
+          </p>
+        </div>
+        <div class="p-5 rounded-[--radius-lg] border border-border bg-bg-surface">
+          <p class="text-sm font-semibold text-text-primary mb-2">Different signal set</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            GEO audits llms.txt, ai.txt, JSON-LD depth, factual density, brand entity coherence,
+            and AI-crawler permissions — signals that SEO tools don't surface.
+          </p>
+        </div>
+        <div class="p-5 rounded-[--radius-lg] border border-border bg-bg-surface">
+          <p class="text-sm font-semibold text-text-primary mb-2">Research-backed scoring</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Scoring weights are grounded in <a href="/research" class="text-accent-teal hover:underline">Princeton KDD 2024 and AutoGEO ICLR 2026</a> research
+            on what actually influences AI search retrieval.
+          </p>
+        </div>
+        <div class="p-5 rounded-[--radius-lg] border border-border bg-bg-surface">
+          <p class="text-sm font-semibold text-text-primary mb-2">Open source and auditable</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Every scoring rule is readable in the <a href="https://github.com/Auriti-Labs/geo-optimizer-skill" target="_blank" rel="noopener" class="text-accent-teal hover:underline">public repository</a>.
+            No black box — you can audit the auditor.
+          </p>
+        </div>
+        <div class="p-5 rounded-[--radius-lg] border border-border bg-bg-surface">
+          <p class="text-sm font-semibold text-text-primary mb-2">Forward-looking signals</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            llms.txt and ai.txt are emerging standards. GEO tracks adoption curves and updates scoring
+            weights as the AI search landscape evolves.
+          </p>
+        </div>
+        <div class="p-5 rounded-[--radius-lg] border border-border bg-bg-surface">
+          <p class="text-sm font-semibold text-text-primary mb-2">Complements, doesn't replace</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Use GEO Optimizer alongside your existing SEO tooling. A strong GEO score makes a well-ranked
+            page more likely to be cited by AI assistants.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* Feature comparison table */}
+    <section class="mt-20 md:mt-24" aria-labelledby="comparison-heading">
+      <h2 id="comparison-heading" class="font-display text-2xl font-bold text-text-primary mb-2">
+        Feature comparison
+      </h2>
+      <p class="text-sm text-text-secondary mb-8">
+        Paid plan features reflect planned early access scope and may change before public launch.
+      </p>
+      <div class="overflow-x-auto -mx-4 sm:mx-0">
+        <table class="w-full text-sm border-collapse min-w-[480px] px-4 sm:px-0">
+          <thead>
+            <tr class="border-b border-border">
+              <th class="text-left py-3 pr-4 font-medium text-text-muted font-mono text-xs uppercase tracking-wider w-[40%]">Feature</th>
+              <th class="text-center py-3 px-3 font-medium text-text-muted font-mono text-xs uppercase tracking-wider">Free</th>
+              <th class="text-center py-3 px-3 font-medium text-accent-teal font-mono text-xs uppercase tracking-wider">Pro</th>
+              <th class="text-center py-3 px-3 font-medium text-text-muted font-mono text-xs uppercase tracking-wider">Studio</th>
+              <th class="text-center py-3 px-3 font-medium text-text-muted font-mono text-xs uppercase tracking-wider">Agency</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border">
+            {comparisonRows.map(([feature, free, pro, studio, agency]) => (
+              <tr class="hover:bg-bg-subtle/50 transition-colors">
+                <td class="py-2.5 pr-4 text-text-secondary">{feature}</td>
+                <td class={`py-2.5 px-3 text-center font-mono text-xs ${free === '✓' ? 'text-accent-success' : free === '—' ? 'text-border' : 'text-text-secondary'}`}>{free}</td>
+                <td class={`py-2.5 px-3 text-center font-mono text-xs ${pro === '✓' ? 'text-accent-teal' : pro === '—' ? 'text-border' : 'text-accent-teal font-medium'}`}>{pro}</td>
+                <td class={`py-2.5 px-3 text-center font-mono text-xs ${studio === '✓' ? 'text-accent-success' : studio === '—' ? 'text-border' : 'text-text-secondary'}`}>{studio}</td>
+                <td class={`py-2.5 px-3 text-center font-mono text-xs ${agency === '✓' ? 'text-accent-success' : agency === '—' ? 'text-border' : 'text-text-secondary'}`}>{agency}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* FAQ */}
+    <section class="mt-20 md:mt-24" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="font-display text-2xl font-bold text-text-primary mb-8">
+        Frequently asked questions
+      </h2>
+      <div class="grid md:grid-cols-2 gap-x-12 gap-y-8">
+        {faqs.map((faq) => (
+          <div>
+            <p class="text-sm font-semibold text-text-primary mb-2">{faq.q}</p>
+            <p class="text-sm text-text-secondary leading-relaxed">{faq.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* Footer CTA */}
+    <section class="mt-20 md:mt-24 p-8 md:p-10 rounded-[--radius-xl] border border-border bg-bg-surface text-center">
+      <p class="text-[10px] font-mono text-text-muted uppercase tracking-wider mb-3">Early access open</p>
+      <h2 class="font-display text-2xl font-bold text-text-primary mb-3">
+        Start with a free audit. Join the list for Pro.
+      </h2>
+      <p class="text-sm text-text-secondary mb-6 max-w-md mx-auto leading-relaxed">
+        No account required for the audit. Join the early access list to be notified when Pro launches — no payment until plans go live.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a
+          href="/"
+          class="inline-block py-2.5 px-6 rounded-[--radius-md] border border-border text-sm font-semibold text-text-primary hover:bg-bg-subtle transition-colors"
+        >
+          Start free audit
+        </a>
+        <a
+          href="/early-access"
+          class="inline-block py-2.5 px-6 rounded-[--radius-md] bg-accent-teal text-white text-sm font-semibold hover:bg-accent-teal-dark transition-colors"
+        >
+          Join early access →
+        </a>
+      </div>
+    </section>
+
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "name": "GEO Optimizer Pricing",
+        "description": "GEO Optimizer pricing — free audit with no account required, Pro monitoring, Studio multi-site, Agency workspace.",
+        "url": "https://geoready.dev/pricing",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "GEO Optimizer",
+          "url": "https://geoready.dev"
+        }
+      },
+      {
+        "@type": "ItemList",
+        "name": "GEO Optimizer Plans",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "Offer",
+              "name": "Free",
+              "price": "0",
+              "priceCurrency": "EUR",
+              "description": "Single-URL GEO audit, no account required, partial 3/8 category report.",
+              "availability": "https://schema.org/InStock",
+              "url": "https://geoready.dev"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "Offer",
+              "name": "Pro",
+              "price": "19",
+              "priceCurrency": "EUR",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "19",
+                "priceCurrency": "EUR",
+                "unitCode": "MON"
+              },
+              "description": "Full 8-category reports, weekly monitoring for 1 domain, score history, regression alerts.",
+              "availability": "https://schema.org/PreOrder",
+              "url": "https://geoready.dev/early-access"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "Offer",
+              "name": "Studio",
+              "price": "49",
+              "priceCurrency": "EUR",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "49",
+                "priceCurrency": "EUR",
+                "unitCode": "MON"
+              },
+              "description": "15 domains, white-label PDF, competitor comparison, 12-month history.",
+              "availability": "https://schema.org/PreOrder",
+              "url": "https://geoready.dev/early-access"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "Offer",
+              "name": "Agency",
+              "price": "89",
+              "priceCurrency": "EUR",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "89",
+                "priceCurrency": "EUR",
+                "unitCode": "MON"
+              },
+              "description": "50 domains, team workspace, unlimited bulk audits, AI search snapshots.",
+              "availability": "https://schema.org/PreOrder",
+              "url": "https://geoready.dev/early-access"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is the free audit really free?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. The web audit requires no account, no credit card, and no signup. You get a full GEO score and three category breakdowns immediately. The CLI is MIT-licensed and free to use without limits." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need to register to use the free audit?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. Just enter a URL and run the audit. Email capture is optional and only used to unlock the full 8-category report." }
+          },
+          {
+            "@type": "Question",
+            "name": "What does Pro add that Free does not?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Pro adds continuity. The free audit is a one-shot snapshot. Pro monitors your domain weekly, tracks score history over time, and sends alerts when your GEO score drops. It also includes PDF export and API access." }
+          },
+          {
+            "@type": "Question",
+            "name": "Are paid plans available right now?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. Pro, Studio, and Agency are in early access. You can join the waitlist to be notified when access opens. No payment is collected until plans officially launch." }
+          },
+          {
+            "@type": "Question",
+            "name": "Will pricing change before launch?",
+            "acceptedAnswer": { "@type": "Answer", "text": "It may. The prices shown are planned pricing for early access. Early access members will be notified of any changes before billing begins." }
+          },
+          {
+            "@type": "Question",
+            "name": "Will the CLI remain open source?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. The CLI (geo-optimizer-skill on PyPI) is MIT-licensed and will remain free forever. SaaS plans add server-side continuity features the CLI cannot provide on its own." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is there a free trial for paid plans?",
+            "acceptedAnswer": { "@type": "Answer", "text": "There is no time-limited trial. The Free plan is the permanent baseline — it returns real audit results without commitment. Paid plans add monitoring and team features on top." }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I cancel at any time?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. When plans launch, you will be able to cancel from your account settings at any time, with no lock-in or penalties." }
+          }
+        ]
+      }
+    ]
+  })} />
+</Shell>
