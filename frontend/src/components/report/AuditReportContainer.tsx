@@ -3,12 +3,19 @@ import { trackAuditCompleted } from '../../lib/geo_track';
 import { fetchAuditReport } from '../../lib/api';
 import { mockAuditReport } from '../../lib/mockData';
 import type { AuditReport } from '../../lib/mockData';
+import { saveScore } from '../../lib/scoreHistory';
 import ReportHeader from './ReportHeader';
 import ScoreGauge from './ScoreGauge';
+import ScoreHistory from './ScoreHistory';
 import CategoryBreakdown from './CategoryBreakdown';
+import GateBanner from './GateBanner';
 import TechnicalSignals from './TechnicalSignals';
 import RecommendationList from './RecommendationList';
 import ExportActions from './ExportActions';
+
+const FREE_SLUGS = new Set(['robots', 'meta', 'signals']);
+const LOCKED_SLUGS = ['llms', 'schema', 'content', 'ai_discovery', 'brand_entity'];
+const LOCKED_MAX_POINTS = 18 + 16 + 12 + 6 + 10; // 62
 
 interface AuditReportContainerProps {
   reportId: string;
@@ -61,6 +68,12 @@ export default function AuditReportContainer({ reportId }: AuditReportContainerP
           score: result.report.geoScore,
           score_band: result.report.grade ?? 'unknown',
         });
+        saveScore({
+          url: result.report.url,
+          score: result.report.geoScore,
+          grade: result.report.grade ?? 'unknown',
+          timestamp: new Date().toISOString(),
+        });
       } else {
         setState({ status: 'error', message: 'Unexpected empty response.' });
       }
@@ -93,9 +106,14 @@ export default function AuditReportContainer({ reportId }: AuditReportContainerP
   }
 
   const report = state.report;
+
+  const isDemo = reportId === 'demo';
+  const lockedSlugs = isDemo ? [] : LOCKED_SLUGS;
+  const lockedSet = new Set(lockedSlugs);
+
   const criticalCount = report.recommendations.filter((r) => r.priority === 'critical').length;
   const highCount = report.recommendations.filter((r) => r.priority === 'high').length;
-  const activeCategories = report.categories.filter((c) => c.score > 0).length;
+  const activeCategories = report.categories.filter((c) => c.score > 0 && !lockedSet.has(c.slug)).length;
   const passSignals = report.technicalSignals.filter((s) => s.status === 'pass').length;
   const warnSignals = report.technicalSignals.filter((s) => s.status === 'warn').length;
   const failSignals = report.technicalSignals.filter((s) => s.status === 'fail').length;
@@ -160,6 +178,8 @@ export default function AuditReportContainer({ reportId }: AuditReportContainerP
             <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted mb-3">Export Report</h3>
             <ExportActions reportUrl={report.url} />
           </div>
+
+          <ScoreHistory url={report.url} currentScore={report.geoScore} />
         </div>
 
         <div className="lg:col-span-9 space-y-8">
@@ -167,10 +187,22 @@ export default function AuditReportContainer({ reportId }: AuditReportContainerP
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-muted">Category Breakdown</h2>
               <span className="text-[11px] text-text-muted">
-                {activeCategories} of {report.categories.length} active
+                {activeCategories} of {report.categories.filter((c) => !lockedSet.has(c.slug)).length} visible
+                {lockedSlugs.length > 0 && (
+                  <span className="ml-1 text-accent-teal">· {lockedSlugs.length} locked</span>
+                )}
               </span>
             </div>
-            <CategoryBreakdown categories={report.categories} />
+            <CategoryBreakdown categories={report.categories} lockedSlugs={lockedSlugs} />
+            {lockedSlugs.length > 0 && (
+              <div className="mt-4">
+                <GateBanner
+                  score={report.geoScore}
+                  lockedCount={lockedSlugs.length}
+                  totalLockedPoints={LOCKED_MAX_POINTS}
+                />
+              </div>
+            )}
           </section>
 
           <section>

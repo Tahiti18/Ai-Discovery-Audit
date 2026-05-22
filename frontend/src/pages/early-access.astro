@@ -1,6 +1,7 @@
 ---
 import Shell from '../components/Shell.astro';
 import WaitlistForm from '../components/WaitlistForm';
+import SurveyForm from '../components/SurveyForm';
 ---
 
 <Shell
@@ -82,6 +83,18 @@ import WaitlistForm from '../components/WaitlistForm';
           when access opens. We won't share your data or add you to unrelated lists.
         </p>
       </div>
+    </div>
+
+    <div class="mt-16 pt-12 border-t border-border max-w-xl">
+      <div class="mb-6">
+        <h2 class="text-sm font-semibold text-text-primary uppercase tracking-wider font-mono mb-2">
+          Quick survey — 4 questions
+        </h2>
+        <p class="text-sm text-text-secondary leading-relaxed">
+          No email required. Anonymous answers help us build the right features first.
+        </p>
+      </div>
+      <SurveyForm client:load />
     </div>
   </main>
 

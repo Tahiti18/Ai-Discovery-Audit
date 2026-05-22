@@ -85,3 +85,24 @@ export function trackCtaClicked(params: {
 }): void {
   track('geo_cta_clicked', params);
 }
+
+/** Gate visuale mostrato — categorie locked dopo il free report. */
+export function trackGateTriggered(params: {
+  score: number;
+  locked_categories: number;
+}): void {
+  track('geo_gate_triggered', params);
+}
+
+/** Utente inizia a compilare il survey WTP. */
+export function trackSurveyStarted(): void {
+  track('geo_survey_started');
+}
+
+/** Survey WTP completato con successo. */
+export function trackSurveyCompleted(params: {
+  wtp: string;
+  main_problem: string;
+}): void {
+  track('geo_survey_completed', params);
+}
