@@ -79,8 +79,22 @@ const faqs = [
     a: 'Yes. The core toolkit is MIT licensed. Source code, scoring weights, and methodology are publicly available on GitHub. The CLI and web audit remain free.',
   },
 ];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(f => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.a
+    }
+  }))
+};
 ---
 
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 <Shell
   title="GEO Optimizer — AI Search Visibility & Citability Audit"
   description="Audit your website's AI search visibility and citability. GEO Optimizer scores your site across 8 categories with actionable recommendations — free, no account required."

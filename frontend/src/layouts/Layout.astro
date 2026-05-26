@@ -64,8 +64,16 @@ const {
     "@graph": [
       {
         "@type": "Organization",
+        "@id": "https://geoready.dev/#organization",
         "name": "Auriti Labs",
-        "url": "https://github.com/Auriti-Labs",
+        "url": "https://geoready.dev",
+        "description": "Auriti Labs builds open-source tools for AI search visibility and Generative Engine Optimization.",
+        "foundingDate": "2024",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "technical support",
+          "url": "https://github.com/Auriti-Labs/geo-optimizer-skill/issues"
+        },
         "sameAs": [
           "https://github.com/Auriti-Labs",
           "https://pypi.org/project/geo-optimizer-skill/",
@@ -74,19 +82,29 @@ const {
       },
       {
         "@type": "WebSite",
+        "@id": "https://geoready.dev/#website",
         "name": "GEO Optimizer",
         "url": "https://geoready.dev",
-        "publisher": { "@id": "https://github.com/Auriti-Labs" }
+        "description": "Audit your website's AI search visibility and citability. GEO Optimizer scores your site across 8 categories with actionable recommendations — free, no account required.",
+        "dateModified": "2026-05-26",
+        "publisher": { "@id": "https://geoready.dev/#organization" }
       },
       {
         "@type": "WebApplication",
+        "@id": "https://geoready.dev/#webapp",
         "name": "GEO Optimizer",
+        "url": "https://geoready.dev",
+        "description": "Audit your website's AI search visibility and citability. GEO Optimizer scores your site across 8 categories with actionable recommendations — free, no account required.",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Web",
+        "dateModified": "2026-05-26",
+        "author": {
+          "@id": "https://geoready.dev/#organization"
+        },
         "offers": {
           "@type": "Offer",
           "price": "0",
-          "priceCurrency": "USD"
+          "priceCurrency": "EUR"
         }
       }
     ]

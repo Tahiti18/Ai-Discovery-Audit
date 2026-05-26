@@ -574,6 +574,7 @@ KEYWORD_STUFFING_THRESHOLD = 0.025
 # URL patterns for "about" pages (fix #391)
 ABOUT_LINK_PATTERNS = [
     "/about",
+    "/manifesto",
     "/chi-siamo",
     "/team",
     "/company",

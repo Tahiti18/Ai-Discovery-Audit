@@ -46,7 +46,17 @@ def audit_schema(soup: BeautifulSoup | None, url: str) -> SchemaResult:
             data = json.loads(raw)
             # Fix: support @graph format (used by Yoast SEO, RankMath, etc.)
             if isinstance(data, dict) and "@graph" in data:
-                schemas = data["@graph"] if isinstance(data["@graph"], list) else [data["@graph"]]
+                # Propaga @context del root a ogni item figlio (fix schema completeness su @graph)
+                root_context = data.get("@context")
+                root_id = data.get("@id")
+                raw_items = data["@graph"] if isinstance(data["@graph"], list) else [data["@graph"]]
+                schemas = []
+                for item in raw_items:
+                    if isinstance(item, dict) and root_context and "@context" not in item:
+                        item = {**item, "@context": root_context}
+                        if root_id and "@id" not in item:
+                            item["@id"] = root_id
+                    schemas.append(item)
             elif isinstance(data, list):
                 schemas = data
             else:
