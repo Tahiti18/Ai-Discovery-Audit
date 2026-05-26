@@ -1,6 +1,6 @@
 # GEO Optimizer
 
-> Open-source toolkit to audit, fix, and optimize websites for AI search engine visibility. Score 0-100 based on 10 scoring categories derived from peer-reviewed research (Princeton KDD 2024, AutoGEO ICLR 2026).
+> Open-source toolkit to audit, fix, and optimize websites for AI search engine visibility. Score 0-100 based on 8 scoring categories derived from peer-reviewed research (Princeton KDD 2024, AutoGEO ICLR 2026).
 
 GEO Optimizer helps developers, SEOs, and content teams measure and improve how discoverable, readable, and citable their websites are to AI answer engines such as ChatGPT, Perplexity, Claude, and Gemini.
 
