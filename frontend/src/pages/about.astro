@@ -1,0 +1,147 @@
+---
+import Shell from '../components/Shell.astro';
+---
+
+<Shell
+  title="About Auriti Labs — GEO Optimizer & GeoReady"
+  description="Auriti Labs builds open-source tools for AI search visibility. GEO Optimizer is the audit engine. GeoReady is the monitoring platform."
+  canonical="https://geoready.dev/about"
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-10 md:py-16">
+    <header class="mb-14 md:mb-20">
+      <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted uppercase tracking-wider">
+        <span>GEO Optimizer</span>
+        <span class="w-1 h-1 rounded-full bg-text-muted" />
+        <span>About</span>
+      </div>
+
+      <h1 class="mt-3 font-display text-3xl md:text-4xl font-bold text-text-primary leading-tight tracking-tight">
+        About Auriti Labs
+      </h1>
+
+      <p class="mt-4 text-base md:text-lg text-text-secondary leading-relaxed max-w-2xl">
+        Auriti Labs builds open-source tools for AI search visibility and Generative Engine Optimization.
+      </p>
+    </header>
+
+    <div class="space-y-12">
+
+      {/* Products */}
+      <section>
+        <h2 class="text-xl font-bold text-text-primary mb-6">Products</h2>
+        <div class="space-y-6">
+
+          <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
+            <div class="flex items-start gap-3">
+              <span class="w-2 h-2 rounded-full bg-accent-teal mt-2 shrink-0" aria-hidden="true" />
+              <div>
+                <h3 class="font-semibold text-text-primary">GEO Optimizer</h3>
+                <p class="mt-1 text-sm text-text-secondary leading-relaxed">
+                  Open-source Python toolkit for auditing AI search visibility. Scores websites across
+                  8 signal categories — robots.txt, llms.txt, schema, meta tags, content, signals,
+                  AI discovery, and brand entity. MIT licensed. Available as a CLI and as a web tool
+                  at <a href="https://geoready.dev" class="text-accent-teal hover:underline">geoready.dev</a>.
+                </p>
+                <div class="mt-3 flex flex-wrap gap-3 text-xs font-mono">
+                  <a href="https://github.com/Auriti-Labs/geo-optimizer-skill" class="text-text-muted hover:text-accent-teal transition-colors" target="_blank" rel="noopener">GitHub →</a>
+                  <a href="https://pypi.org/project/geo-optimizer-skill/" class="text-text-muted hover:text-accent-teal transition-colors" target="_blank" rel="noopener">PyPI →</a>
+                  <a href="https://auriti-labs.github.io/geo-optimizer-skill/" class="text-text-muted hover:text-accent-teal transition-colors" target="_blank" rel="noopener">Docs →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
+            <div class="flex items-start gap-3">
+              <span class="w-2 h-2 rounded-full bg-accent-teal/50 mt-2 shrink-0" aria-hidden="true" />
+              <div>
+                <h3 class="font-semibold text-text-primary">GeoReady <span class="text-xs font-mono text-text-muted ml-1">Early access</span></h3>
+                <p class="mt-1 text-sm text-text-secondary leading-relaxed">
+                  The commercial monitoring platform built on GEO Optimizer. Adds continuous score
+                  tracking, regression alerts, score history, and team workflows for agencies and
+                  developers managing multiple sites. Available at
+                  <a href="https://app.geoready.dev" class="text-accent-teal hover:underline" target="_blank" rel="noopener">app.geoready.dev</a>.
+                </p>
+                <div class="mt-3 text-xs font-mono">
+                  <a href="/pricing" class="text-text-muted hover:text-accent-teal transition-colors">See plans →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Research foundation */}
+      <section>
+        <h2 class="text-xl font-bold text-text-primary mb-4">Research foundation</h2>
+        <p class="text-sm text-text-secondary leading-relaxed">
+          The scoring methodology is grounded in peer-reviewed research on AI search retrieval:
+          the Princeton KDD 2024 study on generative engine optimization and the AutoGEO ICLR 2026
+          paper on automated GEO. Every signal in GEO Optimizer is traceable to a published source.
+        </p>
+        <div class="mt-4">
+          <a href="/research" class="text-sm text-accent-teal hover:underline">Read the research foundation →</a>
+        </div>
+      </section>
+
+      {/* Open source */}
+      <section>
+        <h2 class="text-xl font-bold text-text-primary mb-4">Open source</h2>
+        <p class="text-sm text-text-secondary leading-relaxed">
+          GEO Optimizer is MIT licensed. The source code, scoring weights, audit methodology,
+          and all 47 citability methods are publicly available on GitHub. The audit tool and CLI
+          remain free with no rate limits.
+        </p>
+        <blockquote class="mt-4 pl-4 border-l-2 border-accent-teal">
+          <p class="text-sm text-text-secondary italic">
+            AI visibility infrastructure should be auditable by anyone, not locked behind
+            proprietary black boxes.
+          </p>
+        </blockquote>
+        <div class="mt-4">
+          <a href="/manifesto" class="text-sm text-accent-teal hover:underline">Read the manifesto →</a>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section>
+        <h2 class="text-xl font-bold text-text-primary mb-4">Contact</h2>
+        <p class="text-sm text-text-secondary leading-relaxed">
+          Bug reports and feature requests: <a href="https://github.com/Auriti-Labs/geo-optimizer-skill/issues" class="text-accent-teal hover:underline" target="_blank" rel="noopener">GitHub Issues</a>.
+          For everything else, reach out via GitHub.
+        </p>
+      </section>
+
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About Auriti Labs",
+    "url": "https://geoready.dev/about",
+    "description": "Auriti Labs builds open-source tools for AI search visibility and Generative Engine Optimization. Products: GEO Optimizer (open-source audit engine) and GeoReady (commercial monitoring platform).",
+    "author": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://geoready.dev"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://geoready.dev"
+    },
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "Auriti Labs",
+      "url": "https://geoready.dev",
+      "description": "Auriti Labs builds open-source tools for AI search visibility and Generative Engine Optimization.",
+      "foundingDate": "2024",
+      "sameAs": [
+        "https://github.com/Auriti-Labs",
+        "https://pypi.org/project/geo-optimizer-skill/"
+      ]
+    }
+  })} />
+</Shell>
