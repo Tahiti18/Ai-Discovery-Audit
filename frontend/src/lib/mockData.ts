@@ -43,7 +43,7 @@ export const mockAuditReport: AuditReport = {
   citabilityScore: 47,
   grade: 'critical',
   timestamp: '2026-05-12T14:32:00Z',
-  version: '4.10.4',
+  version: '4.11.1',
   categories: [
     {
       name: 'Robots.txt',

@@ -97,7 +97,7 @@ export function mapBackendToFrontend(data: any): AuditReport {
     citabilityScore: data.citability?.total_score ?? 0,
     grade: data.band || 'critical',
     timestamp: data.timestamp || new Date().toISOString(),
-    version: data.version || '4.10.4',
+    version: data.version || '4.11.1',
     categories,
     recommendations,
     technicalSignals,

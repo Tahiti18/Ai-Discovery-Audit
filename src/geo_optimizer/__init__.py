@@ -15,7 +15,13 @@ Programmatic usage::
 
 from __future__ import annotations
 
-__version__ = "4.10.4"
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
+
+try:
+    __version__ = _pkg_version("geo-optimizer-skill")
+except PackageNotFoundError:
+    __version__ = "4.11.1"
 
 # ─── Public API ──────────────────────────────────────────────────────────────
 

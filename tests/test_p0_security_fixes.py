@@ -485,6 +485,23 @@ class TestVersionPep440:
         # Deve essere "2.0.0b1" (o simile)
         assert "b" in __version__ or "." in __version__
 
+    def test_version_matches_package_metadata(self):
+        """__version__ deve corrispondere a importlib.metadata (regressione #v4.11.0 mismatch)."""
+        from importlib.metadata import PackageNotFoundError
+        from importlib.metadata import version as pkg_version
+
+        from geo_optimizer import __version__
+
+        try:
+            metadata_version = pkg_version("geo-optimizer-skill")
+            assert __version__ == metadata_version, (
+                f"__version__ ({__version__!r}) != package metadata ({metadata_version!r}). "
+                "Aggiorna pyproject.toml e __init__.py insieme."
+            )
+        except PackageNotFoundError:
+            # In source checkout non installato: fallback attivo, verifica solo formato
+            assert "." in __version__
+
 
 # ============================================================================
 # validate_safe_path

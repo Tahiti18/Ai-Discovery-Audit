@@ -19,7 +19,7 @@ export const roadmapPhases: RoadmapPhase[] = [
   {
     id: 'current',
     label: 'Current Foundation',
-    subtitle: 'What exists today in v4.10.x',
+    subtitle: 'What exists today in v4.11.x',
     statusColor: 'border-accent-success',
     items: [
       {
@@ -280,7 +280,7 @@ export const roadmapPhases: RoadmapPhase[] = [
 
 export const releaseCadence = [
   { version: 'v4.10.0', name: 'Veil', status: 'available' as RoadmapStatus },
-  { version: 'v4.11.0', name: 'Static', status: 'planned' as RoadmapStatus },
+  { version: 'v4.11.0', name: 'Static', status: 'available' as RoadmapStatus },
   { version: 'v4.12.0', name: 'Ledger', status: 'planned' as RoadmapStatus },
   { version: 'v4.13.0', name: 'Quiet Glass', status: 'planned' as RoadmapStatus },
   { version: 'v4.14.0', name: 'Threshold / Pale Signal', status: 'planned' as RoadmapStatus },

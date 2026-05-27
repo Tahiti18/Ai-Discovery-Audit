@@ -5,6 +5,20 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · [SemVer](https://semv
 
 ---
 
+## [4.11.1] — 2026-05-27
+
+### Fixed
+- Fixed runtime version mismatch where `geo --version` and `geo_optimizer.__version__` still reported `4.10.4` after the `4.11.0` package release.
+- Switched runtime version resolution to `importlib.metadata.version("geo-optimizer-skill")` with a source-checkout fallback (`"4.11.1"`) to prevent future version drift.
+- Updated web demo/frontend hardcoded version references from `v4.10.4` to `v4.11.1`.
+
+### Notes
+- No functional changes to Agent Access Audit or AI Crawler Activity.
+- No breaking changes.
+- `v4.11.0` remains valid but users should prefer `v4.11.1`.
+
+---
+
 ## [4.11.0] — 2026-05-27
 
 ### Added
