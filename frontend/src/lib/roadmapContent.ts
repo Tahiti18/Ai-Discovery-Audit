@@ -196,9 +196,9 @@ export const roadmapPhases: RoadmapPhase[] = [
       },
       {
         id: 'server-logs',
-        title: 'Server log analysis',
-        description: 'Detect AI crawler activity from access logs (OAI-SearchBot, ClaudeBot, PerplexityBot).',
-        status: 'exploring',
+        title: 'AI Crawler Activity Analytics',
+        description: 'Detect AI crawler activity from access logs (OAI-SearchBot, ClaudeBot, PerplexityBot). Available via `geo logs` CLI command and `POST /api/logs/analyze`.',
+        status: 'available',
       },
       {
         id: 'batch-audit',
