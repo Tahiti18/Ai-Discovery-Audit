@@ -45,9 +45,7 @@ def run_agent_access_audit(base_url: str) -> AgentAccessResult:
         result.robots_allows_citation_bots = robots.citation_bots_ok
         result.robots_blocks = list(robots.bots_blocked)
         if robots.bots_blocked:
-            result.blocking_issues.append(
-                f"robots.txt blocks: {', '.join(robots.bots_blocked)}"
-            )
+            result.blocking_issues.append(f"robots.txt blocks: {', '.join(robots.bots_blocked)}")
         else:
             result.passing.append("robots.txt allows AI bots")
     except Exception as exc:  # noqa: BLE001
@@ -58,12 +56,8 @@ def run_agent_access_audit(base_url: str) -> AgentAccessResult:
         cdn = audit_cdn_ai_crawler(base_url)
         result.cdn_challenge_detected = cdn.any_blocked
         if cdn.any_blocked:
-            blocked_bots = [
-                r["bot"] for r in cdn.bot_results if r.get("blocked")
-            ]
-            result.blocking_issues.append(
-                f"CDN/WAF blocks AI bots: {', '.join(blocked_bots)}"
-            )
+            blocked_bots = [r["bot"] for r in cdn.bot_results if r.get("blocked")]
+            result.blocking_issues.append(f"CDN/WAF blocks AI bots: {', '.join(blocked_bots)}")
         else:
             result.passing.append("No CDN challenge detected for AI bots")
     except Exception as exc:  # noqa: BLE001
@@ -93,13 +87,9 @@ def run_agent_access_audit(base_url: str) -> AgentAccessResult:
             x_robots_lower = meta.x_robots_tag.lower()
             result.x_robots_noai = "noai" in x_robots_lower or "noimageai" in x_robots_lower
             if meta.has_noai:
-                result.warnings.append(
-                    f"noai/noimageai in meta robots: {meta.noai_value}"
-                )
+                result.warnings.append(f"noai/noimageai in meta robots: {meta.noai_value}")
             if result.x_robots_noai:
-                result.warnings.append(
-                    f"X-Robots-Tag contains noai/noimageai: {meta.x_robots_tag}"
-                )
+                result.warnings.append(f"X-Robots-Tag contains noai/noimageai: {meta.x_robots_tag}")
             if not meta.has_noai and not result.x_robots_noai:
                 result.passing.append("No noai/noimageai directives found")
         except Exception as exc:  # noqa: BLE001
@@ -112,13 +102,9 @@ def run_agent_access_audit(base_url: str) -> AgentAccessResult:
         if discovery.endpoints_found == 0:
             result.warnings.append("No AI discovery endpoints found (ai.txt, ai/*.json)")
         elif discovery.endpoints_found < 3:
-            result.warnings.append(
-                f"Partial AI discovery: {discovery.endpoints_found}/4 endpoints"
-            )
+            result.warnings.append(f"Partial AI discovery: {discovery.endpoints_found}/4 endpoints")
         else:
-            result.passing.append(
-                f"AI discovery: {discovery.endpoints_found}/4 endpoints found"
-            )
+            result.passing.append(f"AI discovery: {discovery.endpoints_found}/4 endpoints found")
     except Exception as exc:  # noqa: BLE001
         result.warnings.append(f"AI discovery check failed: {exc}")
 
@@ -132,8 +118,7 @@ def _compute_overall_status(result: AgentAccessResult) -> str:
     if result.blocking_issues:
         # CDN blocks or robots blocks are hard blockers
         hard_blockers = [
-            i for i in result.blocking_issues
-            if "CDN" in i or "robots.txt blocks" in i or "unreachable" in i.lower()
+            i for i in result.blocking_issues if "CDN" in i or "robots.txt blocks" in i or "unreachable" in i.lower()
         ]
         if hard_blockers:
             return "blocked"

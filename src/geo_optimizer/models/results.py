@@ -1295,7 +1295,4 @@ class PerceptionSnapshot:
     schema_types_present: list[str] = field(default_factory=list)
     trust_score: float | None = None
     citability_grade: str | None = None
-    disclaimer: str = (
-        "Simulated AI perception based on deterministic analysis. "
-        "Not a real AI system output."
-    )
+    disclaimer: str = "Simulated AI perception based on deterministic analysis. Not a real AI system output."

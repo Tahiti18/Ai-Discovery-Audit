@@ -71,11 +71,7 @@ class BodySizeLimitMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         if request.method == "POST":
-            limit = (
-                _MAX_LOG_UPLOAD_BYTES
-                if request.url.path == _LOG_UPLOAD_PATH
-                else _MAX_BODY_BYTES
-            )
+            limit = _MAX_LOG_UPLOAD_BYTES if request.url.path == _LOG_UPLOAD_PATH else _MAX_BODY_BYTES
             content_length = request.headers.get("content-length")
             if content_length is not None:
                 try:
@@ -2025,6 +2021,7 @@ async def analyze_logs(request: Request):
         raise HTTPException(status_code=500, detail="Log analysis failed. Check file format.") from exc
     finally:
         import os as _os
+
         try:
             _os.unlink(tmp_path)
         except OSError:
