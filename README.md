@@ -7,7 +7,6 @@
 [![PyPI](https://img.shields.io/pypi/v/geo-optimizer-skill?style=flat-square&color=3b82f6)](https://pypi.org/project/geo-optimizer-skill/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-3776ab?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![CI](https://github.com/auriti-labs/geo-optimizer-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/auriti-labs/geo-optimizer-skill/actions)
-[![codecov](https://codecov.io/gh/auriti-labs/geo-optimizer-skill/branch/main/graph/badge.svg)](https://codecov.io/gh/auriti-labs/geo-optimizer-skill)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-8b5cf6?style=flat-square)](https://modelcontextprotocol.io)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?style=flat-square&logo=buymeacoffee&logoColor=000000)](https://buymeacoffee.com/auritidesign)
@@ -327,15 +326,15 @@ GEO Optimizer translates these findings into technical and content-level signals
 
 This project follows a deliberate release cadence — focused waves, not noisy patches.
 
-| Version | Window | Codename |
-|---------|--------|----------|
-| v4.10.0 | Late Apr 2026 | Veil |
-| v4.11.0 | Mid / Late Jul 2026 | Static |
-| v4.12.0 | Sep 2026 | Ledger |
-| v4.13.0 | Nov 2026 | Quiet Glass |
-| v4.14.0-rc1 | Jan 2027 | Threshold |
-| v4.14.0-rc2 / v4.15.0 | Mar 2027 | Pale Signal |
-| v5.0.0 | May 2027 | Black Archive |
+| Version | Window | Codename | Status |
+|---------|--------|----------|--------|
+| v4.10.0 | Apr 2026 | Veil | Shipped |
+| v4.11.0 | May 2026 | Static | Shipped |
+| v4.12.0 | Sep 2026 | Ledger | Planned |
+| v4.13.0 | Nov 2026 | Quiet Glass | Planned |
+| v4.14.0-rc1 | Jan 2027 | Threshold | Planned |
+| v4.14.0-rc2 / v4.15.0 | Mar 2027 | Pale Signal | Planned |
+| v5.0.0 | May 2027 | Black Archive | Exploring |
 
 Next focus areas: signal architecture, retrieval surface analysis, scoring recalibration, and structural pattern recognition. The v5.0 cycle represents a broader architectural evolution.
 
