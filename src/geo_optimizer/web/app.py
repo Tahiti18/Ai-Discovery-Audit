@@ -1160,12 +1160,22 @@ def _audit_result_to_dict(result) -> dict:
     Uses dataclasses.asdict() as the base to avoid losing fields,
     then adds the nested calculated "checks" fields for API compatibility.
     Fix #151: the previous version lost 10+ result fields.
+    Schema v1: adds schema_version, alias keys for platform consumers.
     """
     # Full base via dataclasses.asdict (includes all fields)
     base = dataclasses.asdict(result)
 
-    # Add the "checks" mapping (structure expected by the frontend)
+    # JSON contract version — consumers must handle missing (default 0 = pre-v1)
+    base["schema_version"] = 1
+
+    # Garantisce le 8 categorie sempre presenti nel score_breakdown (valore 0 se audit non eseguito)
+    _BREAKDOWN_KEYS = ("robots", "llms", "schema", "meta", "content", "signals", "ai_discovery", "brand_entity")
+    base["score_breakdown"] = {k: base.get("score_breakdown", {}).get(k, 0) for k in _BREAKDOWN_KEYS}
+
+    # Add the "checks" mapping (structure expected by the frontend and platform)
+    # Keys under checks must match gate_service.CATEGORY_KEY_MAP and analytics_dashboard
     base["checks"] = {
+        # ── robots ──────────────────────────────────────────────────────────
         "robots_txt": {
             "found": result.robots.found,
             "citation_bots_ok": result.robots.citation_bots_ok,
@@ -1175,14 +1185,22 @@ def _audit_result_to_dict(result) -> dict:
             "bots_missing": result.robots.bots_missing,
             "bots_partial": result.robots.bots_partial,
         },
+        # Alias keys used by analytics_dashboard and gate_service CATEGORY_KEY_MAP
+        "robots_citation_ok": result.robots.citation_bots_ok,
+        # ── llms ─────────────────────────────────────────────────────────────
         "llms_txt": {
             "found": result.llms.found,
             "has_h1": result.llms.has_h1,
             "has_description": result.llms.has_description,
             "has_sections": result.llms.has_sections,
             "has_links": result.llms.has_links,
+            "has_full": result.llms.has_full,
             "word_count": result.llms.word_count,
         },
+        # Alias keys used by analytics_dashboard
+        "llms_found": result.llms.found,
+        "llms_full": result.llms.has_full,
+        # ── schema ───────────────────────────────────────────────────────────
         "schema_jsonld": {
             "found_types": result.schema.found_types,
             "has_website": result.schema.has_website,
@@ -1195,6 +1213,7 @@ def _audit_result_to_dict(result) -> dict:
             "schema_richness_score": result.schema.schema_richness_score,
             "raw_schemas": result.schema.raw_schemas[:5],  # fix #41: limita a 5 per evitare memory bloat
         },
+        # ── meta ─────────────────────────────────────────────────────────────
         "meta_tags": {
             "has_title": result.meta.has_title,
             "has_description": result.meta.has_description,
@@ -1208,6 +1227,7 @@ def _audit_result_to_dict(result) -> dict:
             "title_length": result.meta.title_length,
             "canonical_url": result.meta.canonical_url,
         },
+        # ── content ──────────────────────────────────────────────────────────
         "content": {
             "has_h1": result.content.has_h1,
             "heading_count": result.content.heading_count,
@@ -1221,6 +1241,24 @@ def _audit_result_to_dict(result) -> dict:
             "has_heading_hierarchy": result.content.has_heading_hierarchy,
             "has_lists_or_tables": result.content.has_lists_or_tables,
             "has_front_loading": result.content.has_front_loading,
+        },
+        # ── signals (previously missing from checks) ──────────────────────
+        "signals": {
+            "has_lang": result.signals.has_lang if result.signals else False,
+            "has_rss": result.signals.has_rss if result.signals else False,
+            "has_freshness": result.signals.has_freshness if result.signals else False,
+        },
+        # ── ai_discovery (previously missing from checks) ─────────────────
+        "ai_discovery": {
+            "has_well_known_ai": result.ai_discovery.has_well_known_ai if result.ai_discovery else False,
+            "has_summary": result.ai_discovery.has_summary if result.ai_discovery else False,
+            "has_faq": result.ai_discovery.has_faq if result.ai_discovery else False,
+            "endpoints_found": result.ai_discovery.endpoints_found if result.ai_discovery else 0,
+        },
+        # ── brand_entity (previously missing from checks) ─────────────────
+        "brand_entity": {
+            "brand_name_consistent": result.brand_entity.brand_name_consistent if result.brand_entity else False,
+            "kg_pillar_count": result.brand_entity.kg_pillar_count if result.brand_entity else 0,
         },
     }
 
