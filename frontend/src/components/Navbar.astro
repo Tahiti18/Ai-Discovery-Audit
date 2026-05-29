@@ -42,7 +42,7 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
         <a
           href={l.href}
           data-nav-link
-          class="nav-link relative px-3 py-1.5 rounded-full text-[13px] font-medium text-text-secondary hover:text-text-primary transition-colors"
+          class="nav-link relative px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors"
         >
           <span class="relative z-10">{l.label}</span>
         </a>
@@ -52,7 +52,7 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
       <a
         href={featuredLink.href}
         data-nav-link
-        class="nav-link ml-1 px-3 py-1.5 rounded-full text-[13px] font-medium text-accent-teal hover:bg-accent-teal/10 transition-colors flex items-center gap-1.5"
+        class="nav-link nav-link-featured ml-1 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors flex items-center gap-1.5"
       >
         <span class="w-1.5 h-1.5 rounded-full bg-accent-teal animate-pulse"></span>
         <span class="relative z-10">{featuredLink.label}</span>
@@ -62,7 +62,7 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
       <div class="relative ml-0.5">
         <button
           id="more-menu-btn"
-          class="px-3 py-1.5 rounded-full text-[13px] font-medium text-text-secondary hover:text-text-primary hover:bg-bg-subtle transition-colors flex items-center gap-1"
+          class="more-btn px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors flex items-center gap-1"
           aria-haspopup="true"
           aria-expanded="false"
           aria-controls="more-menu"
@@ -76,23 +76,23 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
           id="more-menu"
           role="menu"
           aria-labelledby="more-menu-btn"
-          class="absolute top-full right-0 mt-3 w-64 bg-bg-surface/95 backdrop-blur-xl border border-border rounded-2xl shadow-[0_12px_40px_-8px_rgba(0,0,0,0.18)] opacity-0 invisible translate-y-1 transition-all duration-200 overflow-hidden p-1"
+          class="more-menu absolute top-full right-0 mt-3 w-64 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl opacity-0 invisible translate-y-1 transition-all duration-200 overflow-hidden p-1"
         >
           {moreLinks.map((l) => (
             <a
               href={l.href}
               role="menuitem"
-              class="flex flex-col gap-0.5 px-3 py-2.5 rounded-xl text-sm hover:bg-bg-subtle transition-colors"
+              class="more-item flex flex-col gap-0.5 px-3 py-2.5 rounded-xl text-sm transition-colors"
             >
-              <span class="font-medium text-text-primary">{l.label}</span>
-              <span class="text-xs text-text-secondary">{l.desc}</span>
+              <span class="more-item-title font-medium">{l.label}</span>
+              <span class="more-item-desc text-xs">{l.desc}</span>
             </a>
           ))}
         </div>
       </div>
 
       <!-- Divider -->
-      <span class="mx-2 h-5 w-px bg-border" aria-hidden="true"></span>
+      <span class="nav-divider mx-2 h-5 w-px" aria-hidden="true"></span>
 
       <!-- Right cluster -->
       <div class="flex items-center gap-1.5">
@@ -101,7 +101,7 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
           target="_blank"
           rel="noopener"
           aria-label="GitHub repository"
-          class="w-8 h-8 flex items-center justify-center rounded-full text-text-secondary hover:text-text-primary hover:bg-bg-subtle transition-colors"
+          class="nav-icon-btn w-8 h-8 flex items-center justify-center rounded-full transition-colors"
         >
           <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
@@ -420,7 +420,7 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
   navLinks.forEach((link) => {
     const href = link.getAttribute('href')?.replace(/\/$/, '') || '';
     if (href === currentPath) {
-      link.classList.add('bg-bg-subtle', 'text-text-primary');
+      link.classList.add('nav-link-active');
       link.setAttribute('aria-current', 'page');
     }
   });
@@ -469,19 +469,57 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
     background: color-mix(in srgb, black 42%, transparent);
   }
 
-  /* Text colors flip with theme (overrides Tailwind utilities on the inner links) */
-  #floating-nav[data-theme="dark"] .nav-pill,
-  #floating-nav[data-theme="dark"] .nav-pill * {
-    color: rgba(255, 255, 255, 0.92);
+  /* ─── Primary nav links ──────────────────────────────────────────────────── */
+  #floating-nav[data-theme="light"] .nav-link { color: rgba(20, 20, 20, 0.68); }
+  #floating-nav[data-theme="light"] .nav-link:hover { color: rgba(20, 20, 20, 0.95); background: rgba(0, 0, 0, 0.05); }
+  #floating-nav[data-theme="dark"] .nav-link { color: rgba(255, 255, 255, 0.78); }
+  #floating-nav[data-theme="dark"] .nav-link:hover { color: white; background: rgba(255, 255, 255, 0.08); }
+
+  /* Active page link */
+  #floating-nav[data-theme="light"] .nav-link-active { background: rgba(0, 0, 0, 0.06); color: rgba(20, 20, 20, 0.95); }
+  #floating-nav[data-theme="dark"] .nav-link-active { background: rgba(255, 255, 255, 0.10); color: white; }
+
+  /* Featured (Pricing) — accent teal both themes */
+  #floating-nav[data-theme="light"] .nav-link-featured { color: #0D9488; }
+  #floating-nav[data-theme="light"] .nav-link-featured:hover { background: rgba(13, 148, 136, 0.10); }
+  #floating-nav[data-theme="dark"] .nav-link-featured { color: #5EEAD4; }
+  #floating-nav[data-theme="dark"] .nav-link-featured:hover { background: rgba(94, 234, 212, 0.12); }
+
+  /* More button (same as nav-link styling) */
+  #floating-nav[data-theme="light"] .more-btn { color: rgba(20, 20, 20, 0.68); }
+  #floating-nav[data-theme="light"] .more-btn:hover { color: rgba(20, 20, 20, 0.95); background: rgba(0, 0, 0, 0.05); }
+  #floating-nav[data-theme="dark"] .more-btn { color: rgba(255, 255, 255, 0.78); }
+  #floating-nav[data-theme="dark"] .more-btn:hover { color: white; background: rgba(255, 255, 255, 0.08); }
+
+  /* Divider */
+  #floating-nav[data-theme="light"] .nav-divider { background: rgba(0, 0, 0, 0.12); }
+  #floating-nav[data-theme="dark"] .nav-divider { background: rgba(255, 255, 255, 0.18); }
+
+  /* Icon button (GitHub) */
+  #floating-nav[data-theme="light"] .nav-icon-btn { color: rgba(20, 20, 20, 0.65); }
+  #floating-nav[data-theme="light"] .nav-icon-btn:hover { color: rgba(20, 20, 20, 0.95); background: rgba(0, 0, 0, 0.05); }
+  #floating-nav[data-theme="dark"] .nav-icon-btn { color: rgba(255, 255, 255, 0.75); }
+  #floating-nav[data-theme="dark"] .nav-icon-btn:hover { color: white; background: rgba(255, 255, 255, 0.08); }
+
+  /* ─── More dropdown menu ─────────────────────────────────────────────────── */
+  #floating-nav[data-theme="light"] .more-menu {
+    background: color-mix(in srgb, white 78%, transparent);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.18), 0 4px 12px -4px rgba(0, 0, 0, 0.08);
   }
-  #floating-nav[data-theme="dark"] .nav-pill .text-accent-teal,
-  #floating-nav[data-theme="dark"] .nav-pill [class*="text-accent-teal"] {
-    color: #5EEAD4; /* lighter teal for dark bg */
+  #floating-nav[data-theme="dark"] .more-menu {
+    background: color-mix(in srgb, #0a0a0a 72%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.45), 0 4px 12px -4px rgba(0, 0, 0, 0.35);
   }
-  #floating-nav[data-theme="dark"] .nav-pill a[href*="signup"] {
-    color: white;
-  }
-  #floating-nav[data-theme="dark"] .nav-pill a:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-  }
+
+  /* Dropdown items */
+  #floating-nav[data-theme="light"] .more-item-title { color: rgba(20, 20, 20, 0.95); }
+  #floating-nav[data-theme="light"] .more-item-desc { color: rgba(20, 20, 20, 0.55); }
+  #floating-nav[data-theme="light"] .more-item:hover { background: rgba(0, 0, 0, 0.05); }
+  #floating-nav[data-theme="dark"] .more-item-title { color: white; }
+  #floating-nav[data-theme="dark"] .more-item-desc { color: rgba(255, 255, 255, 0.62); }
+  #floating-nav[data-theme="dark"] .more-item:hover { background: rgba(255, 255, 255, 0.08); }
+
+  /* More chevron color follows theme via currentColor on the parent button — already handled */
 </style>
