@@ -110,29 +110,35 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
       </div>
     </div>
 
-    <!-- Mobile burger -->
+    <!-- Mobile burger — Pulse-themed: arc + wave morphing into X -->
     <button
       id="mobile-menu-btn"
-      class="md:hidden relative w-10 h-10 flex items-center justify-center rounded-md text-text-secondary hover:text-text-primary hover:bg-bg-subtle transition-colors"
+      class="md:hidden relative w-10 h-10 flex items-center justify-center rounded-lg text-text-primary hover:bg-bg-subtle transition-colors"
       aria-label="Toggle menu"
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
       <span class="sr-only">Menu</span>
-      <span id="burger-icon" class="block w-5 h-[14px] relative">
-        <span class="absolute left-0 top-0 w-full h-[2px] bg-current rounded-full transition-all duration-300 origin-center"></span>
-        <span class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-current rounded-full transition-all duration-300"></span>
-        <span class="absolute left-0 bottom-0 w-full h-[2px] bg-current rounded-full transition-all duration-300 origin-center"></span>
-      </span>
+      <svg id="burger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="transition-transform duration-300">
+        <!-- Arc (top) — morphs to X stroke 1 -->
+        <path id="burger-arc" d="M5 8 A 7 7 0 0 1 19 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" class="transition-all duration-300"/>
+        <!-- Wave (middle) — fades out -->
+        <path id="burger-wave" d="M4 13 C 7 10 9 16 12 13 C 15 10 17 16 20 13" stroke="#0D9488" stroke-width="2" stroke-linecap="round" fill="none" class="transition-all duration-300"/>
+        <!-- Bottom line — morphs to X stroke 2 -->
+        <line id="burger-base" x1="6" y1="18" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="transition-all duration-300"/>
+      </svg>
     </button>
   </div>
 
-  <!-- Mobile fullscreen overlay -->
-  <div
-    id="mobile-menu"
-    class="md:hidden hidden fixed inset-x-0 top-16 bottom-0 z-40 bg-bg-base overflow-y-auto overscroll-contain"
-    aria-hidden="true"
-  >
+  <!-- end inner container -->
+</nav>
+
+<!-- Mobile fullscreen overlay — OUTSIDE nav to avoid backdrop-filter containing block bug -->
+<div
+  id="mobile-menu"
+  class="md:hidden hidden fixed inset-x-0 top-16 bottom-0 z-[60] bg-bg-base overflow-y-auto overscroll-contain"
+  aria-hidden="true"
+>
     <div class="px-5 pt-5 pb-10">
 
       <!-- Featured CTA -->
@@ -216,8 +222,7 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
         </a>
       </div>
     </div>
-  </div>
-</nav>
+</div>
 
 <script>
   // ─── Mobile fullscreen menu ─────────────────────────────────────────────────
@@ -226,17 +231,25 @@ const featuredLink = { label: "Pricing", href: "/pricing/" };
   const burgerIcon = document.getElementById('burger-icon');
 
   function setBurgerOpen(open: boolean) {
-    if (!burgerIcon) return;
-    const lines = burgerIcon.querySelectorAll('span');
-    if (lines.length < 3) return;
+    const arc = document.getElementById('burger-arc') as SVGPathElement | null;
+    const wave = document.getElementById('burger-wave') as SVGPathElement | null;
+    const base = document.getElementById('burger-base') as SVGLineElement | null;
+    if (!arc || !wave || !base) return;
     if (open) {
-      (lines[0] as HTMLElement).style.transform = 'translateY(6px) rotate(45deg)';
-      (lines[1] as HTMLElement).style.opacity = '0';
-      (lines[2] as HTMLElement).style.transform = 'translateY(-6px) rotate(-45deg)';
+      // Morph arc → diagonal X line, wave fades, base → opposite diagonal
+      arc.setAttribute('d', 'M6 6 L 18 18');
+      wave.style.opacity = '0';
+      base.setAttribute('x1', '18');
+      base.setAttribute('y1', '6');
+      base.setAttribute('x2', '6');
+      base.setAttribute('y2', '18');
     } else {
-      (lines[0] as HTMLElement).style.transform = '';
-      (lines[1] as HTMLElement).style.opacity = '';
-      (lines[2] as HTMLElement).style.transform = '';
+      arc.setAttribute('d', 'M5 8 A 7 7 0 0 1 19 8');
+      wave.style.opacity = '';
+      base.setAttribute('x1', '6');
+      base.setAttribute('y1', '18');
+      base.setAttribute('x2', '18');
+      base.setAttribute('y2', '18');
     }
   }
 
