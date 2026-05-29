@@ -16,9 +16,20 @@ const { title, description, canonical, robots } = Astro.props;
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
   <Navbar />
-  <main id="main-content" class="flex-1">
+  <main id="main-content" class="flex-1 site-main">
     <slot />
   </main>
   <Footer />
   <CookieConsentManager client:only="react" />
 </Layout>
+
+<style is:global>
+  /* Reserve space for fixed navbar */
+  .site-main { padding-top: 76px; }
+  /* Hero sections opt into bleeding under the glass nav: cancel main padding,
+     re-add it inside the hero so its background extends to viewport top. */
+  .site-main > section:first-child[data-hero-bleed] {
+    margin-top: -76px;
+    padding-top: 76px;
+  }
+</style>
