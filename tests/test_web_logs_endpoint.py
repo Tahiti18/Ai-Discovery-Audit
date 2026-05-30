@@ -85,6 +85,7 @@ def test_upload_requires_auth_when_token_set(monkeypatch):
     import importlib
 
     import geo_optimizer.web.app as appmod
+
     importlib.reload(appmod)
     from geo_optimizer.web.app import app as reloaded_app
 

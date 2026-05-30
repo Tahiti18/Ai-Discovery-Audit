@@ -33,7 +33,10 @@ class TestPerformanceBudget:
         """Warning is logged when audit exceeds AUDIT_TIMEOUT_SECONDS."""
         html = "<html><head><title>T</title></head><body><p>Hello</p></body></html>"
         mock_fetch.return_value = (Mock(status_code=200, text=html, headers={}), None)
-        with patch("geo_optimizer.core.audit.AUDIT_TIMEOUT_SECONDS", 0), caplog.at_level(logging.WARNING, logger="geo_optimizer.core.audit"):
+        with (
+            patch("geo_optimizer.core.audit.AUDIT_TIMEOUT_SECONDS", 0),
+            caplog.at_level(logging.WARNING, logger="geo_optimizer.core.audit"),
+        ):
             run_full_audit("https://example.com")
         assert any("exceeded" in r.message.lower() for r in caplog.records)
 

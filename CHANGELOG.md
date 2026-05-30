@@ -5,6 +5,25 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · [SemVer](https://semv
 
 ---
 
+## [4.12.0] — 2026-05-29
+
+### Changed
+- **Google AI scoring lens realigned to Google's AI optimization guide.** `_score_google_ai` no longer rewards `/.well-known/ai.txt` (Google's guide confirms machine-readable AI files like `llms.txt` and `ai.txt` are not used by AI features). The 10 points are redistributed to Google-confirmed signals: content freshness (+4), SSR-safe / non-JS-only content (+3), and descriptive image alt text (+3). Schema and `sameAs` rewards are retained because structured data still aids Search rich-result eligibility, on which AI Overviews ranking depends.
+- `audit_platform_citation()` gains a backward-compatible `js_rendering` parameter (defaults to `None`). The core 100-point score, `score_breakdown`, and the ChatGPT/Perplexity lenses are unchanged — only `platform_citation.google_ai` is affected. `llms.txt` remains rewarded for ChatGPT and Perplexity.
+
+### Added
+- **JSON contract v1** — `POST/GET /api/audit` responses now include `schema_version: 1`, always-present 8-category `score_breakdown`, flat alias keys (`robots_citation_ok`, `llms_found`, `llms_full`), and previously-missing `signals` / `ai_discovery` / `brand_entity` sections under `checks`. Documented in `docs/json-contract.md` with a frozen regression fixture.
+- **Frontend redesign** — floating-pill desktop navbar with scroll-shrink and active state, fullscreen mobile menu, GeoReady Pulse logo/favicon, softer corner radii, and teal theme color.
+
+### Fixed
+- **Python 3.9 web compatibility** — `asyncio.Lock()` instances are now created lazily inside the running event loop via `_get_lock(name)`, avoiding "no current event loop" at import time on Python 3.9 (module reload in tests, some ASGI servers).
+- Added `python-multipart` to the `web` extra (required for file uploads).
+
+### Notes
+- No breaking CLI changes. JSON contract additions are backward-compatible (consumers use `.get(key, default)`; missing `schema_version` → `0`).
+
+---
+
 ## [4.11.1] — 2026-05-27
 
 ### Fixed

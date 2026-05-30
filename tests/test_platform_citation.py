@@ -103,18 +103,12 @@ class TestGoogleAiRealign:
 
     def test_well_known_ai_does_not_affect_google_ai_score(self):
         # Google does NOT use .well-known/ai.txt — toggling it must not move the score.
-        with_ai = audit_platform_citation(
-            **_defaults(), ai_discovery=AiDiscoveryResult(has_well_known_ai=True)
-        )
-        without_ai = audit_platform_citation(
-            **_defaults(), ai_discovery=AiDiscoveryResult(has_well_known_ai=False)
-        )
+        with_ai = audit_platform_citation(**_defaults(), ai_discovery=AiDiscoveryResult(has_well_known_ai=True))
+        without_ai = audit_platform_citation(**_defaults(), ai_discovery=AiDiscoveryResult(has_well_known_ai=False))
         assert _google_ai(with_ai).score == _google_ai(without_ai).score
 
     def test_no_ai_txt_recommendation_for_google_ai(self):
-        result = audit_platform_citation(
-            **_defaults(), ai_discovery=AiDiscoveryResult(has_well_known_ai=False)
-        )
+        result = audit_platform_citation(**_defaults(), ai_discovery=AiDiscoveryResult(has_well_known_ai=False))
         recs = " ".join(_google_ai(result).recommendations).lower()
         assert "ai.txt" not in recs
         assert ".well-known" not in recs
@@ -125,18 +119,14 @@ class TestGoogleAiRealign:
         assert _google_ai(fresh).score - _google_ai(stale).score == 4
 
     def test_ssr_safe_content_boosts_google_ai_by_3(self):
-        ssr = audit_platform_citation(
-            **_defaults(), js_rendering=JsRenderingResult(checked=True, js_dependent=False)
-        )
+        ssr = audit_platform_citation(**_defaults(), js_rendering=JsRenderingResult(checked=True, js_dependent=False))
         js_only = audit_platform_citation(
             **_defaults(), js_rendering=JsRenderingResult(checked=True, js_dependent=True)
         )
         assert _google_ai(ssr).score - _google_ai(js_only).score == 3
 
     def test_js_dependent_content_gets_ssr_recommendation(self):
-        result = audit_platform_citation(
-            **_defaults(), js_rendering=JsRenderingResult(checked=True, js_dependent=True)
-        )
+        result = audit_platform_citation(**_defaults(), js_rendering=JsRenderingResult(checked=True, js_dependent=True))
         recs = " ".join(_google_ai(result).recommendations).lower()
         assert "server-side" in recs or "server side" in recs
 

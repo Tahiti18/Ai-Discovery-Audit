@@ -58,3 +58,4 @@ docs/strategy/
 # Local caches
 local_cache/
 .codex
+.mypy_cache/
