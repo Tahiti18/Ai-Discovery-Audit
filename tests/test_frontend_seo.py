@@ -38,14 +38,21 @@ _SITEMAP_NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 _ASSET_EXTENSIONS = (".png", ".jpg", ".jpeg", ".svg", ".ico", ".xml", ".pdf", ".json", ".webp", ".txt")
 
 # Pagine ad alta priorità: devono avere title + description + canonical corretti.
-# slug → file .astro
+# slug → file .astro (anche in sottocartella, es. guides/)
 KEY_PAGES = {
     "/": "index.astro",
     "/research/": "research.astro",
     "/roadmap/": "roadmap.astro",
     "/manifesto/": "manifesto.astro",
     "/compare/": "compare.astro",
+    # Guide target del recovery indicizzazione: stessi standard SEO delle core.
+    "/guides/ai-visibility-checklist/": "guides/ai-visibility-checklist.astro",
+    "/guides/geo-vs-seo/": "guides/geo-vs-seo.astro",
+    "/guides/llms-txt-wordpress/": "guides/llms-txt-wordpress.astro",
 }
+
+# robots.txt: fonte di verità per la policy di crawl (vedi report/[id].astro).
+_ROBOTS = _FRONTEND / "public" / "robots.txt"
 
 
 # ── Helper di parsing ───────────────────────────────────────────────────────────
@@ -243,4 +250,197 @@ class TestSchemaCanonicalConsistency:
         assert not mancanti, (
             "Pagine con JSON-LD ma nessun URL di pagina né canonical estraibile "
             f"(possibile silent-pass o canonical mancante): {mancanti}"
+        )
+
+
+# ── Helper robots.txt ────────────────────────────────────────────────────────────
+def _robots_group(agent: str) -> list[str]:
+    """Ritorna le direttive (Allow/Disallow) del gruppo `User-agent: <agent>`.
+
+    robots.txt è una sequenza di gruppi introdotti da `User-agent:`. Estrae solo
+    le righe del gruppo richiesto, così i test non confondono le regole di un bot
+    con quelle del wildcard `*`.
+    """
+    if not _ROBOTS.exists():
+        return []
+    directives: list[str] = []
+    in_group = False
+    for raw in _ROBOTS.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, _, value = line.partition(":")
+        key = key.strip().lower()
+        value = value.strip()
+        if key == "user-agent":
+            in_group = value == agent
+            continue
+        if in_group and key in ("allow", "disallow"):
+            directives.append(f"{key}:{value}")
+    return directives
+
+
+# ── Test policy robots.txt (crawl) ───────────────────────────────────────────────
+class TestRobotsPolicy:
+    """La policy di crawl deve esporre solo la demo pubblica di /report/, tenendo
+    privati i report con token e gli endpoint API."""
+
+    pytestmark = pytest.mark.skipif(not _ROBOTS.exists(), reason="robots.txt assente")
+
+    def test_demo_report_e_consentito_al_wildcard(self):
+        directives = _robots_group("*")
+        assert "allow:/report/demo" in directives, "Manca Allow: /report/demo per *"
+        assert "allow:/report/demo/" in directives, "Manca Allow: /report/demo/ per *"
+
+    def test_report_resta_disallow(self):
+        # I report con token (es. /report/<hash>) non devono essere crawlabili.
+        assert "disallow:/report/" in _robots_group("*"), "Manca Disallow: /report/"
+
+    def test_api_resta_disallow(self):
+        assert "disallow:/api/" in _robots_group("*"), "Manca Disallow: /api/"
+
+    def test_allow_demo_precede_disallow_report(self):
+        # Per i matcher robots (longest-match) l'ordine non è vincolante, ma teniamo
+        # Allow più specifico prima del Disallow generico per chiarezza e per i
+        # crawler che applicano la prima regola corrispondente.
+        directives = _robots_group("*")
+        assert directives.index("allow:/report/demo") < directives.index("disallow:/report/"), (
+            "Allow: /report/demo deve precedere Disallow: /report/"
+        )
+
+    def test_sitemap_dichiarata(self):
+        content = _ROBOTS.read_text(encoding="utf-8")
+        assert "Sitemap: https://geoready.dev/sitemap.xml" in content, (
+            "Riferimento alla sitemap mancante in robots.txt"
+        )
+
+
+# ── Test link interni verso le guide ─────────────────────────────────────────────
+# Guide target del recovery indicizzazione.
+_TARGET_GUIDES = (
+    "/guides/ai-visibility-checklist/",
+    "/guides/geo-vs-seo/",
+    "/guides/llms-txt-wordpress/",
+)
+_GUIDES_HUB = _PAGES_DIR / "guides" / "index.astro"
+_HOMEPAGE = _PAGES_DIR / "index.astro"
+_RESEARCH = _PAGES_DIR / "research.astro"
+
+
+def _hrefs(source: str) -> list[str]:
+    """Tutti gli href interni (path assoluti) presenti nel sorgente.
+
+    Cattura sia l'attributo letterale `href="/..."` sia la forma a oggetto dati
+    `href: '/...'` / `href: "/..."` (usata, es., dall'array `guides` dell'hub che
+    poi rende i link via `href={g.href}`).
+    """
+    attr = re.findall(r'href="(/[^"]*)"', source)
+    data = re.findall(r"""href:\s*['"](/[^'"]*)['"]""", source)
+    return attr + data
+
+
+class TestGuideInternalLinks:
+    """Le 3 guide non indicizzate devono ricevere link editoriali dalle pagine forti
+    e nessun link non-slash deve essere introdotto (coerenza con il canonical)."""
+
+    def test_hub_linka_tutte_le_guide_target(self):
+        source = _GUIDES_HUB.read_text(encoding="utf-8")
+        hrefs = _hrefs(source)
+        for guide in _TARGET_GUIDES:
+            assert guide in hrefs, f"Hub guide non linka {guide}"
+
+    def test_homepage_linka_hub_guide(self):
+        hrefs = _hrefs(_HOMEPAGE.read_text(encoding="utf-8"))
+        assert "/guides/" in hrefs, "Homepage non linka l'hub /guides/"
+
+    def test_research_linka_almeno_una_guida_target(self):
+        hrefs = set(_hrefs(_RESEARCH.read_text(encoding="utf-8")))
+        assert hrefs & set(_TARGET_GUIDES), (
+            "La pagina research non linka nessuna guida target"
+        )
+
+    @pytest.mark.parametrize("relpath", _ALL_PAGES)
+    def test_nessun_link_guide_senza_slash(self, relpath: str):
+        # Un link /guides/<slug> senza slash finale invierebbe il segnale di
+        # duplicato che il canonical (slash) corregge → vietato introdurlo.
+        source = (_PAGES_DIR / relpath).read_text(encoding="utf-8")
+        for href in _hrefs(source):
+            path = href.split("#")[0].split("?")[0]
+            if path.startswith("/guides/") and len(path) > len("/guides/"):
+                assert path.endswith("/"), f"{relpath}: link guide senza slash: {href}"
+
+    @pytest.mark.parametrize("relpath", _ALL_PAGES)
+    def test_link_demo_report_con_slash(self, relpath: str):
+        # /report/demo è indicizzabile e canonicalizzato con slash: i link devono
+        # puntare a /report/demo/ per non generare una variante non-slash.
+        source = (_PAGES_DIR / relpath).read_text(encoding="utf-8")
+        for href in _hrefs(source):
+            path = href.split("#")[0].split("?")[0]
+            if path == "/report/demo":
+                pytest.fail(f"{relpath}: link a /report/demo senza slash (usare /report/demo/)")
+
+
+# ── Test SEO del report demo ─────────────────────────────────────────────────────
+class TestDemoReportSeo:
+    """La demo pubblica deve essere indicizzabile con canonical slash; i report con
+    token devono restare noindex."""
+
+    _REPORT_PAGE = _PAGES_DIR / "report" / "[id].astro"
+    pytestmark = pytest.mark.skipif(
+        not (_PAGES_DIR / "report" / "[id].astro").exists(),
+        reason="pagina report/[id].astro assente",
+    )
+
+    def test_demo_e_indicizzabile(self):
+        source = self._REPORT_PAGE.read_text(encoding="utf-8")
+        assert "isDemo ? 'index, follow'" in source, (
+            "La demo deve usare robots 'index, follow'"
+        )
+        assert "'noindex, nofollow'" in source, (
+            "I report con token devono restare 'noindex, nofollow'"
+        )
+
+    def test_demo_canonical_con_slash(self):
+        source = self._REPORT_PAGE.read_text(encoding="utf-8")
+        assert "https://geoready.dev/report/demo/" in source, (
+            "Il canonical della demo deve essere /report/demo/ (con slash)"
+        )
+
+    def test_demo_island_inizializza_con_mock(self):
+        """L'isola del report deve inizializzare lo stato dai dati mock per la demo,
+        così l'HTML statico (SSG) contiene il contenuto del report e non un guscio
+        vuoto: una pagina index,follow senza contenuto crawlabile finirebbe in
+        'Crawled - currently not indexed'."""
+        container = _FRONTEND / "src" / "components" / "report" / "AuditReportContainer.tsx"
+        if not container.exists():
+            pytest.skip("AuditReportContainer.tsx assente")
+        source = container.read_text(encoding="utf-8")
+        # L'initializer di useState deve gestire il ramo demo (non solo useEffect).
+        assert re.search(
+            r"useState<State>\(\s*\(\)\s*=>", source
+        ), "useState della demo deve usare un initializer lazy con i dati mock"
+
+
+# ── Test contenuto crawlabile della demo (build artefatti) ───────────────────────
+_DIST = _FRONTEND / "dist"
+_DEMO_HTML = _DIST / "report" / "demo" / "index.html"
+
+
+@pytest.mark.skipif(
+    not _DEMO_HTML.exists(),
+    reason="build assente (dist/report/demo/index.html) — eseguire `npm run build`",
+)
+class TestDemoBuiltContent:
+    """Se la build è presente, l'HTML statico della demo deve contenere il corpo
+    del report (non lo spinner di loading)."""
+
+    def test_html_demo_contiene_corpo_report(self):
+        html = _DEMO_HTML.read_text(encoding="utf-8")
+        for marker in ("Category Breakdown", "Technical Signals", "Recommendations"):
+            assert marker in html, f"HTML demo senza sezione '{marker}' (shell vuoto?)"
+
+    def test_html_demo_non_e_solo_spinner(self):
+        html = _DEMO_HTML.read_text(encoding="utf-8")
+        assert "Running audit" not in html, (
+            "HTML demo mostra solo lo spinner 'Running audit' — contenuto non server-rendered"
         )
