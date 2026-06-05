@@ -27,11 +27,18 @@ type State =
   | { status: 'ready'; report: AuditReport; claim_token: string | null; expires_at: string | null };
 
 export default function AuditReportContainer({ reportId }: AuditReportContainerProps) {
-  const [state, setState] = useState<State>({ status: 'loading' });
+  // La demo è una pagina marketing indicizzabile: inizializza già con i dati mock
+  // così l'isola viene renderizzata lato server (SSG) con il contenuto completo
+  // del report, invece di uno shell vuoto idratato solo client-side.
+  const [state, setState] = useState<State>(() =>
+    reportId === 'demo'
+      ? { status: 'ready', report: mockAuditReport, claim_token: null, expires_at: null }
+      : { status: 'loading' }
+  );
 
   useEffect(() => {
     if (reportId === 'demo') {
-      setState({ status: 'ready', report: mockAuditReport, claim_token: null, expires_at: null });
+      // Stato già pronto dall'initializer; nessun fetch necessario per la demo.
       return;
     }
 

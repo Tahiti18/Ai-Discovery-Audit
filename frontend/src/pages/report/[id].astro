@@ -19,8 +19,12 @@ const title = isDemo
 const description = isDemo
   ? 'Preview a sample GEO Optimizer audit report with GEO scores, citability ratings, technical signals, and actionable AI search visibility recommendations.'
   : 'View your GEO Optimizer audit report with GEO scores, citability ratings, technical signals, and actionable AI search visibility recommendations.';
-const canonical = `https://geoready.dev/report/${decodedId}`;
-const robots = 'noindex, nofollow';
+// Public demo report is a marketing page (static mock data, no user data) and
+// should be indexable. Live token reports stay out of the index.
+const canonical = isDemo
+  ? 'https://geoready.dev/report/demo/'
+  : `https://geoready.dev/report/${decodedId}`;
+const robots = isDemo ? 'index, follow' : 'noindex, nofollow';
 ---
 
 <Shell title={title} description={description} canonical={canonical} robots={robots}>

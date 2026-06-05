@@ -81,6 +81,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Allow: /report/demo
+Allow: /report/demo/
 Disallow: /report/
 Disallow: /api/
 
