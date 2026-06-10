@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · [SemVer](https://semv
 
 ---
 
+## [Unreleased]
+
+### Added
+- **`geo authority` — site-level topical authority analysis.** AI engines map entities and multi-page topic coverage, not single pages. Groups sitemap pages into topic clusters by shared key terms (navigation boilerplate filtered out by document frequency, brand excluded), measures cluster depth, internal interlinking (hub-and-spoke), and pillar-page presence, and returns an authority score 0-100 with actionable recommendations. Text and JSON output.
+
 ## [4.13.0] — 2026-06-10 · Echo
 
 ### Added

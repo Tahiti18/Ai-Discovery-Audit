@@ -693,6 +693,37 @@ class CitationMapResult:
     overall_visibility: float = 0.0  # 0-1
 
 
+# ─── Topic Authority (geo authority) ─────────────────────────────────────────
+
+
+@dataclass
+class TopicCluster:
+    """A group of pages covering the same topic (entity-based authority)."""
+
+    topic: str = ""
+    pages: list[str] = field(default_factory=list)
+    pages_count: int = 0
+    pillar_url: str = ""  # page whose title/H1 states the topic ("" if missing)
+    interlink_ratio: float = 0.0  # share of cluster pages linking to another cluster page
+
+
+@dataclass
+class TopicAuthorityResult:
+    """Site-level topical authority analysis (`geo authority`).
+
+    AI engines map entities and multi-page topic coverage, not single pages:
+    a brand with several interlinked pages covering a topic from multiple
+    angles is more visible than a brand with one strong page.
+    """
+
+    checked: bool = False
+    skipped_reason: str | None = None
+    pages_analyzed: int = 0
+    clusters: list[TopicCluster] = field(default_factory=list)
+    authority_score: int = 0  # 0-100
+    recommendations: list[str] = field(default_factory=list)
+
+
 # ─── AI Citation Check (geo citations) ───────────────────────────────────────
 
 

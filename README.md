@@ -176,6 +176,7 @@ geo coherence --sitemap https://example.com/sitemap.xml  # Cross-page terminolog
 geo logs --file access.log                                # AI Crawler Activity — crawler evidence from user-agent logs
 geo access --url https://example.com                      # Agent Access Audit — browser vs AI bot access simulation
 geo citations --brand "Acme" --domain acme.com            # AI Citation Check — are you cited by answer engines? (BYO key)
+geo authority --sitemap https://example.com/sitemap.xml   # Topic Authority — multi-page entity coverage, clusters, pillars
 ```
 
 GEO Optimizer checks whether websites can be **crawled, understood, cited, and monitored** by AI answer engines:
