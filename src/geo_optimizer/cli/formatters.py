@@ -160,6 +160,10 @@ def format_audit_json(result: AuditResult) -> str:
     if hasattr(result, "js_rendering") and result.js_rendering and result.js_rendering.checked:
         data["js_rendering"] = asdict(result.js_rendering)
 
+    # Multimodal readiness (informational)
+    if hasattr(result, "multimodal") and result.multimodal and result.multimodal.checked:
+        data["multimodal"] = asdict(result.multimodal)
+
     # Fix #451: Trust Stack score
     if hasattr(result, "trust_stack") and result.trust_stack:
         data["trust_stack"] = asdict(result.trust_stack)
@@ -506,6 +510,28 @@ def format_audit_text(result: AuditResult) -> str:
             f"  Error recovery: aria-live {'✅' if ir.has_aria_live else '❌'} | roles {'✅' if ir.has_error_roles else '❌'}"
         )
         lines.append(f"  Readiness: {ir.readiness_score}/100 ({ir.readiness_level})")
+
+    # Multimodal readiness (informational)
+    mm = getattr(result, "multimodal", None)
+    if mm and mm.checked and mm.readiness_level != "none":
+        lines.append("")
+        lines.append(_section_header("19. MULTIMODAL READINESS"))
+        if mm.total_images:
+            lines.append(
+                f"  Images: {mm.images_with_alt}/{mm.total_images} with descriptive alt "
+                f"({mm.alt_coverage:.0%}) | captions: {mm.caption_count}"
+            )
+        if mm.has_video:
+            lines.append(
+                f"  Video: {mm.video_count} found | VideoObject schema: {'✅' if mm.has_video_schema else '❌'} "
+                f"| captions/transcript: {'✅' if (mm.has_video_captions or mm.has_transcript) else '❌'}"
+            )
+        if mm.has_audio:
+            lines.append(
+                f"  Audio: present | schema: {'✅' if mm.has_audio_schema else '❌'} "
+                f"| transcript: {'✅' if mm.has_transcript else '❌'}"
+            )
+        lines.append(f"  Readiness: {mm.readiness_level}")
 
     # Score
     lines.append("")

@@ -280,6 +280,29 @@ class JsRenderingResult:
 
 
 @dataclass
+class MultimodalResult:
+    """Multimodal readiness — image/video/audio text scaffolding for multimodal AI engines.
+
+    Informational bonus check: multimodal engines (Gemini, GPT-4o) reach
+    non-text content through alt text, captions, schema, and transcripts.
+    """
+
+    checked: bool = False
+    total_images: int = 0
+    images_with_alt: int = 0  # images with informative alt (>= 5 chars)
+    alt_coverage: float = 0.0  # 0-1
+    caption_count: int = 0  # <figcaption> elements
+    has_video: bool = False  # <video> or embedded player iframe
+    video_count: int = 0
+    has_video_schema: bool = False  # VideoObject/Clip/BroadcastEvent JSON-LD
+    has_video_captions: bool = False  # <track kind="captions|subtitles">
+    has_audio: bool = False
+    has_audio_schema: bool = False  # AudioObject/PodcastEpisode JSON-LD
+    has_transcript: bool = False  # transcript keyword or schema property
+    readiness_level: str = "none"  # none | missing | basic | good | excellent
+
+
+@dataclass
 class WebMcpResult:
     """Checks whether the site is ready for AI agents via WebMCP and related signals."""
 
@@ -931,6 +954,8 @@ class AuditResult:
     brand_entity: BrandEntityResult = field(default_factory=BrandEntityResult)
     # v4.3: WebMCP Readiness check (#233)
     webmcp: WebMcpResult = field(default_factory=WebMcpResult)
+    # Multimodal readiness — image/video/audio scaffolding (informational)
+    multimodal: MultimodalResult = field(default_factory=MultimodalResult)
     # v4.3: Negative Signals detection
     negative_signals: NegativeSignalsResult = field(default_factory=NegativeSignalsResult)
     # v4.4: Prompt Injection Pattern Detection (#276)

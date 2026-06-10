@@ -65,6 +65,7 @@ from geo_optimizer.models.results import (
     JsRenderingResult,
     LlmsTxtResult,
     MetaResult,
+    MultimodalResult,
     NegativeSignalsResult,
     PromptInjectionResult,
     RobotsResult,
@@ -89,6 +90,7 @@ def build_recommendations(
     negative_signals: NegativeSignalsResult | None = None,
     prompt_injection: PromptInjectionResult | None = None,
     score_breakdown: dict[str, int] | None = None,
+    multimodal: MultimodalResult | None = None,
 ) -> list[str]:
     """Build a prioritized list of recommendations sorted by score impact (gap #5).
 
@@ -117,6 +119,7 @@ def build_recommendations(
     _l_ai: list[str] = []
     _l_schema: list[str] = []
     _l_webmcp: list[str] = []
+    _l_multimodal: list[str] = []
 
     # ── CRITICAL — blocking signals ─────────────────────────────────────────
     # gap #2: X-Robots-Tag: noindex via HTTP header
@@ -313,6 +316,31 @@ def build_recommendations(
                 "for Chrome AI agent support"
             )
 
+    # Multimodal readiness (informational) — multimodal engines reach non-text
+    # content through its text scaffolding
+    if multimodal is not None and multimodal.checked:
+        if multimodal.total_images and multimodal.alt_coverage < 0.8:
+            missing_alts = multimodal.total_images - multimodal.images_with_alt
+            _l_multimodal.append(
+                f"{missing_alts} of {multimodal.total_images} images lack descriptive alt text — "
+                "multimodal AI engines (Gemini, GPT-4o) read images through their alt text"
+            )
+        if multimodal.has_video and not multimodal.has_video_schema:
+            _l_multimodal.append(
+                "Video detected without VideoObject schema — add name, description, thumbnailUrl, "
+                "and uploadDate so AI engines can cite your video content"
+            )
+        if multimodal.has_video and not (multimodal.has_video_captions or multimodal.has_transcript):
+            _l_multimodal.append(
+                'Video without captions or transcript — add <track kind="captions"> or a text '
+                "transcript: AI engines index the transcript, not the pixels"
+            )
+        if multimodal.has_audio and not (multimodal.has_audio_schema or multimodal.has_transcript):
+            _l_multimodal.append(
+                "Audio content without AudioObject/PodcastEpisode schema or transcript — "
+                "add one to make it citable by AI engines"
+            )
+
     # gap #5: order categories inside each bucket by recoverable points
     high_segs: list[tuple[str | None, list[str]]] = [
         ("robots", _h_robots),
@@ -333,6 +361,7 @@ def build_recommendations(
         ("ai_discovery", _l_ai),
         ("schema", _l_schema),
         (None, _l_webmcp),
+        (None, _l_multimodal),
     ]
 
     def _recoverable(category: str | None) -> int:
@@ -370,6 +399,7 @@ def _build_audit_result(
     js_rendering=None,  # v4.2: JS Rendering check (#226)
     brand_entity=None,  # v4.3: Brand & Entity signals
     webmcp=None,  # v4.3: WebMCP Readiness check (#233)
+    multimodal=None,  # Multimodal readiness (informational)
     negative_signals=None,  # v4.3: Negative Signals detection
     prompt_injection=None,  # v4.4: Prompt Injection Detection (#276)
     trust_stack=None,  # v4.5: Trust Stack Score (#273)
@@ -417,6 +447,16 @@ def _build_audit_result(
 
     # v4.3: use empty WebMcpResult if not provided (#233)
     effective_webmcp = webmcp if webmcp is not None else WebMcpResult()
+
+    # Multimodal readiness: compute from soup if not provided, else empty
+    if multimodal is not None:
+        effective_multimodal = multimodal
+    elif soup is not None:
+        from geo_optimizer.core.audit_multimodal import audit_multimodal_readiness
+
+        effective_multimodal = audit_multimodal_readiness(soup, schema)
+    else:
+        effective_multimodal = MultimodalResult()
 
     # v4.3: use empty NegativeSignalsResult if not provided
     effective_negative_signals = negative_signals if negative_signals is not None else NegativeSignalsResult()
@@ -553,6 +593,7 @@ def _build_audit_result(
         effective_negative_signals,
         effective_prompt_injection,
         score_breakdown=breakdown,
+        multimodal=effective_multimodal,
     )
 
     # Fix #460: load entry_point plugins if not already loaded (API + MCP callers)
@@ -620,6 +661,7 @@ def _build_audit_result(
         js_rendering=effective_js,
         brand_entity=effective_brand_entity,
         webmcp=effective_webmcp,
+        multimodal=effective_multimodal,
         negative_signals=effective_negative_signals,
         prompt_injection=effective_prompt_injection,
         trust_stack=effective_trust_stack,

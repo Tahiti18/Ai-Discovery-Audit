@@ -165,6 +165,7 @@ geo schema --type faq --url https://yoursite.com
 | **RAG Chunk Readiness** | Content segmentation for RAG retrieval: section word counts, definition openings, heading boundaries, anchor sentences `🆕 v4.7` |
 | **Content Decay Prediction** | Detects temporal, statistical, version, event, and price decay patterns — evergreen score 0-100 `🆕 v4.7` |
 | **Platform Citation Profile** | Per-platform readiness scores for ChatGPT, Perplexity, Google AI `🆕 v4.7` |
+| **Multimodal Readiness** | Image alt coverage, captions, VideoObject/AudioObject schema, subtitle tracks, transcripts — the text scaffolding multimodal engines (Gemini, GPT-4o) need `🆕` |
 
 Plus a separate **Citability Score** (0-100) measuring content quality across 47 methods:
 Quotation +41% · Statistics +33% · Fluency +29% · Cite Sources +27% · and 43 more.

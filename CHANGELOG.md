@@ -8,6 +8,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · [SemVer](https://semv
 ## [Unreleased]
 
 ### Added
+- **Multimodal Readiness bonus check.** Multimodal engines (Gemini, GPT-4o) reach images, video, and audio through their text scaffolding: the audit now measures image alt coverage and `<figcaption>` usage, VideoObject/AudioObject/PodcastEpisode schema, `<track kind="captions">` subtitle tracks, and transcript presence, with a readiness level (none/missing/basic/good/excellent). Informational — does not affect the 100-point score; adds targeted recommendations and a `multimodal` JSON section.
 - **`geo authority` — site-level topical authority analysis.** AI engines map entities and multi-page topic coverage, not single pages. Groups sitemap pages into topic clusters by shared key terms (navigation boilerplate filtered out by document frequency, brand excluded), measures cluster depth, internal interlinking (hub-and-spoke), and pillar-page presence, and returns an authority score 0-100 with actionable recommendations. Text and JSON output.
 
 ## [4.13.0] — 2026-06-10 · Echo
