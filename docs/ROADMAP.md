@@ -20,13 +20,13 @@ Some of these themes will span multiple releases. Specific scope may shift as re
 |---------|--------|----------|-------|--------|
 | v4.10.0 | Late May / Early Jun 2026 | **Veil** | Signal architecture refinement | Shipped |
 | v4.11.0 | May 2026 (advanced from Jul 2026) | **Static** | Expanded retrieval surface analysis | Shipped — MVP A |
-| v4.12.0 | Sep 2026 | **Ledger** | Scoring model recalibration | Planned |
+| v4.12.0 | May 2026 (advanced from Sep 2026) | **Ledger** | Scoring model recalibration | Shipped |
 | v4.13.0 | Nov 2026 | **Quiet Glass** | Structural pattern recognition | Planned |
 | v4.14.0-rc1 | Jan 2027 | **Threshold** | Pre-release validation cycle | Planned |
 | v4.14.0-rc2 / v4.15.0 | Mar 2027 | **Pale Signal** | Stabilization and edge resolution | Planned |
 | v5.0.0 | May 2027 | **Black Archive** | Next-generation audit framework | Planned |
 
-Release windows are estimates. Dates may shift based on validation outcomes and testing discipline. v4.11.0 advanced from its original Jul 2026 window because the MVP A scope was validated and stabilised earlier than planned; subsequent windows remain unchanged.
+Release windows are estimates. Dates may shift based on validation outcomes and testing discipline. v4.11.0 and v4.12.0 both advanced ahead of their original windows because their scope was validated and stabilised earlier than planned; subsequent windows (v4.13.0 onward) remain unchanged.
 
 ## Static Cycle — MVP Track
 

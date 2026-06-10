@@ -13,7 +13,7 @@
 
 **GEO Optimizer helps you audit whether a website can be crawled, understood, cited, and monitored by AI answer engines.**
 
-[Quick Start](#quick-start) · [Live Demo](https://geoready.dev) · [Pricing](https://geoready.dev/pricing) · [Early Access](https://geoready.dev/early-access) · [Documentation](https://auriti-labs.github.io/geo-optimizer-skill/) · [Changelog](CHANGELOG.md)
+[Quick Start](#quick-start) · [Live Demo](https://geoready.dev) · [Pricing](https://geoready.dev/pricing) · [Sign Up](https://app.geoready.dev/signup) · [Documentation](https://auriti-labs.github.io/geo-optimizer-skill/) · [Changelog](CHANGELOG.md)
 
 </div>
 
@@ -51,19 +51,20 @@ GEO Optimizer focuses on the technical and structural signals that AI answer eng
 | | |
 |---|---|
 | **Free audit** | [geoready.dev](https://geoready.dev) — single-URL GEO score, no account required |
+| **Free tools** | [llms.txt generator](https://geoready.dev/tools/llms-txt-generator/) — build a starter llms.txt from your sitemap |
 | **Pricing** | [geoready.dev/pricing](https://geoready.dev/pricing) — plans and feature comparison |
-| **Early access** | [geoready.dev/early-access](https://geoready.dev/early-access) — join the list for Pro monitoring (planned) |
+| **Sign up** | [app.geoready.dev/signup](https://app.geoready.dev/signup) — Pro/Studio/Agency available now |
 
 ---
 
 ## Open-source vs GeoReady Platform
 
-| | GEO Optimizer CLI | GeoReady.dev Free | GeoReady Pro *(early access, planned)* |
+| | GEO Optimizer CLI | GeoReady.dev Free | GeoReady Pro / Studio / Agency |
 |---|---|---|---|
-| **License / access** | MIT, open-source | Free, no account | Early access waitlist — not yet publicly available |
+| **License / access** | MIT, open-source | Free, no account | Self-serve — [sign up](https://app.geoready.dev/signup) |
 | **Core use** | Local audit engine, CI/CD integration, JSON output | Web audit, score preview, educational pages | Monitoring, score history, regression alerts, agency reporting |
 | **Target** | Developers, automation | Developers, SEO specialists | Ongoing clients, multi-site portfolios |
-| **Pricing** | Free forever | Free forever | Planned — see [geoready.dev/pricing](https://geoready.dev/pricing) |
+| **Pricing** | Free forever | Free forever | From $19/month — see [geoready.dev/pricing](https://geoready.dev/pricing) |
 
 The CLI and web audit remain MIT-licensed and free. The GeoReady platform adds server-side continuity — monitoring, history, and team features — that a local CLI cannot provide on its own.
 
@@ -196,7 +197,7 @@ The JSON output format is intended to remain stable across minor versions and ac
 
 ```yaml
 # .github/workflows/geo.yml
-- uses: Auriti-Labs/geo-optimizer-skill@v1
+- uses: Auriti-Labs/geo-optimizer-skill@v4.12.2
   with:
     url: https://yoursite.com
     min-score: 70        # Fail if score drops below 70
@@ -330,7 +331,7 @@ This project follows a deliberate release cadence — focused waves, not noisy p
 |---------|--------|----------|--------|
 | v4.10.0 | Apr 2026 | Veil | Shipped |
 | v4.11.0 | May 2026 | Static | Shipped |
-| v4.12.0 | Sep 2026 | Ledger | Planned |
+| v4.12.0 | May 2026 | Ledger | Shipped |
 | v4.13.0 | Nov 2026 | Quiet Glass | Planned |
 | v4.14.0-rc1 | Jan 2027 | Threshold | Planned |
 | v4.14.0-rc2 / v4.15.0 | Mar 2027 | Pale Signal | Planned |
@@ -353,7 +354,7 @@ All URL inputs are validated against private IP ranges (RFC 1918, loopback, link
 ```bash
 git clone https://github.com/YOUR_USERNAME/geo-optimizer-skill.git
 cd geo-optimizer-skill && pip install -e ".[dev]"
-pytest tests/ -v   # 1309 tests, all mocked
+pytest tests/ -v   # 1682 tests, all mocked
 ```
 
 [Bug reports](https://github.com/Auriti-Labs/geo-optimizer-skill/issues/new?template=bug_report.yml) · [Feature requests](https://github.com/Auriti-Labs/geo-optimizer-skill/issues/new?template=feature_request.yml) · [CONTRIBUTING.md](CONTRIBUTING.md)
@@ -362,7 +363,7 @@ pytest tests/ -v   # 1309 tests, all mocked
 
 <div align="center">
 
-Run the [CLI locally](#quick-start), try the [free audit online](https://geoready.dev), check [planned pricing](https://geoready.dev/pricing), or join the [early access list](https://geoready.dev/early-access) for monitoring.
+Run the [CLI locally](#quick-start), try the [free audit online](https://geoready.dev), see [pricing](https://geoready.dev/pricing), or [sign up](https://app.geoready.dev/signup) for Pro monitoring.
 
 ---
 

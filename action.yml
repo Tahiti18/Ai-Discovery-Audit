@@ -2,7 +2,7 @@
 # Esegue un audit GEO completo su qualsiasi URL direttamente nella CI/CD pipeline.
 #
 # Utilizzo:
-#   - uses: Auriti-Labs/geo-optimizer-skill@v1
+#   - uses: Auriti-Labs/geo-optimizer-skill@v4.12.2
 #     with:
 #       url: https://mysite.com
 #       min-score: 70
