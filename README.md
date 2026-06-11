@@ -21,6 +21,8 @@
 
 <img src="assets/demo.gif" alt="geo audit demo — AI visibility score 0-100 with prioritized fixes in one command" width="800"/>
 
+**15 CLI commands** · **8 scoring categories** · **47 research-backed methods** · **7 output formats** · **1,720 tests** · academic foundation ([KDD 2024](https://arxiv.org/abs/2311.09735), [ICLR 2026](https://arxiv.org/abs/2510.11438)) · runs in CI/CD, as a [Python library](#python-api), an [MCP server](#mcp-server), or an [Astro integration](#astro-integration)
+
 </div>
 
 ---
@@ -244,23 +246,24 @@ The JSON output format is intended to remain stable across minor versions and ac
 
 ---
 
-## CI/CD Integration
+## CI/CD Integration — fail the build when AI-readiness drops
+
+Treat AI visibility like test coverage: gate every deploy on it. The GitHub Action scores your site, fails the build below a threshold, and uploads results to the Security tab.
 
 ```yaml
 # .github/workflows/geo.yml
 - uses: Auriti-Labs/geo-optimizer-skill@v4.14.0
   with:
     url: https://yoursite.com
-    min-score: 70        # Fail if score drops below 70
-    format: sarif        # Upload to GitHub Security tab
+    min-score: 70        # Fail the build if the GEO score drops below 70
+    format: sarif        # Upload findings to the GitHub Security tab
 ```
 
-Works with GitHub Actions, GitLab CI, Jenkins, CircleCI, and any CI that runs Python.
-
-For longitudinal checks, persist snapshots and fail on regressions:
+Works with GitHub Actions, GitLab CI, Jenkins, CircleCI, and any CI that runs Python. For longitudinal checks, persist snapshots and **fail on regression or semantic drift**:
 
 ```bash
 geo audit --url https://yoursite.com --save-history --regression
+geo drift --url https://yoursite.com --fail-on warning   # exit non-zero if signals degraded
 ```
 
 ---
@@ -474,9 +477,7 @@ If this saved you time, a star helps others find it.
 
 [![Star on GitHub](https://img.shields.io/github/stars/auriti-labs/geo-optimizer-skill?style=for-the-badge&color=facc15&logo=github&label=Star)](https://github.com/auriti-labs/geo-optimizer-skill/stargazers)
 
-<sub>
-
-**Topics:** Answer Engine Optimization (AEO) · Generative Engine Optimization (GEO) · AI SEO · LLM SEO · AI Search Optimization · AI visibility · LLM visibility · ChatGPT SEO · Perplexity SEO · Google AI Overviews · Gemini · Claude · llms.txt generator & checker · AI citation tracking · schema markup · structured data · open-source AEO/GEO tool · Python CLI · MCP server · Astro integration
+The open-source engine for **Answer Engine Optimization** — get your site cited by ChatGPT, Perplexity, and Gemini.
 
 </sub>
 
