@@ -6,24 +6,19 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-visibility-command-center.png</image:loc>
-      <image:title>GeoReady AI visibility audit dashboard</image:title>
-      <image:caption>GEO score, crawler access, citation graph, recommendations, and score trend in one report.</image:caption>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-command-center-v2.png</image:loc>
+      <image:title>GeoReady AI visibility command center</image:title>
+      <image:caption>Readiness score, crawler access, citation flow, recommendations, alerts, and trend history.</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-discovery-stack.png</image:loc>
-      <image:title>AI visibility signal stack</image:title>
-      <image:caption>Crawler access, llms.txt, schema, content structure, entity clarity, and citation output.</image:caption>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-retrieval-map-v2.png</image:loc>
+      <image:title>AI discovery and retrieval map</image:title>
+      <image:caption>Crawler access, structured content, entity clarity, retrieval systems, and citation output.</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/monitoring-alerts-dashboard.png</image:loc>
-      <image:title>GeoReady monitoring and alerts dashboard</image:title>
-      <image:caption>Score history, portfolio checks, regression alerts, and AI answer snapshots.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/client-report-export.png</image:loc>
-      <image:title>GeoReady report export package</image:title>
-      <image:caption>Score breakdown, recommendations, and PDF export for audit deliverables.</image:caption>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-monitoring-reporting-v2.png</image:loc>
+      <image:title>GeoReady monitoring and reporting workspace</image:title>
+      <image:caption>Score history, regression alerts, domain portfolio, evidence snapshots, and report export.</image:caption>
     </image:image>
   </url>
   <url>
@@ -38,9 +33,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-discovery-stack.png</image:loc>
-      <image:title>AI SEO discovery stack</image:title>
-      <image:caption>How crawler access, llms.txt, schema, entity clarity, and citation output fit into AI SEO.</image:caption>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-retrieval-map-v2.png</image:loc>
+      <image:title>AI SEO retrieval map</image:title>
+      <image:caption>How crawler access, llms.txt, schema, entity clarity, retrieval, and citation output fit into AI SEO.</image:caption>
     </image:image>
   </url>
   <url>
@@ -49,7 +44,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-visibility-command-center.png</image:loc>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-command-center-v2.png</image:loc>
       <image:title>Competitor AI visibility analysis dashboard</image:title>
       <image:caption>Dashboard for comparing AI visibility signals across competitor domains.</image:caption>
     </image:image>
@@ -60,7 +55,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-visibility-command-center.png</image:loc>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-command-center-v2.png</image:loc>
       <image:title>AI visibility comparison dashboard</image:title>
       <image:caption>Audit dashboard used to compare GEO score, crawler access, citations, and recommendations.</image:caption>
     </image:image>
@@ -83,9 +78,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-discovery-stack.png</image:loc>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-retrieval-map-v2.png</image:loc>
       <image:title>AI visibility guide visual</image:title>
-      <image:caption>Technical signal layers behind AI visibility and GEO guides.</image:caption>
+      <image:caption>Technical signal layers and retrieval paths behind AI visibility and GEO guides.</image:caption>
     </image:image>
   </url>
   <url>
@@ -154,9 +149,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/client-report-export.png</image:loc>
-      <image:title>GeoReady report export package</image:title>
-      <image:caption>Client-ready reporting for paid GeoReady plans.</image:caption>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-monitoring-reporting-v2.png</image:loc>
+      <image:title>GeoReady monitoring and reporting workspace</image:title>
+      <image:caption>Client-ready monitoring, alerts, evidence snapshots, and report export for paid GeoReady plans.</image:caption>
     </image:image>
   </url>
   <url>
@@ -177,7 +172,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-discovery-stack.png</image:loc>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-retrieval-map-v2.png</image:loc>
       <image:title>Research-backed AI visibility signals</image:title>
       <image:caption>Visual model of the signals that inform GEO Optimizer scoring.</image:caption>
     </image:image>
@@ -194,9 +189,9 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-citation-checker.png</image:loc>
-      <image:title>AI citation checker interface</image:title>
-      <image:caption>Domain input, AI answer snapshots, citation chips, and citation rate metric.</image:caption>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-citation-intelligence-v2.png</image:loc>
+      <image:title>AI citation intelligence dashboard</image:title>
+      <image:caption>Answer snapshots, citation rate, source quality, cited source table, competitor cards, and wins versus losses.</image:caption>
     </image:image>
   </url>
   <url>
@@ -205,7 +200,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://geoready.dev/assets/geoready-visuals/ai-discovery-stack.png</image:loc>
+      <image:loc>https://geoready.dev/assets/geoready-visuals/v2/ai-retrieval-map-v2.png</image:loc>
       <image:title>llms.txt in the AI discovery stack</image:title>
       <image:caption>Where llms.txt fits alongside crawler access, schema, and citation output.</image:caption>
     </image:image>

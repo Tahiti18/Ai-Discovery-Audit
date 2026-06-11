@@ -77,80 +77,75 @@ const DEFAULT_META = { changefreq: 'monthly', priority: '0.6' };
 const IMAGE_BY_PATH = {
   '/': [
     {
-      loc: '/assets/geoready-visuals/ai-visibility-command-center.png',
-      title: 'GeoReady AI visibility audit dashboard',
-      caption: 'GEO score, crawler access, citation graph, recommendations, and score trend in one report.',
+      loc: '/assets/geoready-visuals/v2/ai-command-center-v2.png',
+      title: 'GeoReady AI visibility command center',
+      caption: 'Readiness score, crawler access, citation flow, recommendations, alerts, and trend history.',
     },
     {
-      loc: '/assets/geoready-visuals/ai-discovery-stack.png',
-      title: 'AI visibility signal stack',
-      caption: 'Crawler access, llms.txt, schema, content structure, entity clarity, and citation output.',
+      loc: '/assets/geoready-visuals/v2/ai-retrieval-map-v2.png',
+      title: 'AI discovery and retrieval map',
+      caption: 'Crawler access, structured content, entity clarity, retrieval systems, and citation output.',
     },
     {
-      loc: '/assets/geoready-visuals/monitoring-alerts-dashboard.png',
-      title: 'GeoReady monitoring and alerts dashboard',
-      caption: 'Score history, portfolio checks, regression alerts, and AI answer snapshots.',
-    },
-    {
-      loc: '/assets/geoready-visuals/client-report-export.png',
-      title: 'GeoReady report export package',
-      caption: 'Score breakdown, recommendations, and PDF export for audit deliverables.',
+      loc: '/assets/geoready-visuals/v2/ai-monitoring-reporting-v2.png',
+      title: 'GeoReady monitoring and reporting workspace',
+      caption: 'Score history, regression alerts, domain portfolio, evidence snapshots, and report export.',
     },
   ],
   '/pricing/': [
     {
-      loc: '/assets/geoready-visuals/client-report-export.png',
-      title: 'GeoReady report export package',
-      caption: 'Client-ready reporting for paid GeoReady plans.',
+      loc: '/assets/geoready-visuals/v2/ai-monitoring-reporting-v2.png',
+      title: 'GeoReady monitoring and reporting workspace',
+      caption: 'Client-ready monitoring, alerts, evidence snapshots, and report export for paid GeoReady plans.',
     },
   ],
   '/ai-seo/': [
     {
-      loc: '/assets/geoready-visuals/ai-discovery-stack.png',
-      title: 'AI SEO discovery stack',
-      caption: 'How crawler access, llms.txt, schema, entity clarity, and citation output fit into AI SEO.',
+      loc: '/assets/geoready-visuals/v2/ai-retrieval-map-v2.png',
+      title: 'AI SEO retrieval map',
+      caption: 'How crawler access, llms.txt, schema, entity clarity, retrieval, and citation output fit into AI SEO.',
     },
   ],
   '/guides/': [
     {
-      loc: '/assets/geoready-visuals/ai-discovery-stack.png',
+      loc: '/assets/geoready-visuals/v2/ai-retrieval-map-v2.png',
       title: 'AI visibility guide visual',
-      caption: 'Technical signal layers behind AI visibility and GEO guides.',
+      caption: 'Technical signal layers and retrieval paths behind AI visibility and GEO guides.',
     },
   ],
   '/research/': [
     {
-      loc: '/assets/geoready-visuals/ai-discovery-stack.png',
+      loc: '/assets/geoready-visuals/v2/ai-retrieval-map-v2.png',
       title: 'Research-backed AI visibility signals',
       caption: 'Visual model of the signals that inform GEO Optimizer scoring.',
     },
   ],
   '/compare/': [
     {
-      loc: '/assets/geoready-visuals/ai-visibility-command-center.png',
+      loc: '/assets/geoready-visuals/v2/ai-command-center-v2.png',
       title: 'AI visibility comparison dashboard',
       caption: 'Audit dashboard used to compare GEO score, crawler access, citations, and recommendations.',
     },
   ],
   '/analyze-competitors/': [
     {
-      loc: '/assets/geoready-visuals/ai-visibility-command-center.png',
+      loc: '/assets/geoready-visuals/v2/ai-command-center-v2.png',
       title: 'Competitor AI visibility analysis dashboard',
       caption: 'Dashboard for comparing AI visibility signals across competitor domains.',
     },
   ],
   '/tools/llms-txt-generator/': [
     {
-      loc: '/assets/geoready-visuals/ai-discovery-stack.png',
+      loc: '/assets/geoready-visuals/v2/ai-retrieval-map-v2.png',
       title: 'llms.txt in the AI discovery stack',
       caption: 'Where llms.txt fits alongside crawler access, schema, and citation output.',
     },
   ],
   '/tools/ai-citation-checker/': [
     {
-      loc: '/assets/geoready-visuals/ai-citation-checker.png',
-      title: 'AI citation checker interface',
-      caption: 'Domain input, AI answer snapshots, citation chips, and citation rate metric.',
+      loc: '/assets/geoready-visuals/v2/ai-citation-intelligence-v2.png',
+      title: 'AI citation intelligence dashboard',
+      caption: 'Answer snapshots, citation rate, source quality, cited source table, competitor cards, and wins versus losses.',
     },
   ],
 };
