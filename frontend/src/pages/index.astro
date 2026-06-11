@@ -2,7 +2,7 @@
 import Shell from '../components/Shell.astro';
 import AuditForm from '../components/AuditForm';
 import StatsBar from '../components/StatsBar';
-import MarketingVisual from '../components/MarketingVisual.astro';
+import VisualStage from '../components/VisualStage.astro';
 import { marketingVisuals } from '../lib/marketingVisuals';
 
 const trustCards = [
@@ -103,10 +103,18 @@ const faqSchema = {
   canonical="https://geoready.dev/"
 >
   {/* Hero */}
-  <section id="audit-form" data-hero-bleed class="bg-bg-dark text-text-inverse">
-    <div class="max-w-7xl mx-auto px-6 py-20 md:py-28">
-      <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,0.86fr)_minmax(420px,1fr)]">
+  <section id="audit-form" data-hero-bleed class="relative overflow-hidden bg-bg-dark text-text-inverse">
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 opacity-45"
+      style="background-image: radial-gradient(circle at 76% 24%, rgba(94,234,212,0.16), transparent 34%), linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px); background-size: auto, 56px 56px, 56px 56px;"
+    />
+    <div class="relative max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(520px,1fr)]">
         <div class="max-w-3xl">
+          <p class="mb-5 inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-teal-100">
+            AI visibility audit
+          </p>
           <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
             Is your website visible to AI search engines?
           </h1>
@@ -115,6 +123,21 @@ const faqSchema = {
             understood, and cited by AI answer engines like ChatGPT, Perplexity, Claude, and Gemini.
             Get a 0–100 GEO score across 8 signal categories — free, no account required.
           </p>
+
+          <div class="mt-8 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="border-l border-teal-300/40 pl-4">
+              <p class="font-mono text-[11px] uppercase tracking-[0.16em] text-teal-100">Access</p>
+              <p class="mt-1 text-sm text-text-muted">AI crawler rules and fetchability.</p>
+            </div>
+            <div class="border-l border-teal-300/40 pl-4">
+              <p class="font-mono text-[11px] uppercase tracking-[0.16em] text-teal-100">Structure</p>
+              <p class="mt-1 text-sm text-text-muted">Schema, llms.txt, and page hierarchy.</p>
+            </div>
+            <div class="border-l border-teal-300/40 pl-4">
+              <p class="font-mono text-[11px] uppercase tracking-[0.16em] text-teal-100">Citation</p>
+              <p class="mt-1 text-sm text-text-muted">Recommendations ranked by impact.</p>
+            </div>
+          </div>
 
           <div class="mt-10">
             <AuditForm client:load />
@@ -129,61 +152,81 @@ const faqSchema = {
           </div>
         </div>
 
-        <figure class="overflow-hidden rounded-[--radius-xl] border border-white/10 bg-bg-dark-surface shadow-[0_30px_90px_-35px_rgba(13,148,136,0.7)]">
-          <MarketingVisual
-            {...marketingVisuals.commandCenter}
+        <div class="relative lg:-mr-10">
+          <div aria-hidden="true" class="absolute -inset-6 rounded-[--radius-2xl] border border-teal-300/10 bg-teal-300/[0.03] blur-3xl"></div>
+          <VisualStage
+            visual={marketingVisuals.commandCenter}
+            variant="dark"
+            label="Audit command center"
+            eyebrow="Live surface"
             sizes="(min-width: 1024px) 48vw, 100vw"
             loading="eager"
             priority
             imgClass="aspect-[16/9] object-cover"
-            captionClass="border-t border-white/10 px-4 py-3 text-xs leading-relaxed text-text-muted"
+            metrics={[
+              { label: 'Score', value: '0-100 GEO' },
+              { label: 'Signals', value: '8 categories' },
+              { label: 'Output', value: 'JSON + report' },
+            ]}
+            chips={['Crawler access', 'Citation graph', 'Impact fixes']}
+            class="relative"
           />
-        </figure>
+        </div>
       </div>
     </div>
   </section>
 
   {/* What is AI search visibility */}
-  <section class="max-w-7xl mx-auto px-6 py-16">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.75fr)] lg:items-center">
-      <div class="max-w-3xl">
-      <h2 class="text-2xl md:text-3xl font-bold text-text-primary">AI SEO, GEO, and GeoReady</h2>
-      <p class="mt-4 text-text-secondary leading-relaxed">
-        <strong class="text-text-primary">AI SEO</strong> is optimizing for visibility in AI search.
-        Traditional SEO targets ranking in conventional result pages — crawlability, backlinks, keyword signals.
-        AI SEO asks a different question: whether an AI answer engine can read, parse, understand, and <em>cite</em> your content when generating a response.
-        Our <a href="/ai-seo/" class="text-accent-teal hover:underline">AI SEO guide</a> covers the category in depth.
-      </p>
-      <p class="mt-4 text-text-secondary leading-relaxed">
-        <strong class="text-text-primary"><a href="/guides/generative-engine-optimization/" class="hover:underline">GEO</a></strong> (Generative Engine Optimization) is the technical discipline behind it.
-        A site can rank well on Google and still be largely opaque to AI systems.
-        The relevant signals are different: a well-configured <code class="font-mono text-sm bg-bg-subtle px-1 rounded">robots.txt</code> that permits AI crawlers,
-        an <code class="font-mono text-sm bg-bg-subtle px-1 rounded">llms.txt</code> file that guides them through your content,
-        complete JSON-LD schema for entity disambiguation, factual density, and brand coherence.
-      </p>
-      <p class="mt-4 text-text-secondary leading-relaxed">
-        <strong class="text-text-primary">GeoReady</strong> puts the two together: a free audit that scores every one of these GEO signals 0–100 with a per-category breakdown,
-        plus an optional monitoring platform that tracks how that score changes over time.
-      </p>
-      <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
-        <a href="/research/" class="text-accent-teal hover:text-accent-teal-dark transition-colors">Read the research</a>
-        <span class="text-text-muted">·</span>
-        <a href="/manifesto/" class="text-accent-teal hover:text-accent-teal-dark transition-colors">Read the manifesto</a>
-        <span class="text-text-muted">·</span>
-        <a href="/guides/" class="text-accent-teal hover:text-accent-teal-dark transition-colors">AI visibility guides</a>
-        <span class="text-text-muted">·</span>
-        <a href="/report/demo/" class="text-accent-teal hover:text-accent-teal-dark transition-colors">View a demo report</a>
-      </div>
-      </div>
+  <section class="relative overflow-hidden border-b border-border bg-bg-base">
+    <div class="max-w-7xl mx-auto px-6 py-20 md:py-24">
+      <div class="grid gap-12 lg:grid-cols-[minmax(0,0.78fr)_minmax(420px,0.82fr)] lg:items-center">
+        <div class="max-w-3xl">
+          <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-teal">Category map</p>
+          <h2 class="mt-3 text-3xl md:text-5xl font-bold text-text-primary tracking-tight">AI SEO is not a checklist. It is a retrieval path.</h2>
+          <p class="mt-5 text-lg text-text-secondary leading-relaxed">
+            Traditional SEO asks whether a page can rank. AI SEO asks whether an answer engine can reach it, parse it, trust it, and cite it.
+          </p>
 
-      <figure class="overflow-hidden rounded-[--radius-xl] border border-border bg-bg-surface shadow-[0_24px_70px_-40px_rgba(15,23,42,0.65)]">
-        <MarketingVisual
-          {...marketingVisuals.discoveryStack}
-          sizes="(min-width: 1024px) 38vw, 100vw"
+          <div class="mt-8 space-y-4">
+            {[
+              ['01', 'Access', 'Crawler permissions, HTTP behavior, and server-rendered content decide whether AI systems can reach the page.'],
+              ['02', 'Meaning', 'llms.txt, schema, headings, and entity consistency help the model understand what the page is about.'],
+              ['03', 'Citation', 'Self-contained answers and factual density make the page easier to quote inside generated responses.'],
+            ].map(([num, title, text]) => (
+              <div class="grid grid-cols-[44px_minmax(0,1fr)] gap-4 border-l border-border bg-bg-surface/60 p-4">
+                <span class="font-mono text-xs text-accent-teal">{num}</span>
+                <div>
+                  <h3 class="font-display text-base font-semibold text-text-primary">{title}</h3>
+                  <p class="mt-1 text-sm leading-relaxed text-text-secondary">{text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-7 flex flex-wrap items-center gap-4 text-sm">
+            <a href="/research/" class="text-accent-teal hover:text-accent-teal-dark transition-colors">Read the research</a>
+            <span class="text-text-muted">·</span>
+            <a href="/guides/" class="text-accent-teal hover:text-accent-teal-dark transition-colors">AI visibility guides</a>
+            <span class="text-text-muted">·</span>
+            <a href="/report/demo/" class="text-accent-teal hover:text-accent-teal-dark transition-colors">View a demo report</a>
+          </div>
+        </div>
+
+        <VisualStage
+          visual={marketingVisuals.discoveryStack}
+          variant="paper"
+          label="Discovery model"
+          eyebrow="Access to citation"
+          sizes="(min-width: 1024px) 42vw, 100vw"
           imgClass="aspect-[16/9] object-cover"
-          captionClass="border-t border-border px-4 py-3 text-xs leading-relaxed text-text-muted"
+          metrics={[
+            { label: 'Layer 1', value: 'Crawler access' },
+            { label: 'Layer 2', value: 'Entity clarity' },
+            { label: 'Layer 3', value: 'Citation output' },
+          ]}
+          chips={['robots.txt', 'llms.txt', 'Schema']}
         />
-      </figure>
+      </div>
     </div>
   </section>
 
@@ -268,80 +311,66 @@ const faqSchema = {
   </section>
 
   {/* From audit to monitoring */}
-  <section class="max-w-7xl mx-auto px-6 py-16 border-t border-border">
-    <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-2">From audit to monitoring</h2>
-    <p class="text-sm text-text-secondary mb-8 max-w-2xl">
-      The free audit is a point-in-time diagnosis. Monitoring is what turns it into an ongoing signal.
-    </p>
-    <figure class="mb-8 overflow-hidden rounded-[--radius-xl] border border-border bg-bg-surface shadow-[0_24px_70px_-42px_rgba(15,23,42,0.6)]">
-      <MarketingVisual
-        {...marketingVisuals.monitoring}
-        sizes="(min-width: 1024px) 1180px, 100vw"
-        imgClass="max-h-[520px] object-cover object-top"
-        captionClass="border-t border-border px-4 py-3 text-xs leading-relaxed text-text-muted"
-      />
-    </figure>
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
-        <span class="text-xs font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent-success/10 text-accent-success inline-block mb-4">
-          Available now
-        </span>
-        <h3 class="text-base font-semibold text-text-primary mb-3">Free audit</h3>
-        <ul class="space-y-2 text-sm text-text-secondary">
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
-            GEO score 0–100 for any public URL
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
-            Free report preview with top recommendations
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
-            No account, no credit card
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">✓</span>
-            CLI (MIT, unlimited) via pip
-          </li>
-        </ul>
-      </div>
-      <div class="p-6 rounded-[--radius-lg] border border-border bg-bg-surface">
-        <span class="text-xs font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent-teal/10 text-accent-teal inline-block mb-4">
-          Live — founding price
-        </span>
-        <h3 class="text-base font-semibold text-text-primary mb-3">GeoReady Pro</h3>
-        <ul class="space-y-2 text-sm text-text-secondary">
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
-            Weekly monitoring — score tracked automatically
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
-            Full 8-category report history
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
-            Regression alerts when score drops
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="mt-0.5 text-accent-teal shrink-0">+</span>
-            PDF export and agency reporting
-          </li>
-        </ul>
-        <a
-          href="https://app.geoready.dev/signup?plan=pro"
-          data-plan-id="pro"
-          data-plan-name="Pro"
-          data-plan-price="$19"
-          data-plan-period="/month"
-          data-plan-currency="USD"
-          data-cta-location="home_monitoring_section"
-          class="mt-5 inline-block text-sm text-accent-teal hover:underline font-medium"
-        >
-          Start with Pro →
-        </a>
-        <p class="mt-2 text-xs text-text-muted">app.geoready.dev — built on GEO Optimizer</p>
+  <section class="relative overflow-hidden bg-bg-dark text-text-inverse">
+    <div class="max-w-7xl mx-auto px-6 py-20 md:py-24">
+      <div class="grid gap-10 lg:grid-cols-[minmax(420px,0.92fr)_minmax(0,0.72fr)] lg:items-center">
+        <VisualStage
+          visual={marketingVisuals.monitoring}
+          variant="dark"
+          label="Monitoring room"
+          eyebrow="Continuous signal"
+          sizes="(min-width: 1024px) 52vw, 100vw"
+          imgClass="aspect-[4/3] object-cover object-top"
+          metrics={[
+            { label: 'History', value: 'Weekly trend' },
+            { label: 'Alert', value: 'Score drop' },
+            { label: 'Portfolio', value: 'Domains' },
+          ]}
+          chips={['Score history', 'Regression alerts', 'Snapshots']}
+        />
+
+        <div>
+          <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-teal-100">From audit to monitoring</p>
+          <h2 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight">
+            One audit gives the baseline. Monitoring tells you when the baseline moves.
+          </h2>
+          <p class="mt-5 text-base leading-relaxed text-text-muted">
+            The free audit is a point-in-time diagnosis. GeoReady Pro turns the same scoring engine into an ongoing signal for teams and client work.
+          </p>
+
+          <div class="mt-8 grid gap-3">
+            <div class="border border-white/10 bg-white/[0.04] p-5">
+              <div class="flex items-center justify-between gap-3">
+                <h3 class="font-display text-base font-semibold">Free audit</h3>
+                <span class="font-mono text-[10px] uppercase tracking-[0.16em] text-teal-100">Available</span>
+              </div>
+              <p class="mt-2 text-sm leading-relaxed text-text-muted">
+                GEO score, top recommendations, and a fast read on whether a URL is crawlable and understandable.
+              </p>
+            </div>
+            <div class="border border-teal-300/30 bg-teal-300/[0.06] p-5">
+              <div class="flex items-center justify-between gap-3">
+                <h3 class="font-display text-base font-semibold">GeoReady Pro</h3>
+                <span class="font-mono text-[10px] uppercase tracking-[0.16em] text-teal-100">Live</span>
+              </div>
+              <p class="mt-2 text-sm leading-relaxed text-text-muted">
+                Weekly monitoring, report history, regression alerts, PDF export, and API access.
+              </p>
+              <a
+                href="https://app.geoready.dev/signup?plan=pro"
+                data-plan-id="pro"
+                data-plan-name="Pro"
+                data-plan-price="$19"
+                data-plan-period="/month"
+                data-plan-currency="USD"
+                data-cta-location="home_monitoring_section"
+                class="mt-4 inline-flex text-sm font-semibold text-teal-100 underline underline-offset-4"
+              >
+                Start with Pro
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -370,46 +399,44 @@ const faqSchema = {
 
   {/* Final CTA */}
   <section class="max-w-7xl mx-auto px-6 pb-20">
-    <div class="p-8 md:p-12 rounded-[--radius-xl] border border-border bg-bg-surface">
-      <div class="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.7fr)] lg:items-center">
-      <div class="max-w-3xl">
-        <h2 class="text-2xl md:text-3xl font-bold text-text-primary">
-          AI search is already deciding which sites get cited.
-        </h2>
-        <p class="mt-4 text-text-secondary leading-relaxed">
-          The signals are documented, the research is published, and the tool is free.
-          GEO Optimizer exists to make AI visibility auditable and accessible to every developer —
-          not just teams with enterprise budgets.
-        </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a
-            href="#audit-form"
-            class="inline-block py-2.5 px-6 rounded-[--radius-md] bg-accent-teal text-white text-sm font-semibold hover:bg-accent-teal-dark transition-colors"
-          >
-            Start free audit
-          </a>
-          <a
-            href="/pricing/"
-            data-cta="home_final_pick_plan"
-            class="inline-block py-2.5 px-6 rounded-[--radius-md] border border-border text-sm font-semibold text-text-primary hover:bg-bg-subtle transition-colors"
-          >
-            Start free — or pick a plan →
-          </a>
+    <div class="overflow-hidden border border-border bg-bg-surface">
+      <div class="grid lg:grid-cols-[minmax(0,0.82fr)_minmax(420px,0.78fr)]">
+        <div class="p-8 md:p-12 lg:p-14">
+          <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-teal">Open scoring, practical output</p>
+          <h2 class="mt-3 text-3xl md:text-5xl font-bold text-text-primary tracking-tight">
+            AI search is already deciding which sites get cited.
+          </h2>
+          <p class="mt-5 max-w-2xl text-text-secondary leading-relaxed">
+            The signals are documented, the research is published, and the tool is free.
+            GEO Optimizer exists to make AI visibility auditable and accessible to every developer.
+          </p>
+          <div class="mt-7 flex flex-wrap gap-3">
+            <a
+              href="#audit-form"
+              class="inline-block py-2.5 px-6 rounded-[--radius-md] bg-accent-teal text-white text-sm font-semibold hover:bg-accent-teal-dark transition-colors"
+            >
+              Start free audit
+            </a>
+            <a
+              href="/pricing/"
+              data-cta="home_final_pick_plan"
+              class="inline-block py-2.5 px-6 rounded-[--radius-md] border border-border text-sm font-semibold text-text-primary hover:bg-bg-subtle transition-colors"
+            >
+              Start free or pick a plan
+            </a>
+          </div>
         </div>
-        <p class="mt-4 text-xs text-text-muted">
-          Or <a href="/manifesto/" class="hover:text-text-secondary transition-colors underline">read the manifesto</a>
-          <span class="mx-1">·</span>
-          <a href="/pricing/" class="hover:text-text-secondary transition-colors underline">view pricing</a>
-        </p>
-      </div>
-      <figure class="overflow-hidden rounded-[--radius-lg] border border-border bg-bg-subtle">
-        <MarketingVisual
-          {...marketingVisuals.clientReport}
-          sizes="(min-width: 1024px) 35vw, 100vw"
-          imgClass="aspect-[4/3] object-cover"
-          captionClass="border-t border-border px-4 py-3 text-xs leading-relaxed text-text-muted"
-        />
-      </figure>
+        <div class="border-t border-border bg-bg-subtle p-4 lg:border-l lg:border-t-0">
+          <VisualStage
+            visual={marketingVisuals.clientReport}
+            variant="paper"
+            label="Report package"
+            eyebrow="Client output"
+            sizes="(min-width: 1024px) 36vw, 100vw"
+            imgClass="aspect-[4/3] object-cover"
+            chips={['Score breakdown', 'Recommendations', 'PDF export']}
+          />
+        </div>
       </div>
     </div>
   </section>
