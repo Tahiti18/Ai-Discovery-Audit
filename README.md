@@ -331,6 +331,25 @@ Colors: 86-100 green · 68-85 cyan · 36-67 yellow · 0-35 red. Re-audited and c
 
 ---
 
+## Astro Integration
+
+Make an Astro site GEO-ready at build time — generates `llms.txt`,
+`/.well-known/ai.txt`, and `/ai/summary.json` from your built routes
+(never overwrites hand-curated files):
+
+```js
+// astro.config.mjs
+import geoReady from 'astro-geoready';
+export default defineConfig({
+  site: 'https://yoursite.com',
+  integrations: [geoReady({ siteName: 'Your Site' })],
+});
+```
+
+See [`integrations/astro-geoready/`](integrations/astro-geoready/) — geoready.dev itself builds with it.
+
+---
+
 ## Plugin System
 
 Extend the audit with custom checks via entry points:
