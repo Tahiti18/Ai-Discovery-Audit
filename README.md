@@ -1,8 +1,10 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="GEO Optimizer" width="480"/>
+<img src="assets/geoready-logo.svg" alt="GeoReady GEO Optimizer — Answer Engine Optimization toolkit" width="640"/>
 
-### Open-source GEO audit engine for AI search visibility and citability.
+### The open-source **Answer Engine Optimization (AEO)** & **Generative Engine Optimization (GEO)** toolkit.
+
+#### Audit, optimize, and track whether **ChatGPT, Perplexity, Gemini, Claude, and Google AI Overviews** can crawl, understand, and **cite** your website.
 
 [![PyPI](https://img.shields.io/pypi/v/geo-optimizer-skill?style=flat-square&color=3b82f6)](https://pypi.org/project/geo-optimizer-skill/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-3776ab?style=flat-square&logo=python&logoColor=white)](https://python.org)
@@ -13,47 +15,64 @@
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-8b5cf6?style=flat-square)](https://modelcontextprotocol.io)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?style=flat-square&logo=buymeacoffee&logoColor=000000)](https://buymeacoffee.com/auritidesign)
 
-**GEO Optimizer helps you audit whether a website can be crawled, understood, cited, and monitored by AI answer engines.**
+**One command scores your site 0–100 on AI-search readiness, tells you exactly what to fix, and checks whether AI engines actually cite you.**
 
 [Quick Start](#quick-start) · [Live Demo](https://geoready.dev) · [Pricing](https://geoready.dev/pricing) · [Sign Up](https://app.geoready.dev/signup) · [Documentation](https://auriti-labs.github.io/geo-optimizer-skill/) · [Changelog](CHANGELOG.md)
 
-<img src="assets/demo.gif" alt="geo audit demo — score 0-100 with prioritized fixes in one command" width="800"/>
+<img src="assets/demo.gif" alt="geo audit demo — AI visibility score 0-100 with prioritized fixes in one command" width="800"/>
 
 </div>
 
 ---
 
-## Why this exists
+## What is GEO Optimizer?
 
-AI search engines give direct answers and **cite their sources**. If your site isn't optimized, you're invisible — even if you rank #1 on Google.
+**GEO Optimizer** is a free, open-source command-line tool (and Python library, MCP server, and [Astro integration](#astro-integration)) that measures how visible your website is to **AI answer engines** — ChatGPT, Perplexity, Google AI Overviews, Gemini, and Claude — and tells you how to get cited by them.
+
+This discipline goes by several names; this tool covers all of them: **Answer Engine Optimization (AEO)**, **Generative Engine Optimization (GEO)**, **AI SEO**, **LLM SEO**, **AI Search Optimization**, and **AI visibility / LLM visibility** monitoring. If you're searching for an *"open-source AEO tool"*, a *"tool to check if ChatGPT cites my website"*, or an *"llms.txt checker"* — that's this.
+
+```bash
+# Zero install — score any site against 8 AI-readiness categories
+uvx --from geo-optimizer-skill geo audit --url https://yoursite.com
+```
+
+It scores your site against **47 research-backed methods** ([Princeton KDD 2024](https://arxiv.org/abs/2311.09735), [AutoGEO ICLR 2026](https://arxiv.org/abs/2510.11438)) and generates the exact fixes — robots.txt bot rules, `llms.txt`, JSON-LD schema, and the content patterns models quote.
+
+---
+
+## Why AI visibility matters in 2026
+
+AI search engines give one synthesized answer and **cite a handful of sources**. If your site isn't one of them, you're invisible — even if you rank #1 on Google.
 
 ```
-User: "What's the best mortgage calculator?"
+User asks ChatGPT: "What's the best mortgage calculator?"
 
-Perplexity: "According to [Competitor.com], the formula is..."
-             ↑ They appear. You don't.
+ChatGPT: "According to [Competitor.com], the formula is..."
+          ↑ They get cited. You don't.
 ```
-
-GEO Optimizer audits your site against **47 research-backed methods** ([Princeton KDD 2024](https://arxiv.org/abs/2311.09735), [AutoGEO ICLR 2026](https://arxiv.org/abs/2510.11438)) and generates the fixes.
-
-### Why this matters in 2026
 
 - ChatGPT alone serves [**900M weekly users**](https://llmrefs.com/generative-engine-optimization) — a growing share of sessions that used to be Google searches.
 - [**28.3% of ChatGPT's most-cited pages have *zero* organic visibility on Google**](https://llmrefs.com/generative-engine-optimization) (Ahrefs) — AI engines reward different signals than classic SEO.
 - Proper JSON-LD schema lifts LLM extraction accuracy [**from 16% to 54%**](https://dev.to/geobuddy/llmstxt-schema-markup-and-technical-geo-what-actually-works-in-2026-o63) (Semrush test on GPT-4).
 - [**844,000+ sites**](https://webflow.com/blog/llms-txt) already ship an `llms.txt`. Yours?
 
+### Does AI actually cite your brand? Ask it directly.
+
+`geo citations` queries real answer engines with the questions your customers ask, then reports whether your brand is mentioned and your domain is cited as a source — and which competitors get cited instead of you.
+
+<img src="assets/citations.gif" alt="geo citations demo — is your brand cited by ChatGPT and Perplexity?" width="800"/>
+
 ---
 
-## GEO is not traditional SEO
+## AEO / GEO is not traditional SEO
 
-SEO and GEO answer different questions:
+SEO and AEO/GEO answer different questions:
 
-- **SEO** optimizes for ranking and visibility in traditional search result pages — crawlability, backlinks, keyword signals.
-- **GEO** measures whether an AI answer engine can read, parse, understand, and cite your content when generating a response.
+- **SEO** optimizes for ranking and clicks in traditional search result pages — crawlability, backlinks, keyword signals.
+- **AEO / GEO** measures whether an AI answer engine can read, parse, understand, and **cite** your content when generating a response.
 - A site can rank well on Google and still be largely opaque to AI systems — missing structured data, no llms.txt, bot access blocked, thin factual density.
 
-GEO Optimizer focuses on the technical and structural signals that AI answer engines use: robots.txt bot permissions, llms.txt presence and depth, JSON-LD schema richness, brand entity coherence, and content citability across 47 methods. These complement traditional SEO work rather than replacing it.
+GEO Optimizer focuses on the technical and structural signals AI answer engines use: robots.txt bot permissions, `llms.txt` presence and depth, JSON-LD schema richness, brand entity coherence, multi-page topical authority, and content citability across 47 methods. These complement traditional SEO rather than replacing it.
 
 ---
 
@@ -181,7 +200,12 @@ geo logs --file access.log                                # AI Crawler Activity 
 geo access --url https://example.com                      # Agent Access Audit — browser vs AI bot access simulation
 geo citations --brand "Acme" --domain acme.com            # AI Citation Check — are you cited by answer engines? (BYO key)
 geo authority --sitemap https://example.com/sitemap.xml   # Topic Authority — multi-page entity coverage, clusters, pillars
+geo drift --url https://example.com                        # Semantic Drift — what changed since the last snapshot
 ```
+
+**Topic authority** — AI engines map entities and multi-page coverage, not single pages. `geo authority` clusters your site by topic and scores depth, interlinking, and pillar pages:
+
+<img src="assets/authority.gif" alt="geo authority demo — site-level topical authority score and recommendations" width="800"/>
 
 GEO Optimizer checks whether websites can be **crawled, understood, cited, and monitored** by AI answer engines:
 
@@ -398,6 +422,28 @@ Full release calendar, philosophy, and direction → [docs/ROADMAP.md](docs/ROAD
 
 ---
 
+## FAQ
+
+**What is Answer Engine Optimization (AEO)?**
+AEO is the practice of structuring your website so AI answer engines — ChatGPT, Perplexity, Google AI Overviews, Gemini, Claude — can find, understand, and cite it as the direct answer to a user's question. It is also called Generative Engine Optimization (GEO), AI SEO, LLM SEO, or AI Search Optimization. GEO Optimizer audits and scores your site for all of it.
+
+**How do I check if ChatGPT or Perplexity cites my website?**
+Run `geo citations --brand "Your Brand" --domain yoursite.com` with a Perplexity or OpenAI API key. It asks the engine customer-style questions and reports whether your brand is mentioned, whether your domain is cited as a source, and which competitors are cited instead. No account needed for the [free web version](https://geoready.dev/tools/ai-citation-checker/).
+
+**Is this an llms.txt generator and checker?**
+Yes. `geo llms` generates an `llms.txt` from your sitemap, the audit scores its presence and depth, and the [Astro integration](#astro-integration) creates one at build time. There's also a [free online llms.txt generator](https://geoready.dev/tools/llms-txt-generator/).
+
+**Is it free and open source?**
+Yes — MIT licensed, free forever via `pip install geo-optimizer-skill` or `uvx`. The hosted [GeoReady](https://geoready.dev) platform adds continuous monitoring, score history, citation tracking, and team features on top of the same engine.
+
+**Which AI engines does it cover?**
+ChatGPT (GPTBot, OAI-SearchBot), Perplexity (PerplexityBot), Claude (ClaudeBot, anthropic-ai), Google (Google-Extended, Gemini), plus 27 AI bots total and per-platform readiness profiles for ChatGPT, Perplexity, and Google AI Overviews.
+
+**How is it different from a traditional SEO tool?**
+Traditional SEO tools optimize for Google rankings and backlinks. GEO Optimizer measures AI *citation readiness* — whether answer engines can crawl, parse, and quote your content — using signals (llms.txt, AI-bot access, schema richness, citability, topical authority) that classic SEO ignores.
+
+---
+
 ## Security
 
 All URL inputs are validated against private IP ranges (RFC 1918, loopback, link-local, cloud metadata) with DNS pinning before any request. See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
@@ -409,7 +455,7 @@ All URL inputs are validated against private IP ranges (RFC 1918, loopback, link
 ```bash
 git clone https://github.com/YOUR_USERNAME/geo-optimizer-skill.git
 cd geo-optimizer-skill && pip install -e ".[dev]"
-pytest tests/ -v   # 1682 tests, all mocked
+pytest tests/ -v   # 1720 tests, all mocked
 ```
 
 [Bug reports](https://github.com/Auriti-Labs/geo-optimizer-skill/issues/new?template=bug_report.yml) · [Feature requests](https://github.com/Auriti-Labs/geo-optimizer-skill/issues/new?template=feature_request.yml) · [CONTRIBUTING.md](CONTRIBUTING.md)
@@ -427,6 +473,12 @@ Run the [CLI locally](#quick-start), try the [free audit online](https://georead
 If this saved you time, a star helps others find it.
 
 [![Star on GitHub](https://img.shields.io/github/stars/auriti-labs/geo-optimizer-skill?style=for-the-badge&color=facc15&logo=github&label=Star)](https://github.com/auriti-labs/geo-optimizer-skill/stargazers)
+
+<sub>
+
+**Topics:** Answer Engine Optimization (AEO) · Generative Engine Optimization (GEO) · AI SEO · LLM SEO · AI Search Optimization · AI visibility · LLM visibility · ChatGPT SEO · Perplexity SEO · Google AI Overviews · Gemini · Claude · llms.txt generator & checker · AI citation tracking · schema markup · structured data · open-source AEO/GEO tool · Python CLI · MCP server · Astro integration
+
+</sub>
 
 </div>
 
