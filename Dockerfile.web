@@ -13,6 +13,9 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend/ ./
+# astro.config.mjs imports the local astro-geoready integration via ../integrations
+# (WORKDIR is /frontend, so the repo layout is preserved one level up)
+COPY integrations/ /integrations/
 ENV PUBLIC_GA_MEASUREMENT_ID=G-KV5MQTGFZG
 RUN npm run build
 
