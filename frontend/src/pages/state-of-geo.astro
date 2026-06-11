@@ -1,0 +1,184 @@
+---
+import Shell from '../components/Shell.astro';
+
+const title = 'State of GEO — Live Benchmark of AI Search Readiness';
+const description =
+  'Live aggregate statistics from real GEO audits: average scores, llms.txt and schema adoption, AI crawler access, and category breakdowns. Updated continuously, privacy-first.';
+const canonical = 'https://geoready.dev/state-of-geo/';
+---
+
+<Shell title={title} description={description} canonical={canonical}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 py-10 md:py-16">
+    <header class="mb-10 md:mb-12">
+      <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted uppercase tracking-wider">
+        <span>GeoReady</span>
+        <span class="w-1 h-1 rounded-full bg-text-muted" />
+        <span>Benchmark</span>
+      </div>
+
+      <h1 class="mt-3 font-display text-3xl md:text-4xl font-bold text-text-primary leading-tight tracking-tight">
+        State of GEO: how ready is the web for AI search?
+      </h1>
+
+      <p class="mt-4 text-base md:text-lg text-text-secondary leading-relaxed">
+        Live aggregates from real audits run with the open-source GEO Optimizer
+        engine — the same 100-point, 8-category rubric for every site. No
+        domains, no identities: the dataset stores only salted hashes and
+        per-category signals, and this page shows aggregates only.
+      </p>
+    </header>
+
+    {/* Stats — populated client-side from /api/public/benchmark */}
+    <div id="bench-loading" class="rounded-xl border border-border bg-bg-surface px-5 py-8 text-center text-sm text-text-muted">
+      Loading live benchmark data…
+    </div>
+
+    <div id="bench" class="hidden space-y-10">
+      <p class="text-xs font-mono text-text-muted">
+        Based on <span id="b-domains" class="text-text-primary font-semibold">—</span> audited domains
+        (<span id="b-audits">—</span> audits) · live dataset, updated as audits run · last refresh <span id="b-updated">—</span>
+      </p>
+
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="rounded-xl border border-border px-4 py-4">
+          <p class="text-xs text-text-muted uppercase tracking-wider">Average GEO score</p>
+          <p id="b-avg" class="mt-1 text-3xl font-bold text-text-primary">—</p>
+          <p class="text-xs text-text-muted">out of 100</p>
+        </div>
+        <div class="rounded-xl border border-border px-4 py-4">
+          <p class="text-xs text-text-muted uppercase tracking-wider">Median score</p>
+          <p id="b-median" class="mt-1 text-3xl font-bold text-text-primary">—</p>
+          <p class="text-xs text-text-muted">half the web does worse</p>
+        </div>
+        <div class="rounded-xl border border-border px-4 py-4">
+          <p class="text-xs text-text-muted uppercase tracking-wider">Ship an llms.txt</p>
+          <p id="b-llms" class="mt-1 text-3xl font-bold text-text-primary">—</p>
+          <p class="text-xs text-text-muted">of audited domains</p>
+        </div>
+      </div>
+
+      <section>
+        <h2 class="font-display text-2xl font-bold text-text-primary">Adoption of AI-readiness signals</h2>
+        <div id="b-adoption" class="mt-4 space-y-3"></div>
+      </section>
+
+      <section>
+        <h2 class="font-display text-2xl font-bold text-text-primary">Where sites lose points</h2>
+        <p class="mt-2 text-sm text-text-secondary">Average score per category vs. its ceiling — the widest gaps are the easiest wins.</p>
+        <div id="b-cats" class="mt-4 space-y-3"></div>
+      </section>
+
+      <section>
+        <h2 class="font-display text-2xl font-bold text-text-primary">Score bands</h2>
+        <div id="b-bands" class="mt-4 space-y-3"></div>
+      </section>
+    </div>
+
+    <div id="bench-error" class="hidden rounded-xl border border-border bg-bg-surface px-5 py-8 text-center text-sm text-text-muted">
+      Benchmark data is temporarily unavailable. Try again in a minute.
+    </div>
+
+    {/* Methodology + CTA (static, crawlable) */}
+    <div class="mt-14 space-y-12 [&_h2]:font-display [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-text-primary [&_p]:text-text-secondary [&_p]:leading-relaxed [&_li]:text-text-secondary">
+      <section>
+        <h2>Methodology</h2>
+        <ul class="mt-4 space-y-2 list-disc pl-5">
+          <li><strong>One row per domain</strong> — the most recent audit per domain; re-audits don't inflate the cohort.</li>
+          <li><strong>Scheduled monitoring excluded</strong> — only user-initiated audits (web, CLI, API, tools) count.</li>
+          <li><strong>Privacy-first</strong> — domains are stored as salted HMAC hashes; this endpoint exposes aggregates only.</li>
+          <li><strong>Same rubric for everyone</strong> — the open-source engine's 100-point score across 8 categories (robots, llms.txt, schema, meta, content, brand &amp; entity, signals, AI discovery).</li>
+        </ul>
+        <p class="mt-4 text-sm">
+          The dataset grows with every audit. Run one and you're (anonymously) in it.
+        </p>
+      </section>
+
+      <section>
+        <h2>Where does your site stand?</h2>
+        <p class="mt-4">
+          The averages above are the baseline to beat. A free audit gives you
+          your score in seconds — then the gap analysis tells you which
+          category recovers the most points first.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="/" class="inline-flex items-center justify-center rounded-full bg-accent-teal px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90">
+            Audit my site free
+          </a>
+          <a href="/guides/generative-engine-optimization/" class="inline-flex items-center justify-center rounded-full border border-border px-6 py-3 text-sm font-medium text-text-primary transition-colors hover:border-accent-teal">
+            Read the GEO guide
+          </a>
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <script>
+    const CAT_LABELS: Record<string, string> = {
+      robots: 'Robots.txt (AI crawler access)',
+      llms: 'llms.txt',
+      schema: 'Schema JSON-LD',
+      meta: 'Meta tags',
+      content: 'Content quality',
+      brand_entity: 'Brand & entity',
+      signals: 'Technical signals',
+      ai_discovery: 'AI discovery files',
+    };
+    const ADOPTION_LABELS: Record<string, string> = {
+      llms_txt: 'Publish an llms.txt',
+      schema_jsonld: 'Have valid JSON-LD schema',
+      canonical: 'Declare a canonical URL',
+      h1: 'Have a proper H1',
+      robots_no_ai_blocked: 'Allow all AI crawlers (none blocked)',
+    };
+
+    function bar(container: HTMLElement, label: string, ratio: number, valueText: string) {
+      const row = document.createElement('div');
+      row.innerHTML = `
+        <div class="flex justify-between text-sm">
+          <span class="text-text-secondary">${label}</span>
+          <span class="font-mono text-text-primary">${valueText}</span>
+        </div>
+        <div class="mt-1 h-2 rounded-full bg-bg-subtle overflow-hidden">
+          <div class="h-full rounded-full bg-accent-teal" style="width:${Math.round(ratio * 100)}%"></div>
+        </div>`;
+      container.appendChild(row);
+    }
+
+    async function load() {
+      try {
+        const res = await fetch('/api/public/benchmark');
+        if (!res.ok) throw new Error(String(res.status));
+        const d = await res.json();
+
+        (document.getElementById('b-domains') as HTMLElement).textContent = String(d.distinct_domains);
+        (document.getElementById('b-audits') as HTMLElement).textContent = String(d.total_audits);
+        (document.getElementById('b-updated') as HTMLElement).textContent = new Date(d.updated_at).toLocaleDateString('en-GB');
+        (document.getElementById('b-avg') as HTMLElement).textContent = d.score.average ?? '—';
+        (document.getElementById('b-median') as HTMLElement).textContent = d.score.median ?? '—';
+        const llms = d.adoption?.llms_txt;
+        (document.getElementById('b-llms') as HTMLElement).textContent = llms != null ? Math.round(llms * 100) + '%' : '—';
+
+        const adoption = document.getElementById('b-adoption') as HTMLElement;
+        for (const [key, value] of Object.entries(d.adoption ?? {})) {
+          bar(adoption, ADOPTION_LABELS[key] ?? key, value as number, Math.round((value as number) * 100) + '%');
+        }
+        const cats = document.getElementById('b-cats') as HTMLElement;
+        for (const [key, value] of Object.entries(d.category_averages ?? {})) {
+          const v = value as { average: number; max: number };
+          bar(cats, CAT_LABELS[key] ?? key, v.average / v.max, `${v.average}/${v.max}`);
+        }
+        const bands = document.getElementById('b-bands') as HTMLElement;
+        for (const [key, value] of Object.entries(d.bands ?? {})) {
+          bar(bands, key, value as number, Math.round((value as number) * 100) + '%');
+        }
+
+        document.getElementById('bench-loading')!.classList.add('hidden');
+        document.getElementById('bench')!.classList.remove('hidden');
+      } catch {
+        document.getElementById('bench-loading')!.classList.add('hidden');
+        document.getElementById('bench-error')!.classList.remove('hidden');
+      }
+    }
+    load();
+  </script>
+</Shell>
