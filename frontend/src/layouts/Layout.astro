@@ -26,6 +26,11 @@ const {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Preload dei font critici above-the-fold (self-hosted in /public/fonts).
+       Con font-display: optional in global.css, il preload dà al font la possibilità
+       di essere pronto entro il block period → niente swap tardivo, CLS azzerato. -->
+  <link rel="preload" href="/fonts/space-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/geist-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <title>{title}</title>
   <meta name="description" content={description}>
   <meta name="robots" content={robots}>
