@@ -67,3 +67,6 @@ graphify-out/
 platform/.env
 *.db
 geoready_platform.db
+
+# Live eval fixtures (real provider responses; not committed)
+platform/probe_eval/fixtures_live/

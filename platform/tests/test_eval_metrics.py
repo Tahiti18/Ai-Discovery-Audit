@@ -89,6 +89,17 @@ def test_labeled_hallucination_cases_meet_precision_gates():
 # ─── harness replay smoke: contamination gate holds end-to-end ───────────────
 
 
+def test_brand_detection_fp_fn_quantified():
+    """Quantify brand-detection FP/FN vs ground truth; lock known limitations."""
+    r = harness.score_brand_detection(harness.load_brand_cases())
+    assert r["precision"] >= 0.90, r
+    assert r["recall"] >= 0.80, r
+    # The only false positive is the documented ambiguous single-word brand.
+    assert set(r["false_positives"]) == {"LIMIT-ambiguous-single-word"}, r
+    # The only false negatives are documented limitations (typos, non-latin, acronym-off).
+    assert set(r["false_negatives"]) == {"LIMIT-misspelling", "LIMIT-non-latin", "LIMIT-acronym-off"}, r
+
+
 def test_replay_contamination_is_zero_and_runs():
     report = harness.run_replay()
     assert report["fixtures_present"] >= 4

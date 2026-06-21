@@ -1,0 +1,30 @@
+{
+  "_meta": {
+    "description": "Adversarial brand-detection cases. 'expected' is GROUND TRUTH (is the answer actually about this business), so the matcher's real false positives/negatives are measured honestly — including documented limitations (ambiguous single-word brands -> FP; misspellings/non-latin -> FN).",
+    "version": "1"
+  },
+  "cases": [
+    {"id": "suffix-in-name", "name": "Acme Plumbing LLC", "text": "We recommend Acme Plumbing for repairs.", "expected": true},
+    {"id": "suffix-in-text", "name": "Acme Plumbing", "text": "Acme Plumbing, Inc. is highly rated.", "expected": true},
+    {"id": "possessive", "name": "Acme Plumbing", "text": "Acme's plumbing crew was fast.", "expected": true},
+    {"id": "case", "name": "Acme Plumbing", "text": "ACME PLUMBING is open now.", "expected": true},
+    {"id": "possessive-no-apostrophe", "name": "Joe's Plumbing", "text": "Joes Plumbing did great work.", "expected": true},
+    {"id": "accents", "name": "Cafe Lumiere", "text": "We loved Café Lumière downtown.", "expected": true},
+    {"id": "partial-first-token", "name": "Acme Plumbing", "text": "Acme is a solid choice in Austin.", "expected": true},
+    {"id": "quoted", "name": "Acme Plumbing", "text": "The guide lists \"Acme Plumbing\" as top rated.", "expected": true},
+    {"id": "chain-location", "name": "Acme Plumbing", "text": "Acme Plumbing (Downtown branch) is closest to you.", "expected": true},
+    {"id": "domain-brand", "name": "Notion Labs", "domain": "notion.so", "text": "Most people just use Notion for notes.", "expected": true},
+    {"id": "alias-acronym", "name": "Kentucky Fried Chicken", "aliases": ["KFC"], "text": "Grab KFC tonight.", "expected": true},
+    {"id": "mention-not-recommend", "name": "Acme Plumbing", "text": "Honestly, avoid Acme Plumbing — poor reviews.", "expected": true},
+
+    {"id": "different-brand", "name": "Acme Plumbing", "text": "We used Globex Plumbing instead.", "expected": false},
+    {"id": "category-only", "name": "Acme Plumbing", "category": "plumbing", "text": "Plumbing services are widely available here.", "expected": false},
+    {"id": "generic-name", "name": "Best Dentist", "category": "dentist", "text": "Find the best dentists in Denver.", "expected": false},
+    {"id": "substring-not-token", "name": "Acme Plumbing", "text": "The acmecorp tool is unrelated.", "expected": false},
+
+    {"id": "LIMIT-ambiguous-single-word", "name": "Apple", "text": "I baked an apple pie yesterday.", "expected": false, "note": "matcher over-matches (FP) — documented ambiguous single-word limitation"},
+    {"id": "LIMIT-misspelling", "name": "Acme Plumbing", "text": "Acmee Plumbing was great.", "expected": true, "note": "matcher misses (FN) — no fuzzy matching by design"},
+    {"id": "LIMIT-non-latin", "name": "Sakura Dental", "text": "東京のサクラ歯科。", "expected": true, "note": "matcher misses (FN) — no transliteration"},
+    {"id": "LIMIT-acronym-off", "name": "International Business Machines", "text": "IBM leads the market.", "expected": true, "note": "matcher misses (FN) — acronym generation off by default"}
+  ]
+}
