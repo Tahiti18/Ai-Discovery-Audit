@@ -1,0 +1,14 @@
+{
+  "business_id": "notion",
+  "taxonomy_version": "v2",
+  "provider": "synthetic",
+  "_note": "SYNTHETIC placeholder transcript. Replace via `--mode record`.",
+  "responses": [
+    {"category_key": "category_recommendation", "prompt": "What are the best productivity and notes software in San Francisco?", "text": "Top productivity and notes software include Notion, along with Evernote and Coda for documents.", "citations": ["https://notion.so", "https://coda.io", "https://reddit.com/r/x"]},
+    {"category_key": "problem_solution", "prompt": "I need productivity and notes software in San Francisco - who should I hire?", "text": "Notion is a great productivity and notes app; Confluence by Atlassian is an alternative for teams.", "citations": ["https://notion.so", "https://atlassian.com"]},
+    {"category_key": "comparison", "prompt": "How does Notion compare to other productivity and notes software in San Francisco?", "text": "Notion competes with Coda and Confluence; Notion is favored for flexible notes and databases.", "citations": ["https://notion.so", "https://coda.io", "https://atlassian.com"]},
+    {"category_key": "legitimacy", "prompt": "Is Notion a reputable, trustworthy productivity and notes software?", "text": "Notion is a reputable productivity tool used by millions and many companies for notes and docs.", "citations": ["https://notion.so"]},
+    {"category_key": "factual_attributes", "prompt": "Where is Notion located, what are their hours, and how do I contact them?", "text": "Notion is based in San Francisco and provides productivity software with online support.", "citations": ["https://notion.so"]},
+    {"category_key": "awareness", "prompt": "What can you tell me about Notion?", "text": "Notion is a productivity and notes application combining documents, wikis, and databases.", "citations": ["https://notion.so"]}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "business_id": "slack",
+  "taxonomy_version": "v2",
+  "provider": "synthetic",
+  "_note": "SYNTHETIC placeholder transcript to demonstrate the harness. Replace with `--mode record` against a live provider.",
+  "responses": [
+    {"category_key": "category_recommendation", "prompt": "What are the best team messaging software in San Francisco?", "text": "The best team messaging software include Slack, which is widely used for workplace messaging, along with Microsoft Teams.", "citations": ["https://slack.com", "https://microsoft.com", "https://yelp.com/biz/x"]},
+    {"category_key": "problem_solution", "prompt": "I need team messaging software in San Francisco - who should I hire?", "text": "For team messaging software, Slack is a strong choice; Discord is also popular for community messaging.", "citations": ["https://slack.com", "https://discord.com"]},
+    {"category_key": "comparison", "prompt": "How does Slack compare to other team messaging software in San Francisco?", "text": "Slack competes with Microsoft Teams and Discord; Slack is known for integrations and messaging usability.", "citations": ["https://slack.com", "https://microsoft.com", "https://discord.com"]},
+    {"category_key": "legitimacy", "prompt": "Is Slack a reputable, trustworthy team messaging software?", "text": "Yes, Slack is a reputable team messaging platform owned by Salesforce and widely trusted by enterprises.", "citations": ["https://slack.com"]},
+    {"category_key": "factual_attributes", "prompt": "Where is Slack located, what are their hours, and how do I contact them?", "text": "Slack is headquartered in San Francisco and offers messaging software with support via their help center.", "citations": ["https://slack.com"]},
+    {"category_key": "awareness", "prompt": "What can you tell me about Slack?", "text": "Slack is a team messaging and collaboration application launched in 2013 and now part of Salesforce.", "citations": ["https://slack.com"]}
+  ]
+}

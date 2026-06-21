@@ -1,0 +1,14 @@
+{
+  "business_id": "joes-plumbing-austin",
+  "taxonomy_version": "v2",
+  "provider": "synthetic",
+  "_note": "SYNTHETIC placeholder for a low-prominence SMB the model does not recognize. Replace via `--mode record`.",
+  "responses": [
+    {"category_key": "category_recommendation", "prompt": "What are the best plumber in Austin?", "text": "Some well-reviewed plumbers in Austin include Citywide Pipes and Lone Star Plumbing, based on local reviews.", "citations": ["https://yelp.com/biz/x", "https://angi.com/x"]},
+    {"category_key": "problem_solution", "prompt": "I need plumber in Austin - who should I hire?", "text": "For a plumber in Austin, consider checking local directories and reviews to find a licensed professional near you.", "citations": ["https://yelp.com/biz/x"]},
+    {"category_key": "comparison", "prompt": "How does Joe's Plumbing compare to other plumber in Austin?", "text": "I don't have specific information about that business to compare it against other plumbers in Austin.", "citations": []},
+    {"category_key": "legitimacy", "prompt": "Is Joe's Plumbing a reputable, trustworthy plumber?", "text": "I do not have verified information about that specific plumber, but generally you should check licensing, insurance, and customer reviews before hiring any plumber.", "citations": []},
+    {"category_key": "factual_attributes", "prompt": "Where is Joe's Plumbing located, what are their hours, and how do I contact them?", "text": "I could not find reliable details about that business's location or hours; please check their official website or a directory listing to confirm contact information.", "citations": []},
+    {"category_key": "awareness", "prompt": "What can you tell me about Joe's Plumbing?", "text": "I don't have specific information about that business; it may be a small local plumbing company, but I cannot verify details.", "citations": []}
+  ]
+}

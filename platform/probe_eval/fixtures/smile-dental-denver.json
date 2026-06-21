@@ -1,0 +1,14 @@
+{
+  "business_id": "smile-dental-denver",
+  "taxonomy_version": "v2",
+  "provider": "synthetic",
+  "_note": "SYNTHETIC placeholder for a low-prominence SMB. Replace via `--mode record`.",
+  "responses": [
+    {"category_key": "category_recommendation", "prompt": "What are the best dentist in Denver?", "text": "Highly rated dentists in Denver include Mile High Dental and Front Range Family Dentistry, per local reviews.", "citations": ["https://yelp.com/biz/x", "https://healthgrades.com/x"]},
+    {"category_key": "problem_solution", "prompt": "I need dentist in Denver - who should I hire?", "text": "To find a dentist in Denver, check reviews and confirm they accept your insurance before booking.", "citations": ["https://yelp.com/biz/x"]},
+    {"category_key": "comparison", "prompt": "How does Smile Bright Dental compare to other dentist in Denver?", "text": "I don't have specific information about that dental practice to compare it with other dentists in Denver.", "citations": []},
+    {"category_key": "legitimacy", "prompt": "Is Smile Bright Dental a reputable, trustworthy dentist?", "text": "I do not have verified information about that specific dental office; in general, check the dentist's credentials, reviews, and licensing before your first visit.", "citations": []},
+    {"category_key": "factual_attributes", "prompt": "Where is Smile Bright Dental located, what are their hours, and how do I contact them?", "text": "I could not find reliable details about that practice's address or hours; please refer to their official website or a verified directory for accurate contact information.", "citations": []},
+    {"category_key": "awareness", "prompt": "What can you tell me about Smile Bright Dental?", "text": "I don't have specific verified information about that dental practice; it appears to be a local dentist but I cannot confirm details.", "citations": []}
+  ]
+}

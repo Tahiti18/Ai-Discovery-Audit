@@ -1,0 +1,80 @@
+{
+  "_meta": {
+    "description": "Labeled synthetic AI responses for hallucination precision/recall. The harness calls detect_flags() with these inputs and compares predicted flag types to 'expected'. Synthetic so labels are ground truth without asserting facts about real businesses.",
+    "version": "1"
+  },
+  "cases": [
+    {
+      "id": "true-closed-brand-named",
+      "text": "Acme Plumbing was a local plumber but is now permanently closed and no longer taking customers.",
+      "category_key": "factual_attributes", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": ["claims_closed"]
+    },
+    {
+      "id": "competitor-closed-brand-not-named",
+      "text": "Globex Plumbing is permanently closed. You might want to consider other plumbing providers in the area, such as several well-reviewed local options worth comparing.",
+      "category_key": "factual_attributes", "brand_mentioned": false, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": ["brand_not_recognized"]
+    },
+    {
+      "id": "negated-closed",
+      "text": "Acme Plumbing is not permanently closed; they are open Monday to Saturday and actively serving customers.",
+      "category_key": "factual_attributes", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": []
+    },
+    {
+      "id": "clean-factual-answer",
+      "text": "Acme Plumbing is located in Austin, open weekdays 8am-6pm, and offers residential plumbing and emergency repairs.",
+      "category_key": "factual_attributes", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": []
+    },
+    {
+      "id": "brand-not-recognized-substantive",
+      "text": "I do not have specific verified information about that particular business, but in general when choosing a plumber you should check licensing, insurance, online reviews, and response times before hiring.",
+      "category_key": "legitimacy", "brand_mentioned": false, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": ["brand_not_recognized"]
+    },
+    {
+      "id": "short-refusal-no-flag",
+      "text": "I'm not sure.",
+      "category_key": "factual_attributes", "brand_mentioned": false, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": []
+    },
+    {
+      "id": "out-of-business-phrasing",
+      "text": "As of last year, Acme Plumbing appears to have gone out of business and shut down operations entirely.",
+      "category_key": "awareness", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": ["claims_closed"]
+    },
+    {
+      "id": "recommendation-context-no-flag",
+      "text": "The best plumbers in Austin include Acme Plumbing, known for fast response times and fair pricing.",
+      "category_key": "category_recommendation", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": false,
+      "expected": []
+    },
+    {
+      "id": "recommendation-brand-absent-not-factual",
+      "text": "Top plumbers in Austin include Globex Plumbing and Citywide Pipes, both well reviewed.",
+      "category_key": "category_recommendation", "brand_mentioned": false, "name": "Acme Plumbing", "counts_for_factual": false,
+      "expected": []
+    },
+    {
+      "id": "false-closed-trap-the-office-closed",
+      "text": "Acme Plumbing's office is closed on Sundays but open every other day for scheduling.",
+      "category_key": "factual_attributes", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": []
+    },
+    {
+      "id": "no-longer-operating-brand-named",
+      "text": "Unfortunately Acme Plumbing is no longer operating in the Austin area.",
+      "category_key": "awareness", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": ["claims_closed"]
+    },
+    {
+      "id": "substantive-generic-but-brand-mentioned",
+      "text": "Acme Plumbing is a plumbing company. When evaluating plumbers generally, look for licensing and reviews to ensure quality service over time.",
+      "category_key": "legitimacy", "brand_mentioned": true, "name": "Acme Plumbing", "counts_for_factual": true,
+      "expected": []
+    }
+  ]
+}
