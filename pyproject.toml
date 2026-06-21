@@ -74,6 +74,28 @@ dev = [
 all = [
     "geo-optimizer-skill[async,web,mcp,pdf,config]",
 ]
+# ── AI Visibility Platform (Phase 0) ──────────────────────────────────────────
+# Isolated dependency group for the geoready_platform/ tree. NOT installed by the
+# default package; the platform wraps the OSS engine and ships separately.
+platform = [
+    "fastapi>=0.110.0,<1.0",
+    "uvicorn[standard]>=0.27.0,<1.0",
+    "sqlalchemy>=2.0,<3.0",
+    "alembic>=1.13,<2.0",
+    "pydantic>=2.6,<3.0",
+    "celery>=5.3,<6.0",
+    "redis>=5.0,<6.0",
+    "pyjwt>=2.8,<3.0",
+    "dnspython>=2.6,<3.0",
+    "httpx>=0.27.0,<1.0",
+    "psycopg[binary]>=3.1,<4.0",
+]
+platform-dev = [
+    "geo-optimizer-skill[platform,async]",
+    "pytest>=7.0,<10.0",
+    "pytest-cov>=4.0,<8.0",
+    "ruff>=0.8.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/auriti-labs/geo-optimizer-skill"
@@ -136,6 +158,9 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/test_integration.py" = ["E402"]
+# FastAPI's Depends()/Header() in argument defaults is the framework's intended
+# idiom, not a bug — B008 is a false positive across the platform API layer.
+"platform/**" = ["B008"]
 
 [tool.mypy]
 python_version = "3.10"

@@ -62,3 +62,8 @@ local_cache/
 
 # Generated graph analysis output (graphify tool)
 graphify-out/
+
+# Platform (Phase 0) local artifacts
+platform/.env
+*.db
+geoready_platform.db
