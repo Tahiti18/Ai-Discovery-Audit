@@ -36,8 +36,12 @@ def _extract_citations(data: dict, message: dict) -> list[str]:
     return citations
 
 
-def run_prompt(prompt: str, *, model: str) -> ProbeResponse:
-    """Query OpenRouter for one prompt. Returns a ProbeResponse (provenance kept)."""
+def run_prompt(prompt: str, *, model: str, timeout: float = _TIMEOUT) -> ProbeResponse:
+    """Query OpenRouter for one prompt. Returns a ProbeResponse (provenance kept).
+
+    ``timeout`` is the total request timeout in seconds; on expiry a clear
+    error is returned (never hangs).
+    """
     import httpx
 
     key = os.environ.get("OPENROUTER_API_KEY")
@@ -49,7 +53,7 @@ def run_prompt(prompt: str, *, model: str) -> ProbeResponse:
             _URL,
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
             json={"model": model, "messages": [{"role": "user", "content": prompt}]},
-            timeout=_TIMEOUT,
+            timeout=httpx.Timeout(timeout),
         )
         resp.raise_for_status()
         data = resp.json()
