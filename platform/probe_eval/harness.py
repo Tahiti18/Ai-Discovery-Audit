@@ -26,6 +26,7 @@ from probe_eval import metrics
 BASE = Path(__file__).parent
 BENCH = BASE / "benchmark"
 FIXTURES = BASE / "fixtures"
+FIXTURES_LIVE = BASE / "fixtures_live"  # gitignored; never overwrites synthetic golden set
 
 
 # ─── Loading ─────────────────────────────────────────────────────────────────
@@ -39,11 +40,97 @@ def load_halluc_cases() -> list[dict]:
     return json.loads((BENCH / "hallucination_cases.json").read_text(encoding="utf-8"))["cases"]
 
 
-def load_fixture(business_id: str) -> dict | None:
-    path = FIXTURES / f"{business_id}.json"
+def load_brand_cases() -> list[dict]:
+    return json.loads((BENCH / "brand_detection_cases.json").read_text(encoding="utf-8"))["cases"]
+
+
+def score_brand_detection(cases: list[dict]) -> dict:
+    """Confusion matrix + precision/recall for brand detection vs ground truth."""
+    from geoready_platform.services.probe.entity_matching import mentions
+
+    tp = fp = tn = fn = 0
+    misses: list[str] = []
+    false_hits: list[str] = []
+    for c in cases:
+        got = mentions(
+            c["text"], c["name"],
+            domain=c.get("domain"), aliases=c.get("aliases"),
+            category=c.get("category"), enable_acronym=c.get("enable_acronym", False),
+        ).matched
+        exp = bool(c["expected"])
+        if got and exp:
+            tp += 1
+        elif got and not exp:
+            fp += 1
+            false_hits.append(c["id"])
+        elif not got and exp:
+            fn += 1
+            misses.append(c["id"])
+        else:
+            tn += 1
+    precision = tp / (tp + fp) if (tp + fp) else 1.0
+    recall = tp / (tp + fn) if (tp + fn) else 1.0
+    return {
+        "tp": tp, "fp": fp, "tn": tn, "fn": fn,
+        "precision": round(precision, 4), "recall": round(recall, 4),
+        "false_positives": false_hits, "false_negatives": misses,
+    }
+
+
+def load_fixture(business_id: str, fixtures_dir: Path = FIXTURES) -> dict | None:
+    path = fixtures_dir / f"{business_id}.json"
     if not path.exists():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def business_by_id(bid: str) -> dict | None:
+    for b in load_businesses():
+        if b["id"] == bid:
+            return b
+    return None
+
+
+def record_live_openrouter(ids: list[str], *, model: str, max_prompts: int, run_label: str = "") -> dict:
+    """Record real OpenRouter responses for a few businesses into fixtures_live/.
+
+    Key is read inside the client; never logged here. Writes one fixture per
+    business: <id>.json (or <id>__<run_label>.json for repeat runs).
+    """
+    from geoready_platform.services.probe import prompt_generator
+
+    from probe_eval import openrouter_client
+
+    if not openrouter_client.available():
+        raise SystemExit("OPENROUTER_API_KEY not set in this environment.")
+
+    FIXTURES_LIVE.mkdir(exist_ok=True)
+    written = []
+    for bid in ids:
+        biz = business_by_id(bid)
+        if biz is None:
+            continue
+        prompts = prompt_generator.generate_prompts(
+            name=biz["name"], category=biz.get("category"), city=biz.get("city"), max_prompts=max_prompts
+        )
+        responses = []
+        for gp in prompts:
+            r = openrouter_client.run_prompt(gp.text, model=model)
+            responses.append(
+                {"category_key": gp.category, "prompt": gp.text, "text": r.text,
+                 "citations": r.citations, "error": r.error}
+            )
+        fixture = {
+            "business_id": bid,
+            "taxonomy_version": prompt_generator.current_taxonomy_version(),
+            "provider": "openrouter",
+            "model": model,
+            "responses": responses,
+        }
+        suffix = f"__{run_label}" if run_label else ""
+        (FIXTURES_LIVE / f"{bid}{suffix}.json").write_text(json.dumps(fixture, indent=2), encoding="utf-8")
+        written.append(bid)
+    return {"recorded": written, "model": model}
 
 
 def _domain_of(website: str) -> str:
@@ -65,7 +152,9 @@ def score_business(biz: dict, fixture: dict) -> dict:
         citations = r.get("citations", [])
         cat = CATEGORY_BY_KEY.get(r["category_key"])
         answered = bool(text.strip())
-        sig = analyze_response(text=text, citations=citations, name=name, domain=domain)
+        sig = analyze_response(
+            text=text, citations=citations, name=name, domain=domain, category=biz.get("category")
+        )
         analyzed.append(
             AnalyzedResponse(
                 category=r["category_key"],

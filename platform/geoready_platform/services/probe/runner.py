@@ -167,6 +167,7 @@ def execute_probe_run(run_id: str) -> None:
                 citations=resp.citations,
                 name=facts["name"],
                 domain=facts["domain"],
+                category=facts["category"],
             )
             flags = (
                 hallucination.detect_flags(

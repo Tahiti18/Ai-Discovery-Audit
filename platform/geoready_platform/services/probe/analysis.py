@@ -7,10 +7,10 @@ domains/competitors were named. Domain normalization reuses the engine.
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
 from urllib.parse import urlparse
 
+from geoready_platform.services.probe.entity_matching import mentions
 from geoready_platform.services.probe.non_competitor_domains import filter_competitor_domains
 
 
@@ -43,12 +43,16 @@ def analyze_response(
     name: str,
     domain: str,
     competitor_names: list[str] | None = None,
+    category: str | None = None,
+    aliases: list[str] | None = None,
 ) -> ResponseSignals:
     text = text or ""
     own = normalize_domain(domain)
     cited = [normalize_domain(c) for c in (citations or []) if c]
 
-    brand_mentioned = bool(name) and re.search(re.escape(name), text, re.IGNORECASE) is not None
+    # Robust, precision-first brand detection (handles suffixes, possessives,
+    # punctuation, accents, partial mentions, domain-derived names, aliases).
+    brand_mentioned = mentions(text, name, domain=domain, aliases=aliases, category=category).matched
     domain_cited = own in cited if own else False
     # Exclude the business's own domain AND reference/social/directory/etc.
     # domains — those are citation sources, not competitors. See
@@ -56,10 +60,9 @@ def analyze_response(
     candidate_competitors = sorted({d for d in cited if d and d != own})
     competitor_domains = filter_competitor_domains(candidate_competitors)
 
+    # Competitor names are matched with the same robust matcher.
     matched_names = [
-        comp
-        for comp in competitor_names_list(competitor_names)
-        if re.search(re.escape(comp), text, re.IGNORECASE)
+        comp for comp in competitor_names_list(competitor_names) if mentions(text, comp).matched
     ]
 
     return ResponseSignals(
