@@ -1,0 +1,32 @@
+name: platform-ci
+
+# CI for the AI Visibility Platform (platform/). Independent of the OSS engine
+# CI (ci.yml), which remains the source of truth for the geo_optimizer package.
+
+on:
+  push:
+    paths:
+      - "platform/**"
+      - "pyproject.toml"
+      - ".github/workflows/platform-ci.yml"
+  pull_request:
+    paths:
+      - "platform/**"
+      - "pyproject.toml"
+      - ".github/workflows/platform-ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e ".[platform-dev]"
+      - name: Lint
+        run: ruff check platform/geoready_platform
+      - name: Test
+        working-directory: platform
+        run: pytest -q
