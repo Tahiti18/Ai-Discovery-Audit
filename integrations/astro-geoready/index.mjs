@@ -13,7 +13,7 @@
  *
  * Companion to the GEO Optimizer audit engine — the same files this
  * integration emits are the ones `geo audit` scores under llms.txt (18 pts)
- * and AI Discovery (6 pts). https://github.com/Auriti-Labs/geo-optimizer-skill
+ * and AI Discovery (6 pts). https://github.com/Tahiti18/geo-optimizer-skill
  */
 
 import { existsSync } from 'node:fs';

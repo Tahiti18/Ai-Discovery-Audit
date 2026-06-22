@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: 📖 Documentation
-    url: https://auritidesign.it/docs/geo-optimizer/
+    url: https://tahiti18.github.io/geo-optimizer-skill/
     about: Check the docs before opening an issue
   - name: 💬 Discussions
-    url: https://github.com/Auriti-Labs/geo-optimizer-skill/discussions
+    url: https://github.com/Tahiti18/geo-optimizer-skill/discussions
     about: Ask questions or share ideas

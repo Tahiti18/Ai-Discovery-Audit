@@ -132,7 +132,7 @@ def format_audit_sarif(result: AuditResult) -> str:
                 "tool": {
                     "driver": {
                         "name": "GEO Optimizer",
-                        "informationUri": "https://github.com/auriti-labs/geo-optimizer-skill",
+                        "informationUri": "https://github.com/Tahiti18/geo-optimizer-skill",
                         "version": _get_version(),
                         "rules": rules,
                     }

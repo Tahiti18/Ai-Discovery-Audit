@@ -206,4 +206,4 @@ mkdir -p .kiro/steering && cp ai-context/kiro-steering.md .kiro/steering/geo-opt
 
 ---
 
-*GEO Optimizer by Juan Camilo Auriti — https://github.com/auriti-labs/geo-optimizer-skill*
+*GEO Optimizer by Tahiti18 — https://github.com/Tahiti18/geo-optimizer-skill*

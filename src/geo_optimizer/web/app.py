@@ -696,7 +696,7 @@ async def stats():
         github_data, pypi_data, geo_stats = await asyncio.gather(
             asyncio.to_thread(
                 _fetch_json,
-                "https://api.github.com/repos/Auriti-Labs/geo-optimizer-skill",
+                "https://api.github.com/repos/Tahiti18/geo-optimizer-skill",
                 {"User-Agent": "GEO-Optimizer", "Accept": "application/vnd.github.v3+json"},
             ),
             asyncio.to_thread(
@@ -1993,32 +1993,32 @@ def _dict_to_audit_result(data: dict):
 #         "- Plugin system: Custom checks via `CheckRegistry` — extend without forking\n\n"
 #         "## Documentation\n\n"
 #         "- [Getting Started]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/getting-started/): "
+#         "(https://tahiti18.github.io/geo-optimizer-skill/getting-started/): "
 #         "Install and first audit\n"
 #         "- [GEO Audit]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/geo-audit/): "
+#         "(https://tahiti18.github.io/geo-optimizer-skill/geo-audit/): "
 #         "Full CLI reference\n"
 #         "- [Scoring Rubric]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/scoring-rubric/): "
+#         "(https://tahiti18.github.io/geo-optimizer-skill/scoring-rubric/): "
 #         "All 8 categories explained\n"
 #         "- [MCP Server]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/mcp-server/): "
+#         "(https://tahiti18.github.io/geo-optimizer-skill/mcp-server/): "
 #         "AI agent integration\n"
 #         "- [CI/CD]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/ci-cd/): "
+#         "(https://tahiti18.github.io/geo-optimizer-skill/ci-cd/): "
 #         "GitHub Actions integration\n"
 #         "- [GEO Methods]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/geo-methods/): "
+#         "(https://tahiti18.github.io/geo-optimizer-skill/geo-methods/): "
 #         "47 research-backed methods\n\n"
 #         "## Reference\n\n"
 #         "- [AI Bots Reference]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/"
+#         "(https://tahiti18.github.io/geo-optimizer-skill/"
 #         "ai-bots-reference/): 27 AI crawlers documented\n"
 #         "- [Troubleshooting]"
-#         "(https://auriti-labs.github.io/geo-optimizer-skill/troubleshooting/): "
+#         "(https://tahiti18.github.io/geo-optimizer-skill/troubleshooting/): "
 #         "Common issues\n"
 #         "- [Changelog]"
-#         "(https://github.com/Auriti-Labs/geo-optimizer-skill/blob/main/CHANGELOG.md): "
+#         "(https://github.com/Tahiti18/geo-optimizer-skill/blob/main/CHANGELOG.md): "
 #         "Full release history\n"
 #         "- [PyPI](https://pypi.org/project/geo-optimizer-skill/): "
 #         "Package and version history\n\n"
@@ -2029,10 +2029,10 @@ def _dict_to_audit_result(data: dict):
 #         "- geo-checklist.dev standard — https://geo-checklist.dev/\n\n"
 #         "## Optional\n\n"
 #         "- [GitHub Issues]"
-#         "(https://github.com/Auriti-Labs/geo-optimizer-skill/issues): "
+#         "(https://github.com/Tahiti18/geo-optimizer-skill/issues): "
 #         "Bug reports and feature requests\n"
 #         "- [Releases RSS]"
-#         "(https://github.com/Auriti-Labs/geo-optimizer-skill/releases.atom): "
+#         "(https://github.com/Tahiti18/geo-optimizer-skill/releases.atom): "
 #         "Subscribe to new releases\n"
 #     )
 #     return PlainTextResponse(content=llms, media_type="text/plain")

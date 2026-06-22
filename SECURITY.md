@@ -16,7 +16,7 @@ If you discover a security vulnerability in GEO Optimizer, please report it resp
 
 ### How to Report
 
-1. **Email**: Send details to [juancamilo.auriti@gmail.com](mailto:juancamilo.auriti@gmail.com)
+1. **Email**: Send details to [GitHub Security Advisories](https://github.com/Tahiti18/geo-optimizer-skill/security/advisories/new)
 2. **Subject**: `[SECURITY] GEO Optimizer — Brief description`
 3. **Include**:
    - Description of the vulnerability

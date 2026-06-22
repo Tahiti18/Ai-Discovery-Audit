@@ -32,12 +32,12 @@ a CLI with 14 commands, an MCP server, and [GeoReady](https://geoready.dev).
 **Where things go:**
 - 🙏 **Q&A** — "how do I raise my llms.txt score?", CI setup, MCP quirks. Ask anything.
 - 💡 **Ideas** — propose checks, commands, integrations. The roadmap
-  ([docs/ROADMAP.md](https://github.com/Auriti-Labs/geo-optimizer-skill/blob/main/docs/ROADMAP.md))
+  ([docs/ROADMAP.md](https://github.com/Tahiti18/geo-optimizer-skill/blob/main/docs/ROADMAP.md))
   is shaped by what practitioners actually need.
 - 🏆 **Show & tell** — post your before/after GEO scores, your
-  [score badge](https://github.com/Auriti-Labs/geo-optimizer-skill#show-your-geo-score),
+  [score badge](https://github.com/Tahiti18/geo-optimizer-skill#show-your-geo-score),
   what moved the needle. Real-world evidence beats theory.
-- 🐛 Confirmed bugs → [Issues](https://github.com/Auriti-Labs/geo-optimizer-skill/issues), as always.
+- 🐛 Confirmed bugs → [Issues](https://github.com/Tahiti18/geo-optimizer-skill/issues), as always.
 
 **Three things worth trying today:**
 1. `uvx --from geo-optimizer-skill geo audit --url https://yoursite.com` — zero-install audit

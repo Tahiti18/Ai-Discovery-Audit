@@ -4,7 +4,7 @@
 
 GeoReady helps developers, SEOs, and content teams measure and improve how discoverable, readable, and citable their websites are to AI answer engines such as ChatGPT, Perplexity, Claude, and Gemini.
 
-Built in Italy by Auriti Labs. Designed for the global AI search ecosystem.
+Built in Italy by Tahiti18. Designed for the global AI search ecosystem.
 
 ## What is Generative Engine Optimization (GEO)?
 
@@ -70,7 +70,7 @@ Available MCP tools: `geo_audit`, `geo_compare`, `geo_fix`, `geo_llms_generate`,
 ## Trust signals
 
 - License: MIT
-- Source code: https://github.com/Auriti-Labs/geo-optimizer-skill
+- Source code: https://github.com/Tahiti18/geo-optimizer-skill
 - All scoring weights are public and documented in `src/geo_optimizer/models/config.py`
 - No external API required for core audit functionality
 - Zero data collection from audited URLs beyond the public HTTP fetch
@@ -85,7 +85,7 @@ Available MCP tools: `geo_audit`, `geo_compare`, `geo_fix`, `geo_llms_generate`,
 
 ## Update policy
 
-The GEO Optimizer engine is actively maintained. Scoring weights and audit methods are updated as new research is published. Version history and changelogs are available at https://github.com/Auriti-Labs/geo-optimizer-skill/releases.
+The GEO Optimizer engine is actively maintained. Scoring weights and audit methods are updated as new research is published. Version history and changelogs are available at https://github.com/Tahiti18/geo-optimizer-skill/releases.
 
 ## Main sections
 
@@ -144,7 +144,7 @@ GeoReady (app.geoready.dev) is the commercial monitoring platform built on GEO O
 
 - **GeoReady** — public website, free web audit, and commercial SaaS platform with paid plans at app.geoready.dev
 - **GEO Optimizer** — open-source Python toolkit and scoring engine behind the GeoReady audit
-- **Auriti Labs** — the organization that maintains both products
+- **Tahiti18** — the organization that maintains both products
 
 ### GeoReady Plans
 
@@ -161,6 +161,6 @@ Free audits at geoready.dev require no account. The GeoReady Pro platform at app
 
 ## Contact
 
-- Technical issues and bug reports: https://github.com/Auriti-Labs/geo-optimizer-skill/issues
-- Author: Auriti Labs (https://github.com/Auriti-Labs)
-- Repository: https://github.com/Auriti-Labs/geo-optimizer-skill
+- Technical issues and bug reports: https://github.com/Tahiti18/geo-optimizer-skill/issues
+- Author: Tahiti18 (https://github.com/Tahiti18)
+- Repository: https://github.com/Tahiti18/geo-optimizer-skill

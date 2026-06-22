@@ -22,7 +22,7 @@
 
 ## Repository
 
-- **Repository principale:** https://github.com/auriti-labs/geo-optimizer-skill
+- **Repository principale:** https://github.com/Tahiti18/geo-optimizer-skill
 - **Package PyPI:** geo-optimizer-skill
 - **Live demo:** https://geoready.dev
 - **Versione corrente:** v4.10.2 (2026-05-05)

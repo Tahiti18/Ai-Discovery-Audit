@@ -26,16 +26,16 @@
     "seo",
     "ai-visibility"
   ],
-  "author": "Auriti Labs",
+  "author": "Tahiti18",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Auriti-Labs/geo-optimizer-skill.git",
+    "url": "git+https://github.com/Tahiti18/geo-optimizer-skill.git",
     "directory": "integrations/astro-geoready"
   },
   "homepage": "https://geoready.dev",
   "bugs": {
-    "url": "https://github.com/Auriti-Labs/geo-optimizer-skill/issues"
+    "url": "https://github.com/Tahiti18/geo-optimizer-skill/issues"
   },
   "peerDependencies": {
     "astro": ">=4.0.0"

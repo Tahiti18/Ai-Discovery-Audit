@@ -12,7 +12,7 @@
     "PDF and HTML report export"
   ],
   "installation": "pip install geo-optimizer-skill",
-  "documentation": "https://auriti-labs.github.io/geo-optimizer-skill/",
-  "repository": "https://github.com/Auriti-Labs/geo-optimizer-skill",
+  "documentation": "https://tahiti18.github.io/geo-optimizer-skill/",
+  "repository": "https://github.com/Tahiti18/geo-optimizer-skill",
   "license": "MIT"
 }

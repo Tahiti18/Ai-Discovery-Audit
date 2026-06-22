@@ -976,7 +976,7 @@ First stable release of the v4 architecture.
 
 ### Added
 
-- **GitHub Action for CI/CD** (#205) — composite action `Auriti-Labs/geo-optimizer-skill@v3.14.0` with threshold, SARIF/JUnit output
+- **GitHub Action for CI/CD** (#205) — composite action `Tahiti18/geo-optimizer-skill@v3.14.0` with threshold, SARIF/JUnit output
 - **Dynamic GEO Badge** (#206) — `/badge` SVG endpoint + shields.io compatible `/badge/endpoint`
 - **AI Discovery endpoints** (#207) — audit `/.well-known/ai.txt`, `/ai/summary.json`, `/ai/faq.json`, `/ai/service.json` (geo-checklist.dev standard)
 - **MCP Server potenziato** (#209) — 3 nuovi tool (`geo_compare`, `geo_ai_discovery`, `geo_check_bots`) + 3 nuove resource (`geo://methods`, `geo://changelog`, `geo://ai-discovery-spec`). Totale: 8 tool + 5 resource
@@ -1075,7 +1075,7 @@ First stable release. All 11 security and quality issues from M1 milestone resol
 
 - **Docker image** (#33) — Multi-stage Dockerfile
   - Base: python:3.12-slim, non-root user
-  - Usage: `docker run auritilabs/geo-optimizer audit --url https://example.com`
+  - Usage: `docker run tahiti18/geo-optimizer audit --url https://example.com`
   - GitHub Actions workflow for Docker Hub + GHCR publishing on tags
 
 ### Changed

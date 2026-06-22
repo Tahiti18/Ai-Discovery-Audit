@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # GEO Optimizer — Installation Script
-# https://github.com/auriti-labs/geo-optimizer-skill
+# https://github.com/Tahiti18/geo-optimizer-skill
 #
 # Usage:
-#   curl -sSL https://raw.githubusercontent.com/auriti-labs/geo-optimizer-skill/main/install.sh | bash
+#   curl -sSL https://raw.githubusercontent.com/Tahiti18/geo-optimizer-skill/main/install.sh | bash
 #   pip install geo-optimizer-skill
 
 set -e
@@ -44,5 +44,5 @@ echo "   geo audit --url https://yoursite.com"
 echo "   geo llms --base-url https://yoursite.com --output llms.txt"
 echo "   geo schema --type faq --url https://yoursite.com"
 echo ""
-echo "\U0001f4d6 Full docs: https://github.com/auriti-labs/geo-optimizer-skill"
+echo "\U0001f4d6 Full docs: https://github.com/Tahiti18/geo-optimizer-skill"
 echo ""

@@ -35,7 +35,7 @@ FROM python:3.12-slim
 
 LABEL org.opencontainers.image.title="GEO Optimizer Web" \
       org.opencontainers.image.description="FastAPI audit service + Astro frontend" \
-      org.opencontainers.image.source="https://github.com/auriti-labs/geo-optimizer-skill"
+      org.opencontainers.image.source="https://github.com/Tahiti18/geo-optimizer-skill"
 
 COPY --from=builder /install /usr/local
 

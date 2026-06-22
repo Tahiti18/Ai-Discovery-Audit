@@ -11,7 +11,7 @@ the route list Astro already knows — no crawling, no HTTP:
 | `/ai/summary.json` | Machine-readable site summary |
 
 These are the same files the open-source
-[GEO Optimizer](https://github.com/Auriti-Labs/geo-optimizer-skill) audit
+[GEO Optimizer](https://github.com/Tahiti18/geo-optimizer-skill) audit
 scores under **llms.txt (18 pts)** and **AI Discovery (6 pts)**. Generate them
 here, verify them with `geo audit`.
 
@@ -59,4 +59,4 @@ Run `astro build` — the files land in `dist/` and deploy with everything else.
 - Verify the result: `uvx --from geo-optimizer-skill geo audit --url https://yoursite.com`
   or the free audit at [geoready.dev](https://geoready.dev).
 
-MIT © [Auriti Labs](https://github.com/Auriti-Labs)
+MIT © [Tahiti18](https://github.com/Tahiti18)

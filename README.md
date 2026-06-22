@@ -8,16 +8,15 @@
 
 [![PyPI](https://img.shields.io/pypi/v/geo-optimizer-skill?style=flat-square&color=3b82f6)](https://pypi.org/project/geo-optimizer-skill/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-3776ab?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![CI](https://github.com/auriti-labs/geo-optimizer-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/auriti-labs/geo-optimizer-skill/actions)
-[![codecov](https://codecov.io/gh/Auriti-Labs/geo-optimizer-skill/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Auriti-Labs/geo-optimizer-skill)
-[![Tests](https://img.shields.io/badge/tests-1720%20passed-22c55e?style=flat-square)](https://github.com/Auriti-Labs/geo-optimizer-skill/actions/workflows/ci.yml)
+[![CI](https://github.com/Tahiti18/geo-optimizer-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/Tahiti18/geo-optimizer-skill/actions)
+[![codecov](https://codecov.io/gh/Tahiti18/geo-optimizer-skill/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Tahiti18/geo-optimizer-skill)
+[![Tests](https://img.shields.io/badge/tests-1720%20passed-22c55e?style=flat-square)](https://github.com/Tahiti18/geo-optimizer-skill/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-8b5cf6?style=flat-square)](https://modelcontextprotocol.io)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?style=flat-square&logo=buymeacoffee&logoColor=000000)](https://buymeacoffee.com/auritidesign)
 
 **One command scores your site 0–100 on AI-search readiness, tells you exactly what to fix, and checks whether AI engines actually cite you.**
 
-[Quick Start](#quick-start) · [Live Demo](https://geoready.dev) · [Pricing](https://geoready.dev/pricing) · [Sign Up](https://app.geoready.dev/signup) · [Documentation](https://auriti-labs.github.io/geo-optimizer-skill/) · [Changelog](CHANGELOG.md)
+[Quick Start](#quick-start) · [Live Demo](https://geoready.dev) · [Pricing](https://geoready.dev/pricing) · [Sign Up](https://app.geoready.dev/signup) · [Documentation](https://tahiti18.github.io/geo-optimizer-skill/) · [Changelog](CHANGELOG.md)
 
 <img src="assets/demo.gif" alt="geo audit demo — AI visibility score 0-100 with prioritized fixes in one command" width="800"/>
 
@@ -252,7 +251,7 @@ Treat AI visibility like test coverage: gate every deploy on it. The GitHub Acti
 
 ```yaml
 # .github/workflows/geo.yml
-- uses: Auriti-Labs/geo-optimizer-skill@v4.14.0
+- uses: Tahiti18/geo-optimizer-skill@v4.14.0
   with:
     url: https://yoursite.com
     min-score: 70        # Fail the build if the GEO score drops below 70
@@ -461,7 +460,7 @@ cd geo-optimizer-skill && pip install -e ".[dev]"
 pytest tests/ -v   # 1720 tests, all mocked
 ```
 
-[Bug reports](https://github.com/Auriti-Labs/geo-optimizer-skill/issues/new?template=bug_report.yml) · [Feature requests](https://github.com/Auriti-Labs/geo-optimizer-skill/issues/new?template=feature_request.yml) · [CONTRIBUTING.md](CONTRIBUTING.md)
+[Bug reports](https://github.com/Tahiti18/geo-optimizer-skill/issues/new?template=bug_report.yml) · [Feature requests](https://github.com/Tahiti18/geo-optimizer-skill/issues/new?template=feature_request.yml) · [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ---
 
@@ -471,11 +470,11 @@ Run the [CLI locally](#quick-start), try the [free audit online](https://georead
 
 ---
 
-**MIT License** · Built by [Auriti Labs](https://github.com/auriti-labs)
+**MIT License** · Built by [Tahiti18](https://github.com/Tahiti18)
 
 If this saved you time, a star helps others find it.
 
-[![Star on GitHub](https://img.shields.io/github/stars/auriti-labs/geo-optimizer-skill?style=for-the-badge&color=facc15&logo=github&label=Star)](https://github.com/auriti-labs/geo-optimizer-skill/stargazers)
+[![Star on GitHub](https://img.shields.io/github/stars/Tahiti18/geo-optimizer-skill?style=for-the-badge&color=facc15&logo=github&label=Star)](https://github.com/Tahiti18/geo-optimizer-skill/stargazers)
 
 The open-source engine for **Answer Engine Optimization** — get your site cited by ChatGPT, Perplexity, and Gemini.
 
@@ -485,10 +484,10 @@ The open-source engine for **Answer Engine Optimization** — get your site cite
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=Auriti-Labs%2Fgeo-optimizer-skill&type=timeline&logscale=&legend=bottom-right">
+<a href="https://www.star-history.com/?repos=Tahiti18%2Fgeo-optimizer-skill&type=timeline&logscale=&legend=bottom-right">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=Auriti-Labs/geo-optimizer-skill&type=timeline&theme=dark&logscale&legend=bottom-right" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=Auriti-Labs/geo-optimizer-skill&type=timeline&logscale&legend=bottom-right" />
-   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=Auriti-Labs/geo-optimizer-skill&type=timeline&logscale&legend=bottom-right" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=Tahiti18/geo-optimizer-skill&type=timeline&theme=dark&logscale&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=Tahiti18/geo-optimizer-skill&type=timeline&logscale&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=Tahiti18/geo-optimizer-skill&type=timeline&logscale&legend=bottom-right" />
  </picture>
 </a>

@@ -1,22 +1,22 @@
 title: GEO Optimizer
 description: "Make websites visible to AI search engines. Audit, fix, and optimize for ChatGPT, Perplexity, Claude, and Gemini."
-url: "https://auriti-labs.github.io"
+url: "https://tahiti18.github.io"
 baseurl: "/geo-optimizer-skill"
 lang: en
 
 author:
-  name: "Auriti Labs"
-  url: "https://github.com/Auriti-Labs"
+  name: "Tahiti18"
+  url: "https://github.com/Tahiti18"
 
-repository: Auriti-Labs/geo-optimizer-skill
+repository: Tahiti18/geo-optimizer-skill
 
 # SEO
 twitter:
   card: summary_large_image
 social:
-  name: Auriti Labs
+  name: Tahiti18
   links:
-    - https://github.com/Auriti-Labs
+    - https://github.com/Tahiti18
     - https://pypi.org/project/geo-optimizer-skill/
 
 # Build

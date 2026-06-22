@@ -171,7 +171,7 @@ li{{margin-bottom:.4rem;line-height:1.5}}
 
 <div class="footer">
     Generated on {timestamp} by
-    <a href="https://github.com/auriti-labs/geo-optimizer-skill">GEO Optimizer</a>
+    <a href="https://github.com/Tahiti18/geo-optimizer-skill">GEO Optimizer</a>
 </div>
 </body>
 </html>"""

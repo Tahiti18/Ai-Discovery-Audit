@@ -345,4 +345,4 @@ add_action("wp_head", "add_geo_schema");
 
 ---
 
-*GEO Optimizer by Juan Camilo Auriti — https://github.com/auriti-labs/geo-optimizer-skill*
+*GEO Optimizer by Tahiti18 — https://github.com/Tahiti18/geo-optimizer-skill*

@@ -8,16 +8,16 @@
 - **Open-source engine**: GEO Optimizer
 - **Website**: https://geoready.dev
 - **Application**: https://app.geoready.dev
-- **Maintainer**: Auriti Labs (https://github.com/Auriti-Labs)
-- **Engine repository**: https://github.com/Auriti-Labs/geo-optimizer-skill
+- **Maintainer**: Tahiti18 (https://github.com/Tahiti18)
+- **Engine repository**: https://github.com/Tahiti18/geo-optimizer-skill
 - **Engine package**: https://pypi.org/project/geo-optimizer-skill/
-- **Engine documentation**: https://auriti-labs.github.io/geo-optimizer-skill/
+- **Engine documentation**: https://tahiti18.github.io/geo-optimizer-skill/
 - **License**: MIT
 - **Version**: 4.10.4
 
 ## What GeoReady does
 
-GeoReady scores websites across 8 signal categories to measure how discoverable, readable, and citable they are to AI search engines such as ChatGPT, Perplexity, Claude, and Gemini. The scoring engine is GEO Optimizer, the MIT-licensed open-source toolkit maintained by Auriti Labs.
+GeoReady scores websites across 8 signal categories to measure how discoverable, readable, and citable they are to AI search engines such as ChatGPT, Perplexity, Claude, and Gemini. The scoring engine is GEO Optimizer, the MIT-licensed open-source toolkit maintained by Tahiti18.
 
 The 8 scoring categories (max 100 points):
 
@@ -109,7 +109,7 @@ Also available as an MCP server for integration with AI coding assistants.
 
 ## Trust signals and transparency
 
-- License: MIT. Full source code available at https://github.com/Auriti-Labs/geo-optimizer-skill
+- License: MIT. Full source code available at https://github.com/Tahiti18/geo-optimizer-skill
 - All scoring weights are public and documented in `src/geo_optimizer/models/config.py`
 - 1,400+ unit tests, all mocked — no real network calls in the test suite
 - Zero data retention from audited URLs beyond the public HTTP fetch
@@ -118,7 +118,7 @@ Also available as an MCP server for integration with AI coding assistants.
 
 ## Update policy
 
-The GEO Optimizer engine is actively maintained. Scoring methods and weights are updated when new academic research or significant industry data becomes available. The current scoring reflects KDD 2024, ICLR 2026, and 2025–2026 industry analysis. Version history: https://github.com/Auriti-Labs/geo-optimizer-skill/releases
+The GEO Optimizer engine is actively maintained. Scoring methods and weights are updated when new academic research or significant industry data becomes available. The current scoring reflects KDD 2024, ICLR 2026, and 2025–2026 industry analysis. Version history: https://github.com/Tahiti18/geo-optimizer-skill/releases
 
 ## Companion files
 

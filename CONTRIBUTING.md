@@ -226,7 +226,7 @@ Before submitting:
 
 ## Reporting Bugs
 
-Use [GitHub Issues](https://github.com/auriti-labs/geo-optimizer-skill/issues) with:
+Use [GitHub Issues](https://github.com/Tahiti18/geo-optimizer-skill/issues) with:
 
 **Expected behavior:** What should happen?
 

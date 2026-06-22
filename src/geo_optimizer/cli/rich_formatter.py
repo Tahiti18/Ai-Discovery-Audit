@@ -1197,7 +1197,7 @@ def format_audit_rich(result: AuditResult) -> str:
     footer.append("  GEO Optimizer", style=f"bold {_COLORS['brand_1']}")
     footer.append(f"  v{__version__}", style=_COLORS["dim"])
     footer.append("  •  ", style=_COLORS["dim"])
-    footer.append("github.com/Auriti-Labs/geo-optimizer-skill", style=f"{_COLORS['dim']} underline")
+    footer.append("github.com/Tahiti18/geo-optimizer-skill", style=f"{_COLORS['dim']} underline")
     console.print(Align.center(footer))
 
     # Motivational message based on band

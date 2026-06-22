@@ -5,7 +5,7 @@ Generates a Shields.io-style SVG badge with the site's GEO Score.
 Embeddable in README, footer, portfolio.
 
 Usage in Markdown:
-    [![GEO Score](https://geo.auritidesign.it/badge?url=https://yoursite.com)](https://geo.auritidesign.it/)
+    [![GEO Score](https://geoready.dev/badge?url=https://yoursite.com)](https://geoready.dev/)
 """
 
 from __future__ import annotations

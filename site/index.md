@@ -78,6 +78,6 @@ Async: `result = await audit_async("https://example.com")`
 ## Links
 
 - [Live Demo](https://geoready.dev) — audit any site online
-- [GitHub](https://github.com/Auriti-Labs/geo-optimizer-skill) — source, issues, discussions
+- [GitHub](https://github.com/Tahiti18/geo-optimizer-skill) — source, issues, discussions
 - [PyPI](https://pypi.org/project/geo-optimizer-skill/) — latest release
-- [Changelog](https://github.com/Auriti-Labs/geo-optimizer-skill/blob/main/CHANGELOG.md)
+- [Changelog](https://github.com/Tahiti18/geo-optimizer-skill/blob/main/CHANGELOG.md)
