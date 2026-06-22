@@ -3,7 +3,7 @@ title: "GEO Optimizer v4.0.0 is Stable — What We Fixed, What We Built, What's 
 published: false
 description: "After four beta releases, GEO Optimizer v4.0.0 lands as stable. A full architectural rewrite, 13 security fixes, 1120 tests, and three new capabilities: Trust Stack Score, Prompt Injection Detection, and WebMCP Readiness."
 tags: opensource, python, ai, webdev
-cover_image: https://raw.githubusercontent.com/Auriti-Labs/geo-optimizer-skill/main/site/assets/og-banner.png
+cover_image: https://raw.githubusercontent.com/Tahiti18/geo-optimizer-skill/main/site/assets/og-banner.png
 canonical_url:
 series: Generative Engine Optimization
 ---
@@ -269,7 +269,7 @@ geo audit --url https://yoursite.com
 
 GitHub (star if you find it useful):
 
-**[github.com/Auriti-Labs/geo-optimizer-skill](https://github.com/Auriti-Labs/geo-optimizer-skill)**
+**[github.com/Tahiti18/geo-optimizer-skill](https://github.com/Tahiti18/geo-optimizer-skill)**
 
 ---
 

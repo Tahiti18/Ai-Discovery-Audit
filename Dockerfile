@@ -27,10 +27,10 @@ FROM python:3.12-slim
 # Metadati immagine
 LABEL org.opencontainers.image.title="GEO Optimizer" \
       org.opencontainers.image.description="Audit your website's visibility to AI search engines" \
-      org.opencontainers.image.url="https://github.com/auriti-labs/geo-optimizer-skill" \
-      org.opencontainers.image.source="https://github.com/auriti-labs/geo-optimizer-skill" \
+      org.opencontainers.image.url="https://github.com/Tahiti18/geo-optimizer-skill" \
+      org.opencontainers.image.source="https://github.com/Tahiti18/geo-optimizer-skill" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.vendor="Auriti Labs"
+      org.opencontainers.image.vendor="Tahiti18"
 
 # Copia pacchetto installato dal builder
 COPY --from=builder /install /usr/local

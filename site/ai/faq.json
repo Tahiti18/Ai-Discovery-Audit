@@ -18,7 +18,7 @@
     },
     {
       "question": "Can I run GEO audits in CI/CD?",
-      "answer": "Yes. Use the GitHub Action: uses: Auriti-Labs/geo-optimizer-skill@v1 with url and threshold inputs. Supports SARIF output for GitHub Security tab and JUnit for Jenkins/GitLab. Fails the build if score drops below threshold."
+      "answer": "Yes. Use the GitHub Action: uses: Tahiti18/geo-optimizer-skill@v1 with url and threshold inputs. Supports SARIF output for GitHub Security tab and JUnit for Jenkins/GitLab. Fails the build if score drops below threshold."
     },
     {
       "question": "What AI bots does GEO Optimizer track?",

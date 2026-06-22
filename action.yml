@@ -2,7 +2,7 @@
 # Esegue un audit GEO completo su qualsiasi URL direttamente nella CI/CD pipeline.
 #
 # Utilizzo:
-#   - uses: Auriti-Labs/geo-optimizer-skill@v4.14.0
+#   - uses: Tahiti18/geo-optimizer-skill@v4.14.0
 #     with:
 #       url: https://mysite.com
 #       min-score: 70
@@ -10,7 +10,7 @@
 
 name: "GEO Optimizer Audit"
 description: "Run a full GEO audit on any URL and get a citability score (0-100) for AI search engines."
-author: "Auriti Labs"
+author: "Tahiti18"
 
 branding:
   icon: "search"

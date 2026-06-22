@@ -57,4 +57,4 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-Sitemap: https://auriti-labs.github.io/geo-optimizer-skill/sitemap.xml
+Sitemap: https://tahiti18.github.io/geo-optimizer-skill/sitemap.xml

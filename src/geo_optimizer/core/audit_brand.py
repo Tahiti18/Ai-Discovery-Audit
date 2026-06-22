@@ -32,10 +32,10 @@ def _normalize_brand_name(name: str) -> str:
     when it appears in the middle (e.g. "The Inc. Company" is unchanged).
 
     Args:
-        name: Raw brand name (e.g. "Apple Inc.", "Auriti S.r.l.").
+        name: Raw brand name (e.g. "Apple Inc.", "Acme S.r.l.").
 
     Returns:
-        Normalized name without trailing legal suffix (e.g. "apple", "auriti").
+        Normalized name without trailing legal suffix (e.g. "apple", "acme").
     """
     normalized = name.strip().lower()
     # Strip trailing punctuation (comma, period not part of suffix) before matching

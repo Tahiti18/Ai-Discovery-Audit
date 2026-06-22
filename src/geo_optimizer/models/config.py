@@ -11,7 +11,7 @@ from pathlib import Path
 
 # ─── HTTP ────────────────────────────────────────────────────────────────────
 
-USER_AGENT = "GEO-Optimizer/2.0 (https://github.com/auriti-labs/geo-optimizer-skill)"
+USER_AGENT = "GEO-Optimizer/2.0 (https://github.com/Tahiti18/geo-optimizer-skill)"
 
 HEADERS = {"User-Agent": USER_AGENT}
 

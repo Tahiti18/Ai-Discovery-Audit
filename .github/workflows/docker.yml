@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 env:
-  IMAGE_NAME: auritilabs/geo-optimizer
+  IMAGE_NAME: tahiti18/geo-optimizer
 
 jobs:
   docker:
