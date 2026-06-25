@@ -1,0 +1,19 @@
+---
+// AI Visibility OS — local app shell. Pure client island (no SSR) so it can use
+// localStorage + the /papi proxy freely. Marketing MPA is untouched.
+import "../../styles/global.css";
+import AIVisibilityApp from "../../app/AIVisibilityApp.tsx";
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>AI Visibility OS</title>
+  </head>
+  <body>
+    <AIVisibilityApp client:only="react" />
+  </body>
+</html>

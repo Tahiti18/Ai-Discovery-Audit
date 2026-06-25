@@ -36,6 +36,14 @@ export default defineConfig({
           changeOrigin: true,
           secure: false,
         },
+        // AI Visibility OS platform API (Phase 0/1). Proxied so the browser
+        // never needs CORS and never sees the API origin directly.
+        '/papi': {
+          target: 'http://localhost:8001',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/papi/, ''),
+        },
       },
     },
   },
