@@ -48,6 +48,15 @@ def create_app() -> FastAPI:
     app.include_router(audits.router)
     app.include_router(probe.router)
 
+    @app.get("/")
+    def root():
+        return {
+            "name": "AI Visibility OS API",
+            "status": "ok",
+            "health": "/healthz",
+            "docs": "/docs"
+        }
+
     @app.on_event("startup")
     def _reap_stale_runs_on_startup() -> None:
         # A restart almost always means any in-flight probe died with the old
@@ -67,3 +76,4 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
