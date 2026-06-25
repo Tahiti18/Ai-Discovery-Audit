@@ -40,6 +40,9 @@ def get_probe(
     session: Session = Depends(get_db),
     principal: Principal = Depends(get_principal),
 ) -> ProbeRunOut:
+    # Reap orphaned runs first so a crashed/restarted worker never shows as a
+    # perpetually "running" analysis on the result page.
+    probe_svc.reap_stale_runs(session, org_id=principal.org_id)
     try:
         run = probe_svc.get_probe(session, org_id=principal.org_id, run_id=run_id)
     except probe_svc.ProbeRunNotFoundError:
@@ -81,6 +84,9 @@ def list_entity_probes(
         entity_svc.get_entity(session, org_id=principal.org_id, entity_id=entity_id)
     except entity_svc.EntityNotFoundError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Entity not found") from None
+
+    # Reap orphaned runs so the portfolio/history never lists a stale "running" run.
+    probe_svc.reap_stale_runs(session, org_id=principal.org_id)
 
     rows = (
         session.execute(

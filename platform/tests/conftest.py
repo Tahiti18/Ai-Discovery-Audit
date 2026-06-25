@@ -13,6 +13,7 @@ if os.path.exists(_TMP_DB):
     os.remove(_TMP_DB)
 os.environ["GR_DATABASE_URL"] = f"sqlite:///{_TMP_DB}"
 os.environ["GR_CELERY_EAGER"] = "true"
+os.environ["GR_PROBE_EAGER_BACKGROUND"] = "false"  # deterministic inline completion in tests
 os.environ["GR_JWT_SECRET"] = "test-secret"
 os.environ["GR_FREE_AUDITS_PER_DAY"] = "5"
 

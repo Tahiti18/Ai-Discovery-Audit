@@ -8,11 +8,18 @@ credentials are never logged.
 from __future__ import annotations
 
 import logging
+import os
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from geoready_platform import __version__
 from geoready_platform.api.routers import audits, entities, health, orgs, probe
+
+# Local dev: allow the frontend origin to call the API directly. Auth is via the
+# X-API-Key header (not cookies), so "*" is safe here; override in production via
+# GR_CORS_ORIGINS (comma-separated). No credentials/cookies are used.
+_CORS_ORIGINS = [o.strip() for o in os.environ.get("GR_CORS_ORIGINS", "*").split(",") if o.strip()]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,11 +36,33 @@ def create_app() -> FastAPI:
             "and the AI Perception Probe (Phase 1)."
         ),
     )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_CORS_ORIGINS,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.include_router(health.router)
     app.include_router(orgs.router)
     app.include_router(entities.router)
     app.include_router(audits.router)
     app.include_router(probe.router)
+
+    @app.on_event("startup")
+    def _reap_stale_runs_on_startup() -> None:
+        # A restart almost always means any in-flight probe died with the old
+        # process. Mark those orphans failed up front so they never appear active.
+        from geoready_platform.db.base import session_scope
+        from geoready_platform.services.probe.runner import reap_stale_runs
+
+        try:
+            with session_scope() as session:
+                n = reap_stale_runs(session)
+            if n:
+                logging.getLogger(__name__).info("Reaped %s stale probe run(s) on startup", n)
+        except Exception:  # noqa: BLE001 — never block startup on cleanup
+            logging.getLogger(__name__).warning("Stale-run reap on startup failed", exc_info=True)
+
     return app
 
 

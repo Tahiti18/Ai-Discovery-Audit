@@ -50,4 +50,5 @@ class PerceptionOut(ORMModel):
     domain_cited: bool | None
     competitors_named: list[Any] | None
     flags: list[Any] | None
+    details: dict[str, Any] | None
     probed_at: datetime

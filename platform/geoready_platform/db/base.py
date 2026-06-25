@@ -10,7 +10,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import lru_cache
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -25,7 +25,22 @@ class Base(DeclarativeBase):
 def get_engine() -> Engine:
     settings = get_settings()
     connect_args = {"check_same_thread": False} if settings.is_sqlite else {}
-    return create_engine(settings.database_url, future=True, connect_args=connect_args)
+    engine = create_engine(settings.database_url, future=True, connect_args=connect_args)
+
+    if settings.is_sqlite:
+        # WAL so readers (healthz, the probe poll, /responses) never block on a
+        # writing probe; busy_timeout so a contended writer waits politely instead
+        # of erroring. Without this, concurrent long-running probe writes can wedge
+        # every DB-touching route and the whole API appears to hang.
+        @event.listens_for(engine, "connect")
+        def _sqlite_pragmas(dbapi_conn, _rec):  # noqa: ANN001
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA journal_mode=WAL")
+            cur.execute("PRAGMA busy_timeout=5000")
+            cur.execute("PRAGMA synchronous=NORMAL")
+            cur.close()
+
+    return engine
 
 
 @lru_cache(maxsize=1)
