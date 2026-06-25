@@ -44,7 +44,7 @@ export interface FetchAuditResult {
  */
 export async function fetchAuditReport(url: string): Promise<FetchAuditResult> {
   try {
-    const res = await fetch(buildApiUrl('/public/audits'), {
+    const res = await fetch(buildApiUrl('/audit'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),

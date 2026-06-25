@@ -37,7 +37,7 @@ const MAIN_INTEREST_OPTIONS = [
 
 const ENDPOINT =
   (import.meta as unknown as { env: Record<string, string> }).env
-    .PUBLIC_WAITLIST_ENDPOINT ?? "https://app.geoready.dev/api/waitlist";
+    .PUBLIC_WAITLIST_ENDPOINT ?? "/pricing/";
 
 export default function WaitlistForm() {
   const [state, setState] = useState<FormState>("idle");

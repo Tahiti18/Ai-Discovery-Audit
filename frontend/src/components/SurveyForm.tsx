@@ -37,7 +37,7 @@ const PRIORITY_FEATURE_OPTIONS = [
 
 const ANALYTICS_ENDPOINT =
   (import.meta as unknown as { env: Record<string, string> }).env
-    .PUBLIC_ANALYTICS_ENDPOINT ?? 'https://app.geoready.dev/api/analytics/event';
+    .PUBLIC_ANALYTICS_ENDPOINT ?? '/pricing/';
 
 export default function SurveyForm() {
   const [state, setState] = useState<FormState>('idle');

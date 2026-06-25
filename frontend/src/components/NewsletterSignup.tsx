@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 // Cattura email → platform endpoint (CORS già aperto per geoready.dev).
 // Dedupe e validazione server-side; source distingue i punti di ingresso.
-const CAPTURE_URL = 'https://app.geoready.dev/api/email/capture';
+const CAPTURE_URL = '/pricing/';
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
 
@@ -74,7 +74,7 @@ export default function NewsletterSignup({
       <p className="mt-2 text-xs text-text-muted">
         By submitting, you agree to receive the State of GEO report and occasional GeoReady benchmark
         updates. You can unsubscribe anytime. See our{' '}
-        <a href="https://geoready.dev/privacy/" className="underline hover:text-text-secondary">
+        <a href="/privacy/" className="underline hover:text-text-secondary">
           Privacy Policy
         </a>
         .

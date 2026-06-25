@@ -87,28 +87,33 @@
   --font-mono: "JetBrains Mono", monospace;
   --font-editorial: "Newsreader", serif;
 
-  --color-bg-base: #F7F5F0;
-  --color-bg-surface: #FFFFFF;
-  --color-bg-subtle: #EEEBE5;
+  /* Dark theme: site-wide dark mode (flipped from the original light palette). */
+  --color-bg-base: #0B0F19;
+  --color-bg-surface: #111827;
+  --color-bg-subtle: #1E293B;
   --color-bg-dark: #0B0F19;
   --color-bg-dark-surface: #111827;
 
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-muted: #5B6573;
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #CBD5E1;
+  --color-text-muted: #94A3B8;
+  /* Used as light text on dark/colored sections (e.g. the hero); keep it light. */
   --color-text-inverse: #F1F5F9;
 
-  --color-accent-teal: #0F766E;
-  --color-accent-teal-dark: #115E59;
-  --color-accent-electric: #4F46E5;
-  --color-accent-violet: #6D28D9;
-  --color-accent-success: #065F46;
-  --color-accent-warning: #D97706;
-  --color-accent-danger: #DC2626;
+  /* Brand accent = royal violet (distinct from GeoReady's teal). The token name
+     stays `accent-teal` so existing utilities recolor app-wide without churn. */
+  --color-accent-teal: #8B5CF6;
+  --color-accent-teal-dark: #7C3AED;
+  --color-accent-electric: #818CF8;
+  --color-accent-violet: #A78BFA;
+  --color-accent-gold: #F5B544;
+  --color-accent-success: #34D399;
+  --color-accent-warning: #FBBF24;
+  --color-accent-danger: #F87171;
 
-  --color-border: #E2E0DA;
+  --color-border: #1E293B;
   --color-border-dark: #1E293B;
-  --color-border-accent: #0D9488;
+  --color-border-accent: #7C3AED;
 
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -138,7 +143,17 @@ body {
 
 .bg-bg-dark .text-accent-teal,
 [data-hero-bleed].bg-bg-dark .text-accent-teal {
-  color: #5EEAD4;
+  color: #C4B5FD;
+}
+
+/* Site-wide dark mode: force any literal light backgrounds to dark surfaces so
+   no section renders light. (Semantic bg-bg-* / text-text-* tokens are already
+   flipped via @theme above.) */
+.bg-white {
+  background-color: var(--color-bg-surface) !important;
+}
+.bg-\[\#fbfaf7\] {
+  background-color: var(--color-bg-base) !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -171,6 +186,6 @@ html {
 }
 
 ::selection {
-  background-color: rgba(13, 148, 136, 0.2);
+  background-color: rgba(139, 92, 246, 0.28);
   color: var(--color-text-primary);
 }

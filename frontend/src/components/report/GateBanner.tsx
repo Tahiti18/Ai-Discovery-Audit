@@ -34,7 +34,7 @@ export default function GateBanner({ score, lockedCount, totalLockedPoints }: Ga
         </p>
       </div>
       <a
-        href="https://app.geoready.dev/signup"
+        href="/pricing/"
         onClick={handleCtaClick}
         className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-teal text-white text-sm font-semibold hover:bg-accent-teal-dark transition-colors"
       >

@@ -200,7 +200,7 @@ export default function AICitationChecker() {
               who replaced you.
             </p>
             <a
-              href="https://app.geoready.dev/signup?utm_source=citation-checker&intent=citations"
+              href="/pricing/"
               className="mt-3 inline-block rounded-lg bg-accent-teal px-5 py-2 text-sm font-semibold text-white hover:opacity-90"
             >
               Track my citations →
