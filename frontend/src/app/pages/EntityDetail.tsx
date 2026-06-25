@@ -1,8 +1,8 @@
 /**
  * Business overview — outcome-first.
  * Leads with the product's signature insight: Reality (Share-of-Model, real) vs
- * Readiness (technical audit, ownership-gated → honest gate). History enables
- * the Prove stage; single runs are labeled directional.
+ * Readiness (technical audit). History enables the Prove stage; single runs are
+ * labeled directional.
  */
 import { useEffect, useState } from "react";
 import { api, somPct, type Entity, type ProbeRun, type Signal } from "../../lib/platformApi";
@@ -101,29 +101,18 @@ function Overview({ entity, latest, onRun }: { entity: Entity; latest: ProbeRun 
         )}
       </Card>
 
-      {/* Readiness (honest gate) */}
+      {/* Readiness */}
       <Card className="p-5">
         <div className="mb-2 flex items-center justify-between">
           <p className="text-sm font-medium text-text-primary">Readiness — is your site technically AI-ready?</p>
-          {!entity.verified_at && <PreviewBadge label="Verify to unlock" />}
         </div>
-        {entity.verified_at ? (
-          <EmptyState title="Run a readiness audit" body="Your domain is verified — run the technical AI-readiness audit." />
-        ) : (
-          <div>
-            <Gauge value={null} label="AI Readiness" size={104} tone="muted" />
-            <Caveat>
-              The technical audit crawls your site, so it requires verifying you own this domain
-              (DNS or file). Until then we don’t show a readiness score — and we never invent one.
-            </Caveat>
-            <div className="mt-2">
-              <MethodologyNote title="Readiness vs. Reality">
-                <p><strong>Readiness</strong> measures the AI-facing technical signals on your site (crawler access, structured data, content). <strong>Reality</strong> measures what the AI engine actually says.</p>
-                <p>They can diverge — a technically perfect site can still be ignored by AI. That gap is the most useful thing this product shows you.</p>
-              </MethodologyNote>
-            </div>
-          </div>
-        )}
+        <EmptyState title="Run a readiness audit" body="Crawl your site for the AI-facing technical signals — robots access, structured data, content depth — and see the gap between Readiness and what AI actually says." />
+        <div className="mt-2">
+          <MethodologyNote title="Readiness vs. Reality">
+            <p><strong>Readiness</strong> measures the AI-facing technical signals on your site (crawler access, structured data, content). <strong>Reality</strong> measures what the AI engine actually says.</p>
+            <p>They can diverge — a technically perfect site can still be ignored by AI. That gap is the most useful thing this product shows you.</p>
+          </MethodologyNote>
+        </div>
       </Card>
 
       {/* Improve — honest about backend state */}

@@ -111,7 +111,6 @@ export function ProbeResult({ runId }: { runId: string }) {
     return <ProviderErrorView run={run} responses={responses} />;
   }
 
-  const verified = entity ? !!entity.verified_at : null;
   const name = entity?.canonical_name || "your business";
   const b = breakdown(responses, entity?.canonical_name ?? "", entity?.website_url);
 
@@ -152,7 +151,7 @@ export function ProbeResult({ runId }: { runId: string }) {
       )}
 
       {/* 3. Your next 3 actions */}
-      <NextMove b={b} run={run} verified={verified} />
+      <NextMove b={b} run={run} />
 
       {/* 4. Metrics (data AFTER interpretation) */}
       <MetricsSection run={run} b={b} />
@@ -279,7 +278,7 @@ interface Move {
   success: string; action?: { label: string; onClick: () => void }; preview?: boolean;
 }
 
-function NextMove({ b, run, verified }: { b: Breakdown | null; run: ProbeRun; verified: boolean | null }) {
+function NextMove({ b, run }: { b: Breakdown | null; run: ProbeRun }) {
   const moves: Move[] = [];
   const flagTypes = new Set((run.flags ?? []).map((f) => f.type));
   const scrollAnswers = () => document.getElementById("answers")?.scrollIntoView({ behavior: "smooth" });
@@ -314,15 +313,6 @@ function NextMove({ b, run, verified }: { b: Breakdown | null; run: ProbeRun; ve
       effort: "Medium",
       success: "Brand Knowledge rises and AI starts describing you accurately.",
       action: { label: "See the evidence", onClick: scrollAnswers },
-    });
-  }
-  if (verified === false) {
-    moves.push({
-      priority: "medium", title: "Verify your website",
-      why: "We can't evaluate technical AI-readiness until your domain is verified.",
-      benefit: "Pinpoint the technical reasons AI overlooks you — the gap behind the score.",
-      effort: "Low", success: "A Readiness score becomes available and is tracked over time.",
-      action: { label: "Verify & audit", onClick: goBusiness },
     });
   }
   moves.push({

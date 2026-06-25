@@ -111,7 +111,7 @@ export function Onboarding() {
           <Bullet>Competitors the engine recommends instead <Chip tone="amber">Directional</Chip></Bullet>
           <Bullet>Factual issues the AI states about you (e.g. wrong status)</Bullet>
           <Bullet>History &amp; trend once you run more than once</Bullet>
-          <Bullet>Technical AI-readiness audit <span className="ml-1 align-middle"><PreviewBadge label="Verify to unlock" /></span></Bullet>
+          <Bullet>Technical AI-readiness audit of your site</Bullet>
         </div>
       </Section>
 

@@ -64,6 +64,17 @@ class Settings:
     free_audits_per_day: int = field(default_factory=lambda: int(os.environ.get("GR_FREE_AUDITS_PER_DAY", "5")))
     free_probes_per_day: int = field(default_factory=lambda: int(os.environ.get("GR_FREE_PROBES_PER_DAY", "3")))
 
+    # ─── Ownership verification gate ─────────────────────────────────────────
+    # When True, audit enqueue refuses entities whose `verified_at` is null and
+    # the worker re-asserts the same check defense-in-depth. When False (the
+    # default), audits run on any entity owned by the caller's org — auth +
+    # quota only, the same posture probes already use. DB columns, `/verify`
+    # endpoints, and the ownership service are kept intact so the gate can be
+    # re-enabled by flipping this flag without a code change.
+    require_ownership_verification: bool = field(
+        default_factory=lambda: _env_bool("GR_REQUIRE_OWNERSHIP_VERIFICATION", False)
+    )
+
     # ─── Perception probe ────────────────────────────────────────────────────
     probe_max_prompts: int = field(default_factory=lambda: int(os.environ.get("GR_PROBE_MAX_PROMPTS", "8")))
     probe_provider: str | None = field(default_factory=lambda: os.environ.get("GR_PROBE_PROVIDER"))

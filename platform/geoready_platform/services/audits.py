@@ -52,9 +52,15 @@ def enqueue_audit(
     entity_id: str,
     triggered_by: str = TriggeredBy.api.value,
 ) -> AuditJob:
-    """Create a queued audit job. Refuses unverified entities and over-quota orgs."""
+    """Create a queued audit job.
+
+    Enforces the daily quota and — when `GR_REQUIRE_OWNERSHIP_VERIFICATION=true` —
+    the ownership gate. With the flag off (the default) audits run on any entity
+    owned by the caller's org; the DB column, `/verify` endpoints, and ownership
+    service remain in place so the gate can be re-enabled without a code change.
+    """
     entity = get_entity(session, org_id=org_id, entity_id=entity_id)
-    if not entity.is_verified:
+    if get_settings().require_ownership_verification and not entity.is_verified:
         raise EntityNotVerifiedError("Entity ownership is not verified; audits are refused")
 
     _check_quota(session, org_id)
@@ -107,9 +113,14 @@ def execute_audit_job(job_id: str) -> None:
         if job is None:
             raise AuditJobNotFoundError(job_id)
         entity = session.get(BusinessEntity, job.entity_id)
-        if entity is None or not entity.is_verified:
+        if entity is None:
             job.status = AuditStatus.failed.value
-            job.error = "Entity missing or not verified at execution time"
+            job.error = "Entity missing at execution time"
+            job.completed_at = _utcnow()
+            return
+        if get_settings().require_ownership_verification and not entity.is_verified:
+            job.status = AuditStatus.failed.value
+            job.error = "Entity ownership not verified at execution time"
             job.completed_at = _utcnow()
             return
 

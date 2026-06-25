@@ -6,9 +6,18 @@ the test exercises the platform wiring, not the audit engine itself.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import geoready_platform.services.audits as audit_svc
 import geoready_platform.services.ownership as ownership
+from geoready_platform.config import get_settings
 from geoready_platform.core_bridge.audit_adapter import AuditPayload
+
+
+def _require_verification(monkeypatch) -> None:
+    """Force the ownership gate ON for tests that pin gate-positive behavior."""
+    gated = replace(get_settings(), require_ownership_verification=True)
+    monkeypatch.setattr(audit_svc, "get_settings", lambda: gated)
 
 
 def _fake_payload(url: str) -> AuditPayload:
@@ -37,7 +46,11 @@ def _verified_entity(client, headers, monkeypatch, url="https://acme.test"):
     return eid
 
 
-def test_audit_refused_when_unverified(client, org_key):
+def test_audit_refused_when_unverified_and_gate_enabled(client, org_key, monkeypatch):
+    """With GR_REQUIRE_OWNERSHIP_VERIFICATION=true the gate still refuses
+    unverified entities with a 403 — proving the gate is still functional and
+    can be re-enabled by flag without a code change."""
+    _require_verification(monkeypatch)
     eid = client.post(
         "/v1/entities",
         json={"canonical_name": "Acme", "website_url": "https://acme.test"},
@@ -46,6 +59,24 @@ def test_audit_refused_when_unverified(client, org_key):
     resp = client.post(f"/v1/entities/{eid}/audits", headers=org_key["headers"])
     assert resp.status_code == 403
     assert "not verified" in resp.text.lower()
+
+
+def test_audit_runs_on_unverified_entity_when_gate_disabled(client, org_key, monkeypatch):
+    """Default behavior (GR_REQUIRE_OWNERSHIP_VERIFICATION=false): an audit on an
+    UNVERIFIED entity succeeds — auth + quota only, the same posture probes use."""
+    headers = org_key["headers"]
+    monkeypatch.setattr(audit_svc, "run_audit", _fake_payload)
+    eid = client.post(
+        "/v1/entities",
+        json={"canonical_name": "Acme", "website_url": "https://acme.test"},
+        headers=headers,
+    ).json()["id"]
+
+    resp = client.post(f"/v1/entities/{eid}/audits", headers=headers)
+    assert resp.status_code == 202, resp.text
+    job = client.get(f"/v1/audits/{resp.json()['audit_job_id']}", headers=headers).json()
+    assert job["status"] == "complete"
+    assert job["score"] == 66
 
 
 def test_full_audit_pipeline_writes_signals(client, org_key, monkeypatch):
