@@ -24,6 +24,9 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    preview: {
+      allowedHosts: ['geo-optimizer-skill-production.up.railway.app'],
+    },
     server: {
       proxy: {
         '/api': {
