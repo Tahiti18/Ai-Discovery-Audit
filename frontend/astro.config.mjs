@@ -25,8 +25,10 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     preview: {
+      // Leading dot = wildcard for that domain, so any Railway subdomain works
+      // (avoids surprises on rename / preview environments / redeploys).
       allowedHosts: [
-        'geo-optimizer-skill-production.up.railway.app',
+        '.up.railway.app',
         'visibletoai.io',
         'www.visibletoai.io',
       ],

@@ -75,7 +75,7 @@ export function ReportScreen({ data }: { data: ReportData }) {
     const brandChecks = responses.filter((r) => !DISCOVERY_CATEGORIES.has(r.prompt_category ?? ""));
     const brandHits = brandChecks.filter((r) => r.brand_mentioned).length;
     const brandStrong = brandChecks.length > 0 && brandHits >= Math.ceil(brandChecks.length / 2);
-    const competitors = (run.competitors ?? []).slice(0, 5);
+    const competitors = (run.competitors ?? []).slice(0, 10);
     const maxMentions = competitors.reduce((m, c) => Math.max(m, c.mentions), 1);
     // Evidence: prefer a spread — a couple of "not mentioned", one accurate, one wrong.
     const tagged = responses.map((r) => ({ p: r, tag: tagOf(r) }));
