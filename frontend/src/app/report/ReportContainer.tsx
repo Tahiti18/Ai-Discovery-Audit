@@ -35,6 +35,11 @@ export function ReportContainer({ runId }: { runId: string }) {
           run: r,
           responses: resp.data ?? [],
           moves: computeMoves(r, resp.data ?? []),
+          onRunAgain: async () => {
+            const res = await api.enqueueProbe(r.entity_id);
+            if (res.data) navigate(`report/${res.data.probe_run_id}`);
+            else alert(res.error || "Could not start a new check.");
+          },
           onDownloadTechnical: async (target: Window | null) => {
             const { html, error } = await fetchTechnicalReportHtml(r.entity_id);
             if (!html) throw new Error(error || "Could not generate the technical report.");

@@ -30,6 +30,11 @@ export interface ReportData {
    *  click so the browser's popup blocker doesn't kill it. */
   onDownloadTechnical?: (target: Window | null) => Promise<void>;
   technicalScore?: number | null;
+  /** Where "My businesses" / the logo lead. App: "/app/". Public sample: "/". */
+  homeHref?: string;
+  /** Start a fresh check for this business (app only). When absent — the public
+   *  sample — run-again affordances become a "check my business" signup CTA. */
+  onRunAgain?: () => void;
 }
 
 // Discovery = no-name buyer questions (the commercially important ones).
@@ -55,7 +60,8 @@ const TAG_STYLE: Record<Tag, { label: string; bg: string; fg: string }> = {
 };
 
 export function ReportScreen({ data }: { data: ReportData }) {
-  const { entity, run, responses, moves, technicalReportHref, onDownloadTechnical, technicalScore } = data;
+  const { entity, run, responses, moves, technicalReportHref, onDownloadTechnical, technicalScore, onRunAgain } = data;
+  const home = data.homeHref ?? "/app/";
 
   const derived = useMemo(() => {
     const discovery = responses.filter((r) => DISCOVERY_CATEGORIES.has(r.prompt_category ?? ""));
@@ -92,7 +98,7 @@ export function ReportScreen({ data }: { data: ReportData }) {
         {/* Top bar */}
         <nav className="border-b v-border-hair sticky top-0 z-50" style={{ background: "rgba(10,10,18,0.85)", backdropFilter: "blur(12px)" }}>
           <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
+            <a href={home} className="flex items-center gap-2.5" style={{ textDecoration: "none", color: "inherit" }}>
               <svg width="24" height="18" viewBox="0 0 32 24" fill="none" aria-hidden="true" style={{ filter: "drop-shadow(0 0 10px rgba(167,139,250,0.25))" }}>
                 <path d="M 2 12 Q 16 2, 30 12 Q 16 22, 2 12 Z" stroke="#A78BFA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 <circle cx="16" cy="12" r="3.5" fill="#A78BFA" />
@@ -100,10 +106,14 @@ export function ReportScreen({ data }: { data: ReportData }) {
               <span style={{ fontFamily: "'Playfair Display Variable',Georgia,serif", fontWeight: 500, fontSize: 17 }}>
                 Visible <em style={{ fontStyle: "italic" }}>to</em> <span style={{ color: "var(--vta-accent)" }}>AI</span>
               </span>
-            </div>
+            </a>
             <div className="flex items-center gap-6">
-              <a href="#" className="v-navlink hidden sm:block">My businesses</a>
-              <a href="#" className="v-btn v-btn-ghost" style={{ padding: "7px 14px", fontSize: 13 }}>Run again</a>
+              <a href={home} className="v-navlink hidden sm:block">{onRunAgain ? "My businesses" : "Home"}</a>
+              {onRunAgain ? (
+                <button onClick={onRunAgain} className="v-btn v-btn-ghost" style={{ padding: "7px 14px", fontSize: 13 }}>Run again</button>
+              ) : (
+                <a href="/login/" className="v-btn v-btn-ghost" style={{ padding: "7px 14px", fontSize: 13 }}>Check my business →</a>
+              )}
             </div>
           </div>
         </nav>
@@ -111,7 +121,7 @@ export function ReportScreen({ data }: { data: ReportData }) {
         <main className="max-w-5xl mx-auto px-6 pb-24">
           {/* Business header */}
           <div className="pt-8">
-            <a href="#" className="v-navlink" style={{ fontSize: 13 }}>← My businesses</a>
+            <a href={home} className="v-navlink" style={{ fontSize: 13 }}>← {onRunAgain ? "My businesses" : "Home"}</a>
             <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <h1 className="v-display" style={{ fontSize: "clamp(28px,5vw,38px)" }}>{entity.canonical_name}</h1>
@@ -283,8 +293,12 @@ export function ReportScreen({ data }: { data: ReportData }) {
           </section>
 
           <div className="mt-10 flex flex-wrap gap-3">
-            <a href="#" className="v-btn v-btn-primary">Run this check again</a>
-            <a href="#" className="v-btn v-btn-ghost">Back to my businesses</a>
+            {onRunAgain ? (
+              <button onClick={onRunAgain} className="v-btn v-btn-primary">Run this check again</button>
+            ) : (
+              <a href="/login/" className="v-btn v-btn-primary">Run this check on my business →</a>
+            )}
+            <a href={home} className="v-btn v-btn-ghost">{onRunAgain ? "Back to my businesses" : "Back to the homepage"}</a>
           </div>
         </main>
       </div>

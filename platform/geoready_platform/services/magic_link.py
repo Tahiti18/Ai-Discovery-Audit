@@ -123,5 +123,14 @@ def consume_magic_link(session: Session, *, raw_token: str) -> tuple[User, str, 
     if membership is None:
         raise InvalidMagicLinkError("No workspace is associated with this account.")
 
+    # Comped owner/staff accounts: re-assert the internal owner plan on every
+    # sign-in so it survives DB resets, redeploys, and accidental downgrades.
+    from geoready_platform.config import get_settings
+
+    if user.email in get_settings().comped_emails:
+        org = session.get(Org, membership.org_id)
+        if org is not None and org.plan != "owner":
+            org.plan = "owner"
+
     session.flush()
     return user, membership.org_id, membership.role

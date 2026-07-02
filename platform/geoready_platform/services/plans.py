@@ -33,6 +33,9 @@ PLAN_LIMITS: dict[str, PlanLimits] = {
     "pro": PlanLimits(max_businesses=1, checks_per_day=None, technical_report=True, history=True),
     "business": PlanLimits(max_businesses=5, checks_per_day=None, technical_report=True, history=True),
     "agency": PlanLimits(max_businesses=100, checks_per_day=None, technical_report=True, history=True),
+    # Internal comped tier for the product owner / staff (GR_COMPED_EMAILS):
+    # effectively unlimited so any business can be tested. Never sold.
+    "owner": PlanLimits(max_businesses=10_000, checks_per_day=None, technical_report=True, history=True),
 }
 
 

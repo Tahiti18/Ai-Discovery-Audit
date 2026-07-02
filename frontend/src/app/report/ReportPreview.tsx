@@ -107,6 +107,8 @@ const data: ReportData = {
   entity, run, responses, moves,
   technicalReportHref: "/sample-technical-report.html",
   technicalScore: 36,
+  homeHref: "/", // public sample: logo/back lead to the landing page
+  // no onRunAgain: run-again affordances become "check my business" CTAs
 };
 
 export default function ReportPreview() {

@@ -66,7 +66,7 @@ export function Dashboard() {
       <div className="relative">
         <nav className="border-b v-border-hair sticky top-0 z-50" style={{ background: "rgba(10,10,18,0.85)", backdropFilter: "blur(12px)" }}>
           <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
+            <a href="/app/" className="flex items-center gap-2.5" style={{ textDecoration: "none", color: "inherit" }}>
               <svg width="24" height="18" viewBox="0 0 32 24" fill="none" aria-hidden="true" style={{ filter: "drop-shadow(0 0 10px rgba(167,139,250,0.25))" }}>
                 <path d="M 2 12 Q 16 2, 30 12 Q 16 22, 2 12 Z" stroke="#A78BFA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 <circle cx="16" cy="12" r="3.5" fill="#A78BFA" />
@@ -74,7 +74,7 @@ export function Dashboard() {
               <span style={{ fontFamily: "'Playfair Display Variable',Georgia,serif", fontWeight: 500, fontSize: 17 }}>
                 Visible <em style={{ fontStyle: "italic" }}>to</em> <span style={{ color: "var(--vta-accent)" }}>AI</span>
               </span>
-            </div>
+            </a>
             <div className="flex items-center gap-5">
               <span className="v-text-muted hidden sm:block" style={{ fontSize: 13 }}>{session?.user.email}</span>
               <button onClick={() => { clearSession(); window.location.href = "/login/"; }} className="v-navlink" style={{ fontSize: 13 }}>Sign out</button>

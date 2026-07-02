@@ -124,6 +124,15 @@ class Settings:
         default_factory=lambda: _env_bool("GR_EMAIL_ENABLED", bool(os.environ.get("RESEND_API_KEY")))
     )
 
+    # Comma-separated emails auto-granted the internal "owner" plan on every
+    # sign-in (unlimited businesses/checks, all features). For the product
+    # owner/staff — never a sales path. Case-insensitive.
+    comped_emails: frozenset[str] = field(
+        default_factory=lambda: frozenset(
+            e.strip().lower() for e in os.environ.get("GR_COMPED_EMAILS", "").split(",") if e.strip()
+        )
+    )
+
     @property
     def auth_dev_links_enabled(self) -> bool:
         """Whether /v1/auth/request may echo the sign-in link in the response.

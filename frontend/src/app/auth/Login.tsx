@@ -43,7 +43,7 @@ export default function Login() {
       <div className="relative min-h-screen flex items-center justify-center px-6 py-16">
         <div className="w-full max-w-[440px]">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-2.5 mb-8">
+          <a href="/" className="flex items-center justify-center gap-2.5 mb-8" style={{ textDecoration: "none", color: "inherit" }}>
             <svg width="26" height="20" viewBox="0 0 32 24" fill="none" aria-hidden="true" style={{ filter: "drop-shadow(0 0 10px rgba(167,139,250,0.25))" }}>
               <path d="M 2 12 Q 16 2, 30 12 Q 16 22, 2 12 Z" stroke="#A78BFA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               <circle cx="16" cy="12" r="3.5" fill="#A78BFA" />
@@ -51,7 +51,7 @@ export default function Login() {
             <span style={{ fontFamily: "'Playfair Display Variable',Georgia,serif", fontWeight: 500, fontSize: 19 }}>
               Visible <em style={{ fontStyle: "italic" }}>to</em> <span style={{ color: "var(--vta-accent)" }}>AI</span>
             </span>
-          </div>
+          </a>
 
           <div className="v-card p-7 md:p-8">
             {status === "sent" ? (
