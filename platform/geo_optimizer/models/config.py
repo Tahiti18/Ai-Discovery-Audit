@@ -11,7 +11,12 @@ from pathlib import Path
 
 # ─── HTTP ────────────────────────────────────────────────────────────────────
 
-USER_AGENT = "GEO-Optimizer/2.0 (https://github.com/Tahiti18/geo-optimizer-skill)"
+# Honest bot identifier — NOT Mozilla-prefixed. Empirically some WAFs (e.g.
+# Era's nginx) allowlist honest identifiers and reject anything starting with
+# "Mozilla/5.0" from a Python TLS fingerprint on the assumption that it's a
+# scraper pretending to be a browser. The URL in the string is how site owners
+# recognise / whitelist us.
+USER_AGENT = "VisibleToAI/1.0 (+https://visibletoai.io/bot)"
 
 HEADERS = {"User-Agent": USER_AGENT}
 

@@ -46,7 +46,10 @@ _RETRYABLE_EXCEPTIONS: tuple[type[Exception], ...] = (
 )
 _MAX_RETRIES: int = 3
 _BACKOFF_BASE: int = 2
-_RETRYABLE_STATUS_CODES: list[int] = [408, 429, 500, 502, 503, 504]
+# Includes 202 & 403: some WAFs (Cloudflare, Akamai) return one of these on the
+# first hit from a cloud-datacenter IP as a "prove you're a browser" challenge,
+# then pass a retry through. Cheap to try, high value when it works.
+_RETRYABLE_STATUS_CODES: list[int] = [202, 403, 408, 429, 500, 502, 503, 504]
 
 
 def create_session_with_retry(
