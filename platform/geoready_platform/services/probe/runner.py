@@ -74,6 +74,49 @@ def _provider_error_summary(provider: str, errors: list[str]) -> str:
     return f"The AI provider ({provider}) could not be reached for this run. {detail}"
 
 
+def _extract_competitors_or_fallback(
+    *, name: str, category: str | None, city: str | None, domain: str | None,
+    rows: list[dict], fallback: list[dict], api_key: str,
+) -> list[dict]:
+    """Run the LLM competitor classifier over Phase B's answers. Any failure
+    (network, malformed JSON, empty output) logs a warning and returns the
+    legacy URL+denylist ``fallback`` list, so a probe run is never blocked by
+    this enrichment step."""
+    from geoready_platform.services.probe.competitor_extraction import (
+        CompetitorExtractionError,
+        classify_competitors,
+        filter_for_report,
+    )
+
+    answers = [(r["prompt"], r["raw_response"] or "") for r in rows if r.get("raw_response")]
+    if not answers:
+        return fallback
+    candidate_domains = sorted({d.get("name") for d in (fallback or []) if isinstance(d, dict) and d.get("name")})
+
+    try:
+        classified = classify_competitors(
+            name=name, category=category, city=city, domain=domain,
+            answers=answers,
+            candidate_domains=[d for d in candidate_domains if isinstance(d, str)],
+            api_key=api_key,
+        )
+    except CompetitorExtractionError as exc:
+        logger.warning("Competitor classifier failed, using legacy list: %s", exc)
+        return fallback
+
+    surfaced = filter_for_report(classified)
+    if not surfaced:
+        # Classifier ran but returned no confident businesses. Prefer the legacy
+        # list over showing nothing at all.
+        logger.info("Classifier returned no confident businesses; using legacy list")
+        return fallback
+    # Log dropped candidates so we can eyeball what was filtered.
+    dropped = [(c.name, c.type, c.confidence) for c in classified if c.type != "business" or c.confidence < 0.7]
+    if dropped:
+        logger.info("Classifier dropped %d non-competitor candidates: %s", len(dropped), dropped[:10])
+    return surfaced
+
+
 def _check_quota(session: Session, org_id: str) -> None:
     """Enforce the org's plan check allowance. Paid plans are unlimited
     (``checks_per_day is None``); free is capped."""
@@ -353,6 +396,22 @@ def execute_probe_run(run_id: str) -> None:
         all_failed = bool(rows) and answered == 0 and len(provider_errors) == len(rows)
         run_error = _provider_error_summary(provider, provider_errors) if all_failed else None
 
+        # Phase B.5: semantic competitor extraction.
+        # Ask the LLM to identify who a buyer would ACTUALLY consider instead —
+        # replacing the URL-count + static denylist output. Falls back to the
+        # legacy list on any failure so a run is never blocked by this.
+        competitors_for_run = som.competitors  # fallback: today's URL-count list
+        if not all_failed and answered > 0:
+            competitors_for_run = _extract_competitors_or_fallback(
+                name=facts["name"],
+                category=facts["category"],
+                city=facts["city"],
+                domain=facts["domain"],
+                rows=rows,
+                fallback=som.competitors,
+                api_key=api_key,
+            )
+
         # Phase C: persist everything.
         final_status = "failed" if all_failed else "complete"
         logger.info("Probe %s: %d/%d answered, status=%s", run_id, answered, len(rows), final_status)
@@ -368,7 +427,7 @@ def execute_probe_run(run_id: str) -> None:
             run.answered_count = answered
             run.share_of_model = som.share_of_model
             run.recommended_count = som.recommended_count
-            run.competitors = som.competitors
+            run.competitors = competitors_for_run
             run.flags = run_flags
             run.completed_at = _utcnow()
 
