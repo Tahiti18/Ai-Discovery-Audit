@@ -74,6 +74,52 @@ def _provider_error_summary(provider: str, errors: list[str]) -> str:
     return f"The AI provider ({provider}) could not be reached for this run. {detail}"
 
 
+def _resolve_prompts(*, entity_id: str, entity_facts: dict, max_prompts: int, api_key: str) -> list:
+    """Return the prompts for this run. Order of preference:
+    1. Cached custom prompts on the entity, if version matches (fastest, keeps
+       trend runs comparable across the same generator).
+    2. Freshly LLM-generated + cached back onto the entity (one-time cost).
+    3. Static templates (always works, no LLM needed).
+    """
+    from geoready_platform.services.probe import prompt_extraction as pe
+    from geoready_platform.services.probe.prompt_generator import GeneratedPrompt as StaticPrompt
+
+    static_fallback = prompt_generator.generate_prompts(
+        name=entity_facts["name"], category=entity_facts["category"],
+        city=entity_facts["city"], country=None, max_prompts=max_prompts,
+    )
+
+    # Step 1: try the cache.
+    with session_scope() as session:
+        ent = session.get(BusinessEntity, entity_id)
+        cached = pe.from_json(getattr(ent, "custom_prompts", None) or [])
+        cached_ver = getattr(ent, "custom_prompts_version", None)
+        if cached and cached_ver == pe.GENERATOR_VERSION and len(cached) >= max(4, min(4, max_prompts)):
+            logger.info("Probe: using %d cached custom prompts for entity %s", len(cached), entity_id)
+            return [StaticPrompt(category=p.category, text=p.text) for p in cached[:max_prompts]]
+
+    # Step 2: generate now and cache.
+    try:
+        generated = pe.generate_prompts_for_entity(
+            name=entity_facts["name"], category=entity_facts["category"],
+            city=entity_facts["city"], domain=entity_facts["domain"], api_key=api_key,
+        )
+    except pe.PromptGenerationError as exc:
+        logger.warning("Prompt generator failed, falling back to static templates: %s", exc)
+        return static_fallback
+
+    if not generated:
+        return static_fallback
+
+    with session_scope() as session:
+        ent = session.get(BusinessEntity, entity_id)
+        if ent is not None:
+            ent.custom_prompts = pe.to_json(generated)
+            ent.custom_prompts_version = pe.GENERATOR_VERSION
+    logger.info("Probe: generated + cached %d custom prompts for entity %s", len(generated), entity_id)
+    return [StaticPrompt(category=p.category, text=p.text) for p in generated[:max_prompts]]
+
+
 def _extract_competitors_or_fallback(
     *, name: str, category: str | None, city: str | None, domain: str | None,
     rows: list[dict], fallback: list[dict], api_key: str,
@@ -308,12 +354,12 @@ def execute_probe_run(run_id: str) -> None:
                 run.completed_at = _utcnow()
         return
 
-    prompts = prompt_generator.generate_prompts(
-        name=facts["name"],
-        category=facts["category"],
-        city=facts["city"],
-        country=None,
-        max_prompts=settings.probe_max_prompts,
+    # Buyer questions: prefer LLM-tailored ones cached on the entity (so trend
+    # runs stay comparable), else generate them now and cache, else fall back
+    # to the static templates so a probe is never blocked by generator issues.
+    prompts = _resolve_prompts(
+        entity_id=entity_id, entity_facts=facts,
+        max_prompts=settings.probe_max_prompts, api_key=api_key,
     )
 
     # Phases B + C run under a failure guard: any unexpected error (provider

@@ -178,6 +178,14 @@ class BusinessEntity(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
+    # Cached, LLM-generated buyer questions specific to this business. Populated
+    # on the first probe run (one-time cost, ~$0.001) and reused across
+    # subsequent runs so trend comparisons stay clean. Regenerated only when
+    # explicitly cleared (e.g. after a category change).
+    # Shape: [{"text": "...", "category": "category_recommendation|..."}]
+    custom_prompts: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    custom_prompts_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
+
     org: Mapped[Org] = relationship(back_populates="entities")
     signals: Mapped[list[EntitySignal]] = relationship(back_populates="entity", cascade="all, delete-orphan")
     audits: Mapped[list[AuditJob]] = relationship(back_populates="entity", cascade="all, delete-orphan")
