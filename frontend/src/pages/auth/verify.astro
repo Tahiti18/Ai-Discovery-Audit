@@ -1,7 +1,5 @@
 ---
-// Visible to AI — authenticated app (new design). Pure client island so it can
-// use the session in localStorage and talk to the backend with the JWT.
-import AppRoot from "../../app/AppRoot.tsx";
+import Verify from "../../app/auth/Verify.tsx";
 ---
 <!doctype html>
 <html lang="en" class="dark">
@@ -9,10 +7,10 @@ import AppRoot from "../../app/AppRoot.tsx";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
-    <title>Visible to AI</title>
+    <title>Signing in — Visible to AI</title>
     <style>html,body{margin:0;background:#0A0A12;}</style>
   </head>
   <body>
-    <AppRoot client:only="react" />
+    <Verify client:only="react" />
   </body>
 </html>

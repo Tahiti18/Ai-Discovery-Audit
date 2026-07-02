@@ -9,11 +9,12 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from geoready_platform.db.models import BusinessEntity
+from geoready_platform.db.models import BusinessEntity, Org
 from geoready_platform.services import ownership
+from geoready_platform.services.plans import PlanLimitExceededError, limits_for
 
 
 class EntityNotFoundError(Exception):
@@ -33,6 +34,22 @@ def create_entity(
     category: str | None = None,
     geo: str | None = None,
 ) -> BusinessEntity:
+    # Plan gate: cap the number of businesses per account.
+    org = session.get(Org, org_id)
+    limits = limits_for(org.plan if org else None)
+    current = session.execute(
+        select(func.count(BusinessEntity.id)).where(
+            BusinessEntity.org_id == org_id, BusinessEntity.archived_at.is_(None)
+        )
+    ).scalar_one()
+    if current >= limits.max_businesses:
+        raise PlanLimitExceededError(
+            f"Your plan includes {limits.max_businesses} "
+            f"business{'es' if limits.max_businesses != 1 else ''}. "
+            "Upgrade to add more.",
+            upgrade_to="business",
+        )
+
     entity = BusinessEntity(
         org_id=org_id,
         canonical_name=canonical_name,

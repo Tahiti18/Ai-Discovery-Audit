@@ -276,7 +276,7 @@ def _build_robots_card(result: AuditResult, score: int, max_score: int) -> Panel
     content_parts.append(Text())
 
     if not result.robots.found:
-        content_parts.append(Text("  File non trovato", style=f"italic {_COLORS['dim']}"))
+        content_parts.append(Text("  File not found", style=f"italic {_COLORS['dim']}"))
     else:
         # Bot info with detail
         info = Text()
@@ -327,7 +327,7 @@ def _build_llms_card(result: AuditResult, score: int, max_score: int) -> Panel:
     content_parts.append(Text())
 
     if not result.llms.found:
-        content_parts.append(Text("  File non trovato", style=f"italic {_COLORS['dim']}"))
+        content_parts.append(Text("  File not found", style=f"italic {_COLORS['dim']}"))
     else:
         # Structure details
         features = []
@@ -391,7 +391,7 @@ def _build_schema_card(result: AuditResult, score: int, max_score: int) -> Panel
     content_parts.append(Text())
 
     if not result.schema.found_types:
-        content_parts.append(Text("  Nessuno schema trovato", style=f"italic {_COLORS['dim']}"))
+        content_parts.append(Text("  No schema found", style=f"italic {_COLORS['dim']}"))
     else:
         # Schemas found as inline tags
         types_text = Text("  ")
@@ -674,9 +674,9 @@ def _build_brand_entity_card(result: AuditResult, score: int, max_score: int) ->
     # Brand name consistency
     coherence = Text("  ")
     if be.brand_name_consistent:
-        coherence.append("✓ Brand name coerente", style=_COLORS["excellent"])
+        coherence.append("✓ Brand name consistent", style=_COLORS["excellent"])
     else:
-        coherence.append("✗ Brand name incoerente", style=_COLORS["critical"])
+        coherence.append("✗ Brand name inconsistent", style=_COLORS["critical"])
     if be.names_found:
         coherence.append(f"  ({', '.join(be.names_found[:3])})", style=_COLORS["dim"])
     content_parts.append(coherence)
@@ -814,7 +814,7 @@ def _build_js_card(result: AuditResult) -> Panel | None:
         content_parts.append(fw)
 
     if js.has_empty_root:
-        content_parts.append(Text("  ⚠ Container SPA vuoto rilevato", style=_COLORS["foundation"]))
+        content_parts.append(Text("  ⚠ Empty SPA container detected", style=_COLORS["foundation"]))
     if js.has_noscript_content:
         content_parts.append(Text("  ℹ Fallback <noscript> presente", style=_COLORS["dim"]))
 
@@ -1211,13 +1211,6 @@ def format_audit_rich(result: AuditResult) -> str:
     motiv = motiv_messages.get(result.band, "")
     if motiv:
         console.print(Align.center(Text(motiv, style=f"italic {_COLORS['dim']}")))
-
-    # CLI→platform funnel: the CLI is one-shot, continuity lives in the platform
-    console.print()
-    funnel = Text()
-    funnel.append("Track this score over time — alerts & AI citation tracking → ", style=_COLORS["dim"])
-    funnel.append("geoready.dev", style=f"bold {_COLORS['brand_1']} underline")
-    console.print(Align.center(funnel))
 
     console.print()
     return buf.getvalue()

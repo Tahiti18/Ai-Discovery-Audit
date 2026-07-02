@@ -31,5 +31,16 @@ def test_at_least_one_discovery_category_exists():
 
 
 def test_taxonomy_version_bumped():
-    # Semantics changed in v3; provenance must reflect it.
-    assert TAXONOMY_VERSION == "v3"
+    # v3: SoM restricted to discovery prompts. v4: templates reworded to read
+    # naturally for product categories (no "best jewellery", no "who should I
+    # hire"). Bump this pin whenever templates/semantics change.
+    assert TAXONOMY_VERSION == "v4"
+
+
+def test_templates_use_natural_business_phrasing():
+    """Guard against reintroducing awkward phrasing that made reports look
+    untrustworthy (e.g. 'best jewellery in X', 'who should I hire')."""
+    for c in CATEGORIES:
+        for t in c.templates:
+            assert "hire" not in t.lower(), f"{c.key}: service-only phrasing: {t}"
+            assert "best {category} in" not in t, f"{c.key}: ungrammatical for product categories: {t}"

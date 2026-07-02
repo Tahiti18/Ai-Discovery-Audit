@@ -1022,7 +1022,7 @@ async def citations_check(request: Request, body: CitationsCheckRequest):
     if not await _reserve_citations_slot():
         raise HTTPException(
             status_code=429,
-            detail="Daily check budget exhausted. Try again tomorrow or track citations at app.geoready.dev.",
+            detail="Daily check budget exhausted. Try again tomorrow.",
         )
 
     queries = [t.format(topic=topic) for t in _CITATIONS_QUERY_TEMPLATES[:_CITATIONS_MAX_QUERIES]]

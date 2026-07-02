@@ -8,3 +8,18 @@ httpx
 alembic
 celery
 PyJWT
+
+# Auth (pydantic EmailStr) + billing
+email-validator
+stripe
+
+# Production database driver (GR_DATABASE_URL=postgresql+psycopg://...)
+psycopg[binary]
+
+# Runtime deps of the vendored geo_optimizer engine (audit + probe paths).
+# Without these the technical-report and probe endpoints crash on a clean
+# install — locally they resolve only because the dev machine has them globally.
+beautifulsoup4
+requests
+click
+rich

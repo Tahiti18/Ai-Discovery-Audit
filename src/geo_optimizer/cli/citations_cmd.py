@@ -60,7 +60,6 @@ def _format_text(result) -> str:
     lines.append(_VERDICT_LINES[result.verdict].format(brand=result.brand, domain=result.domain))
     lines.append(f"→ {_VERDICT_ADVICE[result.verdict].format(domain=result.domain)}")
     lines.append("")
-    lines.append("One-shot check. Track citations over time with alerts → https://geoready.dev")
     return "\n".join(lines)
 
 
@@ -94,7 +93,7 @@ def citations(brand, domain, topic, queries, provider, output_format, output_fil
 
     \b
     Examples:
-      geo citations --brand "GeoReady" --domain geoready.dev --topic "GEO audit tools"
+      geo citations --brand "Acme Jewellers" --domain acme.com --topic "jewellery in your city"
       geo citations --brand "Acme" --domain acme.com --query "best CRM for startups"
     """
     resolved_provider, resolved_key = resolve_provider(provider)

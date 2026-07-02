@@ -1,20 +1,663 @@
----
-// AI Visibility OS � root app entry.
-// Replaces the old GeoReady marketing homepage at "/".
-// The original file is backed up as index.old-geoready-backup.astro.
-import "../styles/global.css";
-import AIVisibilityApp from "../app/AIVisibilityApp.tsx";
----
-
 <!doctype html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <title>AI Visibility OS</title>
-  </head>
-  <body>
-    <AIVisibilityApp client:only="react" />
-  </body>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Visible to AI — See what AI says about your business</title>
+<meta name="description" content="Your customers are asking ChatGPT, Perplexity, and Google AI for recommendations. Find out if your business is one of the answers — and what to fix if it isn't." />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M 2 16 Q 16 4 30 16 Q 16 28 2 16 Z' stroke='%23A78BFA' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/><circle cx='16' cy='16' r='4' fill='%23A78BFA'/></svg>">
+<meta property="og:title" content="Visible to AI — See what AI says about your business" />
+<meta property="og:description" content="Your customers are asking ChatGPT, Perplexity, and Google AI for recommendations. Find out if your business is one of the answers." />
+<meta property="og:image" content="og-image.png" />
+<meta property="og:url" content="https://visibletoai.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Visible to AI — See what AI says about your business" />
+<meta name="twitter:description" content="Find out if AI is recommending your business — and what to fix if it isn't." />
+<meta name="twitter:image" content="og-image.png" />
+<script is:inline src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style is:global>
+  :root {
+    --bg: #0A0A12;
+    --bg-elevated: #11111B;
+    --surface-1: #16161F;
+    --surface-2: #1C1C28;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.12);
+    --border-accent: rgba(167, 139, 250, 0.25);
+    --text-primary: #F4F4F5;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --accent: #A78BFA;
+    --accent-strong: #8B5CF6;
+    --accent-soft-bg: rgba(167, 139, 250, 0.08);
+    --accent-soft-text: #C4B5FD;
+  }
+  * { box-sizing: border-box; }
+  html { font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--text-primary); background: var(--bg); }
+  body { background: var(--bg); margin: 0; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-muted { color: var(--text-muted); }
+  .accent { color: var(--accent); }
+  .border-hair { border-color: var(--border); }
+  .border-strong { border-color: var(--border-strong); }
+  .bg-elevated { background: var(--bg-elevated); }
+  .surface-1 { background: var(--surface-1); }
+  .surface-2 { background: var(--surface-2); }
+  .h-display { font-family: 'Playfair Display', Georgia, serif; font-weight: 500; letter-spacing: 0.005em; line-height: 1.32; font-feature-settings: normal; }
+  /* Gradient-clipped italic words: the slant overhangs the text box, so give a
+     hair of right padding to stop the last letter being clipped. */
+  .grad-word { font-style: italic; background: linear-gradient(135deg, var(--accent) 0%, #E879F9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; padding-right: 0.06em; }
+  .label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .ring-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; background: var(--accent-soft-bg); color: var(--accent-soft-text); border: 1px solid var(--border-accent); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 24px; border-radius: 10px; font-weight: 500; font-size: 15px; transition: all 0.2s ease; cursor: pointer; border: none; text-decoration: none; }
+  .btn-primary { background: var(--accent-strong); color: white; box-shadow: 0 0 0 1px rgba(167,139,250,0.2), 0 10px 30px -10px rgba(139, 92, 246, 0.5); }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(167,139,250,0.35), 0 14px 40px -10px rgba(139, 92, 246, 0.65); }
+  .btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-strong); }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.25); background: var(--surface-1); }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; transition: border-color 0.2s ease, transform 0.2s ease; }
+  .card-hover:hover { border-color: var(--border-accent); transform: translateY(-2px); }
+  .hairline { height: 1px; background: var(--border); }
+  .dot-grid { background-image: radial-gradient(circle at center, rgba(255,255,255,0.06) 1px, transparent 1px); background-size: 24px 24px; }
+  .glow-purple { background: radial-gradient(ellipse 600px 400px at top right, rgba(139, 92, 246, 0.18), transparent 70%); }
+  .glow-purple-soft { background: radial-gradient(ellipse 800px 500px at center, rgba(139, 92, 246, 0.08), transparent 60%); }
+  .gradient-line { background: linear-gradient(90deg, transparent, var(--border-strong), transparent); height: 1px; }
+  details[open] summary svg { transform: rotate(45deg); }
+  details summary svg { transition: transform 0.2s ease; }
+  details summary { list-style: none; }
+  details summary::-webkit-details-marker { display: none; }
+  .nav-link { color: var(--text-secondary); font-size: 14px; transition: color 0.15s ease; }
+  .nav-link:hover { color: var(--text-primary); }
+  .pill-stat { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+  .icon-tile { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft-bg); border: 1px solid var(--border-accent); display: flex; align-items: center; justify-content: center; color: var(--accent); }
+  .icon-tile-neutral { width: 36px; height: 36px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); flex-shrink: 0; }
+  .email-form { display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+  .email-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; }
+  .email-form .btn { align-self: center; margin-top: 6px; }
+  .email-input { flex: 1 1 220px; min-width: 0; padding: 13px 16px; border-radius: 10px; background: var(--surface-1); border: 1px solid var(--border-strong); color: var(--text-primary); font-size: 15px; font-family: inherit; }
+  .email-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(167,139,250,0.15); }
+  .email-input::placeholder { color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<!-- Top glow -->
+<div class="fixed inset-0 pointer-events-none glow-purple" aria-hidden="true"></div>
+
+<div class="relative">
+
+<!-- Nav -->
+<nav class="border-b border-hair backdrop-blur-md bg-opacity-80 sticky top-0 z-50" style="background: rgba(10,10,18,0.8);">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <svg width="26" height="20" viewBox="0 0 32 24" fill="none" aria-hidden="true" style="filter: drop-shadow(0 0 10px rgba(167,139,250,0.25));">
+        <path d="M 2 12 Q 16 2, 30 12 Q 16 22, 2 12 Z" stroke="#A78BFA" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="16" cy="12" r="3.5" fill="#A78BFA"/>
+      </svg>
+      <span style="font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:18px;letter-spacing:0.005em;">Visible <em style="font-style:italic;font-weight:500;">to</em> <span style="color:var(--accent);">AI</span></span>
+    </div>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="#report" class="nav-link">Sample report</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+    </div>
+    <a href="/login/" class="btn btn-primary" style="padding: 9px 18px; font-size: 14px;">Get my free audit →</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="relative">
+  <div class="absolute inset-0 dot-grid opacity-40 pointer-events-none" aria-hidden="true"></div>
+  <div class="max-w-6xl mx-auto px-6 pt-20 pb-28 relative">
+    <div class="grid lg:grid-cols-[1.15fr_1fr] gap-16 items-center">
+      <div>
+        <div class="ring-pill mb-8">
+          <span class="w-1.5 h-1.5 rounded-full" style="background: var(--accent); box-shadow: 0 0 8px var(--accent);"></span>
+          For business owners with a website
+        </div>
+        <h1 class="h-display text-3xl md:text-4xl lg:text-[44px]">
+          See what AI says about your business — and <span class="grad-word">fix what's costing you</span> customers.
+        </h1>
+        <p class="mt-7 text-[19px] text-secondary max-w-xl leading-relaxed">
+          Your customers are asking ChatGPT, Perplexity, and Google AI for recommendations instead of searching Google. Find out if your business is one of the answers — and exactly what to fix if it isn't.
+        </p>
+
+        <form id="cta-hero" class="email-form mt-10 max-w-[480px]" onsubmit="event.preventDefault(); var i=this.querySelector('input[type=email]'); location.href='/login/?email='+encodeURIComponent(i&&i.value?i.value:'');">
+          <div class="email-row">
+            <input id="cta-hero-name" class="email-input" type="text" placeholder="Your first name" autocomplete="given-name" required style="flex: 1 1 140px;" />
+            <input class="email-input" type="email" placeholder="Your work email" autocomplete="email" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Run my free audit →</button>
+        </form>
+
+        <div class="mt-6 flex flex-wrap items-center gap-x-7 gap-y-3 text-[13px] text-muted">
+          <div class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Under 60 seconds</div>
+          <div class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> No credit card</div>
+          <div class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Real AI answers, not a score</div>
+        </div>
+      </div>
+
+      <!-- Hero visual: a floating preview card -->
+      <div class="relative">
+        <div class="absolute -inset-8 glow-purple-soft pointer-events-none" aria-hidden="true"></div>
+        <div class="relative card p-6" style="backdrop-filter: blur(10px);">
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-medium" style="background: rgba(167,139,250,0.15); color: var(--accent);">M</div>
+              <div>
+                <p class="text-[13px] font-medium m-0">my-bakery.com</p>
+                <p class="text-[11px] text-muted m-0">Bakery · your city</p>
+              </div>
+            </div>
+            <span class="pill-stat" style="background: rgba(226,75,74,0.12); color: #F87171;">
+              <span class="w-1.5 h-1.5 rounded-full" style="background:#F87171;"></span>
+              Barely visible
+            </span>
+          </div>
+
+          <div class="flex items-baseline gap-3 mb-5">
+            <span class="text-[42px] font-medium leading-none tabular">36</span>
+            <span class="text-[13px] text-muted">/ 100</span>
+            <span class="ml-auto pill-stat" style="background:rgba(167,139,250,0.1); color:var(--accent-soft-text);">+30 if you fix the top 3</span>
+          </div>
+
+          <div class="space-y-2.5 mb-5">
+            <div class="flex items-center justify-between text-[13px]">
+              <span class="text-secondary">ChatGPT</span>
+              <div class="flex items-center gap-3 flex-1 max-w-[200px] ml-4">
+                <div class="flex-1 h-1 rounded-full" style="background: var(--surface-2);"><div class="h-full rounded-full" style="width:30%; background:#F87171;"></div></div>
+                <span class="tabular w-6 text-right">30</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[13px]">
+              <span class="text-secondary">Perplexity</span>
+              <div class="flex items-center gap-3 flex-1 max-w-[200px] ml-4">
+                <div class="flex-1 h-1 rounded-full" style="background: var(--surface-2);"><div class="h-full rounded-full" style="width:42%; background:#FBBF24;"></div></div>
+                <span class="tabular w-6 text-right">42</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[13px]">
+              <span class="text-secondary">Google AI</span>
+              <div class="flex items-center gap-3 flex-1 max-w-[200px] ml-4">
+                <div class="flex-1 h-1 rounded-full" style="background: var(--surface-2);"><div class="h-full rounded-full" style="width:28%; background:#F87171;"></div></div>
+                <span class="tabular w-6 text-right">28</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hairline mb-4"></div>
+
+          <div class="flex items-center gap-3 text-[13px]">
+            <div class="w-7 h-7 rounded-md flex items-center justify-center" style="background: rgba(248,113,113,0.12); color: #F87171;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></svg>
+            </div>
+            <div class="flex-1">
+              <p class="m-0 font-medium">Top fix: AI can't read your menu page</p>
+              <p class="m-0 text-muted text-[12px]">+12 points · 30 min to fix · ask your web person</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="border-t border-hair">
+  <div class="max-w-6xl mx-auto px-6 py-24">
+    <p class="label mb-5">Why this matters</p>
+    <h2 class="h-display text-[26px] md:text-[34px] max-w-3xl">Your customers are asking AI. Is it recommending you?</h2>
+    <div class="grid md:grid-cols-3 gap-8 mt-16">
+      <div>
+        <div class="text-[32px] font-medium mb-3 accent tabular">01</div>
+        <h3 class="font-medium text-[17px] mb-2.5">Search is shifting to AI</h3>
+        <p class="text-secondary leading-relaxed text-[15px]">More buyers are asking ChatGPT, Perplexity, and Google AI instead of typing into a search bar. If AI doesn't know your business, you're invisible to a growing slice of demand.</p>
+      </div>
+      <div>
+        <div class="text-[32px] font-medium mb-3 accent tabular">02</div>
+        <h3 class="font-medium text-[17px] mb-2.5">A few businesses get the answers</h3>
+        <p class="text-secondary leading-relaxed text-[15px]">When someone asks AI "what's the best [your category] near me?", a handful of businesses get named. The rest don't exist as far as the customer is concerned.</p>
+      </div>
+      <div>
+        <div class="text-[32px] font-medium mb-3 accent tabular">03</div>
+        <h3 class="font-medium text-[17px] mb-2.5">SEO alone won't fix this</h3>
+        <p class="text-secondary leading-relaxed text-[15px]">AI engines look at different signals than Google's blue links. Your old SEO playbook still matters — but it's not enough on its own to get cited by AI.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mid-page CTA #1 -->
+<section class="border-t border-hair relative">
+  <div class="absolute inset-0 glow-purple-soft pointer-events-none" aria-hidden="true"></div>
+  <div class="max-w-4xl mx-auto px-6 py-20 text-center relative">
+    <h2 class="h-display text-[26px] md:text-[34px]">Is your business visible to AI? <span class="grad-word">Find out in 60 seconds.</span></h2>
+    <p class="mt-5 text-[17px] text-secondary max-w-xl mx-auto">Enter your name and email — we'll run the audit and send the report.</p>
+    <form class="email-form mt-8 max-w-[520px] mx-auto" onsubmit="event.preventDefault(); var i=this.querySelector('input[type=email]'); location.href='/login/?email='+encodeURIComponent(i&&i.value?i.value:'');">
+      <div class="email-row">
+        <input class="email-input" type="text" placeholder="Your first name" autocomplete="given-name" required style="flex: 1 1 140px;" />
+        <input class="email-input" type="email" placeholder="Your work email" autocomplete="email" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Get my report now →</button>
+    </form>
+  </div>
+</section>
+
+<!-- Benefits -->
+<section class="border-t border-hair relative">
+  <div class="absolute inset-0 glow-purple-soft pointer-events-none" aria-hidden="true"></div>
+  <div class="max-w-6xl mx-auto px-6 py-24 relative">
+    <p class="label mb-5">What you get</p>
+    <h2 class="h-display text-[26px] md:text-[34px] max-w-3xl">Three key answers about how AI sees your business.</h2>
+    <div class="grid md:grid-cols-3 gap-5 mt-16">
+      <div class="card card-hover p-7">
+        <div class="icon-tile mb-6">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <h3 class="font-medium text-[17px] mb-2">See exactly what AI says about you</h3>
+        <p class="text-secondary leading-relaxed text-[15px]">The real answers AI gives when buyers ask about businesses like yours. Are you mentioned? In what context? Are the facts even right?</p>
+      </div>
+      <div class="card card-hover p-7">
+        <div class="icon-tile mb-6">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3 class="font-medium text-[17px] mb-2">Find out who AI recommends instead</h3>
+        <p class="text-secondary leading-relaxed text-[15px]">The real competitors AI names when your customers ask "best [your category] near me." Real names, real evidence — not generic guesses.</p>
+      </div>
+      <div class="card card-hover p-7">
+        <div class="icon-tile mb-6">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3 class="font-medium text-[17px] mb-2">Know what to fix this week</h3>
+        <p class="text-secondary leading-relaxed text-[15px]">The top 3 things you can change this week to start showing up — in plain English, ordered by impact, so you know what's worth doing first.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features (light) -->
+<section class="border-t border-hair">
+  <div class="max-w-6xl mx-auto px-6 py-24">
+    <p class="label mb-5">How we get those answers</p>
+    <h2 class="h-display text-[26px] md:text-[34px] max-w-3xl">A serious audit, presented like a human wrote it.</h2>
+    <div class="grid md:grid-cols-2 gap-x-10 gap-y-9 mt-16">
+      <div class="flex gap-5">
+        <div class="icon-tile-neutral">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div>
+          <h3 class="font-medium text-[16px] mb-1.5">We ask the real AI engines</h3>
+          <p class="text-secondary text-[14.5px] leading-relaxed">ChatGPT, Perplexity, and Google AI — the same engines your customers are using. Not a simulation, not a guess. Live questions, live answers.</p>
+        </div>
+      </div>
+      <div class="flex gap-5">
+        <div class="icon-tile-neutral">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div>
+          <h3 class="font-medium text-[16px] mb-1.5">You read every answer yourself</h3>
+          <p class="text-secondary text-[14.5px] leading-relaxed">We don't hide behind a score. The actual things AI said about your business are in the report so you can see what's wrong and why.</p>
+        </div>
+      </div>
+      <div class="flex gap-5">
+        <div class="icon-tile-neutral">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <h3 class="font-medium text-[16px] mb-1.5">We flag what AI gets wrong</h3>
+          <p class="text-secondary text-[14.5px] leading-relaxed">"Closed permanently" when you're open. Wrong address. Wrong hours. Wrong category. AI hallucinates — and customers act on it. We catch it.</p>
+        </div>
+      </div>
+      <div class="flex gap-5">
+        <div class="icon-tile-neutral">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div>
+          <h3 class="font-medium text-[16px] mb-1.5">We name your real competitors</h3>
+          <p class="text-secondary text-[14.5px] leading-relaxed">Not the ones you think you have — the ones AI is actually recommending to your customers. Sometimes it's the obvious names; sometimes it's a surprise.</p>
+        </div>
+      </div>
+      <div class="flex gap-5">
+        <div class="icon-tile-neutral">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <h3 class="font-medium text-[16px] mb-1.5">We give you a fix list, not a wall of jargon</h3>
+          <p class="text-secondary text-[14.5px] leading-relaxed">Three things, ranked by impact, written in plain English. For each one: what it is, why it matters, and how to fix it.</p>
+        </div>
+      </div>
+      <div class="flex gap-5">
+        <div class="icon-tile-neutral">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <h3 class="font-medium text-[16px] mb-1.5">Run it again next month</h3>
+          <p class="text-secondary text-[14.5px] leading-relaxed">After you make changes, run a new audit. See whether the score moved, whether AI started mentioning you, whether your fix worked.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mid-page CTA #2 -->
+<section class="border-t border-hair relative">
+  <div class="absolute inset-0 glow-purple-soft pointer-events-none" aria-hidden="true"></div>
+  <div class="max-w-4xl mx-auto px-6 py-20 text-center relative">
+    <h2 class="h-display text-[26px] md:text-[34px]">AI is recommending businesses to your customers. <span class="grad-word">Make sure yours is one of them.</span></h2>
+    <form class="email-form mt-8 max-w-[520px] mx-auto" onsubmit="event.preventDefault(); var i=this.querySelector('input[type=email]'); location.href='/login/?email='+encodeURIComponent(i&&i.value?i.value:'');">
+      <div class="email-row">
+        <input class="email-input" type="text" placeholder="Your first name" autocomplete="given-name" required style="flex: 1 1 140px;" />
+        <input class="email-input" type="email" placeholder="Your work email" autocomplete="email" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Check my business →</button>
+    </form>
+    <p class="mt-5 text-[13px] text-muted">Free during early access. Your audit results are yours either way.</p>
+  </div>
+</section>
+
+<!-- How it works -->
+<section id="how" class="border-t border-hair">
+  <div class="max-w-6xl mx-auto px-6 py-24">
+    <p class="label mb-5">How it works</p>
+    <h2 class="h-display text-[26px] md:text-[34px] max-w-3xl">From your URL to your report in under a minute.</h2>
+    <div class="grid md:grid-cols-3 gap-4 mt-16">
+      <div class="card p-7 relative overflow-hidden">
+        <div class="text-[12px] font-medium accent mb-4 tracking-widest">STEP 01</div>
+        <h3 class="font-medium text-[17px] mb-2.5">Tell us your website</h3>
+        <p class="text-secondary text-[14.5px] leading-relaxed">Just enter your URL and your email. We work it out from there — we don't need a login, an account at Google, or access to anything else.</p>
+      </div>
+      <div class="card p-7 relative overflow-hidden">
+        <div class="text-[12px] font-medium accent mb-4 tracking-widest">STEP 02</div>
+        <h3 class="font-medium text-[17px] mb-2.5">We ask AI about you</h3>
+        <p class="text-secondary text-[14.5px] leading-relaxed">Around 60 seconds. We ask ChatGPT, Perplexity, and Google AI the real questions your customers would ask — and capture every answer.</p>
+      </div>
+      <div class="card p-7 relative overflow-hidden">
+        <div class="text-[12px] font-medium accent mb-4 tracking-widest">STEP 03</div>
+        <h3 class="font-medium text-[17px] mb-2.5">Read your report</h3>
+        <p class="text-secondary text-[14.5px] leading-relaxed">Plain-English summary at the top. The actual AI answers in the middle. Your top 3 fixes at the bottom. Sharable with anyone on your team.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sample report -->
+<section id="report" class="border-t border-hair relative">
+  <div class="absolute inset-0 glow-purple-soft pointer-events-none" aria-hidden="true"></div>
+  <div class="max-w-6xl mx-auto px-6 py-24 relative">
+    <p class="label mb-5">Sample report</p>
+    <h2 class="h-display text-[26px] md:text-[34px] max-w-3xl">Here's what your report looks like.</h2>
+    <p class="text-secondary mt-5 max-w-2xl text-[17px]">A real, complete sample on an example business — not a teaser. The plain-English verdict, the actual AI answers, your competitors, your next moves, and a downloadable technical audit for whoever fixes your site.</p>
+    <div class="mt-7">
+      <a href="/report-preview/" class="btn btn-primary">See the full sample report →</a>
+    </div>
+
+    <div class="mt-14 card overflow-hidden">
+      <div class="p-5 border-b border-hair flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="w-2 h-2 rounded-full" style="background:#F87171; box-shadow: 0 0 10px #F87171;"></span>
+          <span class="label" style="text-transform:uppercase;">AI visibility report</span>
+          <span class="text-muted">·</span>
+          <span class="font-medium text-sm">my-bakery.com</span>
+        </div>
+        <span class="text-xs text-muted">Sample · 27 Jun 2026</span>
+      </div>
+
+      <div class="p-8 surface-2">
+        <div class="grid md:grid-cols-[160px_1fr] gap-8 items-center">
+          <div class="relative w-[160px] h-[160px] mx-auto md:mx-0">
+            <svg viewBox="0 0 120 120" class="w-full h-full" style="transform: rotate(-90deg);">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="url(#scoreGrad)" stroke-width="7" stroke-dasharray="117.6 326.7" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#A78BFA"/>
+                  <stop offset="100%" stop-color="#E879F9"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-[40px] font-medium leading-none tabular">36</span>
+              <span class="text-[10px] text-muted mt-1 tracking-widest">OUT OF 100</span>
+            </div>
+          </div>
+          <div>
+            <p class="label mb-3">Barely visible</p>
+            <p class="text-[20px] font-medium leading-snug">When your customers ask AI about businesses like yours, you're mentioned sometimes — but other businesses are mentioned more often.</p>
+            <p class="mt-3 text-[15px] text-secondary">Fix the top three things below and your score should reach <span class="font-medium" style="color:var(--text-primary);">66 (looking good).</span></p>
+            <div class="flex flex-wrap gap-2 mt-5">
+              <span class="text-[11px] font-medium px-2.5 py-1 rounded-full tracking-wider" style="background:rgba(248,113,113,0.15); color:#FCA5A5;">2 BIG WINS</span>
+              <span class="text-[11px] font-medium px-2.5 py-1 rounded-full tracking-wider" style="background:rgba(251,191,36,0.15); color:#FCD34D;">5 WORTH DOING</span>
+              <span class="text-[11px] font-medium px-2.5 py-1 rounded-full tracking-wider" style="background:rgba(255,255,255,0.08); color:var(--text-secondary);">12 NICE TO HAVE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-8 border-t border-hair">
+        <p class="label mb-5">How each AI engine sees you</p>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="rounded-xl border border-hair p-4" style="background:var(--bg-elevated);">
+            <div class="flex justify-between items-center mb-3"><span class="font-medium text-sm">ChatGPT</span><span class="text-[28px] font-medium tabular leading-none">30</span></div>
+            <div class="h-[3px] rounded-full overflow-hidden mb-3" style="background:var(--surface-2);"><div class="h-full" style="width:30%;background:#F87171;"></div></div>
+            <p class="text-[12px] text-secondary leading-relaxed m-0">Can reach your site but can't read your menu.</p>
+          </div>
+          <div class="rounded-xl border border-hair p-4" style="background:var(--bg-elevated);">
+            <div class="flex justify-between items-center mb-3"><span class="font-medium text-sm">Perplexity</span><span class="text-[28px] font-medium tabular leading-none">42</span></div>
+            <div class="h-[3px] rounded-full overflow-hidden mb-3" style="background:var(--surface-2);"><div class="h-full" style="width:42%;background:#FBBF24;"></div></div>
+            <p class="text-[12px] text-secondary leading-relaxed m-0">Mentions you — gets your hours wrong.</p>
+          </div>
+          <div class="rounded-xl border border-hair p-4" style="background:var(--bg-elevated);">
+            <div class="flex justify-between items-center mb-3"><span class="font-medium text-sm">Google AI</span><span class="text-[28px] font-medium tabular leading-none">28</span></div>
+            <div class="h-[3px] rounded-full overflow-hidden mb-3" style="background:var(--surface-2);"><div class="h-full" style="width:28%;background:#F87171;"></div></div>
+            <p class="text-[12px] text-secondary leading-relaxed m-0">Recommends two competitors before you.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Progress over time -->
+<section id="progress" class="border-t border-hair relative">
+  <div class="max-w-6xl mx-auto px-6 py-24 relative">
+    <p class="label mb-5">Prove it worked</p>
+    <h2 class="h-display text-[26px] md:text-[34px] max-w-3xl">Run it again next month. Watch AI start naming you.</h2>
+    <p class="text-secondary mt-5 max-w-2xl text-[17px]">Nine weeks for an example bakery. The score climbs as fixes ship. A website redesign accidentally breaks something in week 6 — your next audit catches it and tells you what. You fix it, and AI starts recommending you for searches you used to lose.</p>
+
+    <div class="mt-14 card overflow-hidden">
+      <div class="p-5 border-b border-hair flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="w-2 h-2 rounded-full" style="background:#A78BFA; box-shadow: 0 0 10px #A78BFA;"></span>
+          <span class="label">Visibility over time</span>
+          <span class="text-muted">·</span>
+          <span class="font-medium text-sm">my-bakery.com</span>
+        </div>
+        <span class="text-xs text-muted">9 audits · one a week</span>
+      </div>
+
+      <div class="p-6 md:p-8 surface-2">
+        <svg viewBox="0 0 1100 360" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; display: block;">
+          <defs>
+            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#A78BFA"/>
+              <stop offset="100%" stop-color="#E879F9"/>
+            </linearGradient>
+            <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.28"/>
+              <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+
+          <line x1="70" y1="70" x2="1030" y2="70" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <line x1="70" y1="185" x2="1030" y2="185" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="70" y1="300" x2="1030" y2="300" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+          <text x="56" y="74" text-anchor="end" fill="#71717A" font-size="11" font-family="Inter, sans-serif">100</text>
+          <text x="56" y="189" text-anchor="end" fill="#71717A" font-size="11" font-family="Inter, sans-serif">50</text>
+          <text x="56" y="304" text-anchor="end" fill="#71717A" font-size="11" font-family="Inter, sans-serif">0</text>
+
+          <text x="70" y="325" text-anchor="middle" fill="#71717A" font-size="11" font-family="Inter, sans-serif">Audit 1</text>
+          <text x="310" y="325" text-anchor="middle" fill="#71717A" font-size="11" font-family="Inter, sans-serif">3</text>
+          <text x="550" y="325" text-anchor="middle" fill="#71717A" font-size="11" font-family="Inter, sans-serif">5</text>
+          <text x="790" y="325" text-anchor="middle" fill="#71717A" font-size="11" font-family="Inter, sans-serif">7</text>
+          <text x="1030" y="325" text-anchor="middle" fill="#71717A" font-size="11" font-family="Inter, sans-serif">9</text>
+
+          <path d="M 70 217.2 L 190 189.6 L 310 166.6 L 430 157.4 L 550 150.5 L 670 180.4 L 790 145.9 L 910 134.4 L 1030 120.6 L 1030 300 L 70 300 Z" fill="url(#areaGrad)"/>
+
+          <path d="M 70 217.2 L 190 189.6 L 310 166.6 L 430 157.4 L 550 150.5 L 670 180.4 L 790 145.9 L 910 134.4 L 1030 120.6" stroke="url(#lineGrad)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <circle cx="70" cy="217.2" r="3" fill="#A78BFA"/>
+          <circle cx="190" cy="189.6" r="3" fill="#A78BFA"/>
+          <circle cx="310" cy="166.6" r="3" fill="#A78BFA"/>
+          <circle cx="430" cy="157.4" r="3" fill="#A78BFA"/>
+          <circle cx="550" cy="150.5" r="3" fill="#A78BFA"/>
+          <circle cx="910" cy="134.4" r="3" fill="#A78BFA"/>
+
+          <circle cx="670" cy="180.4" r="5" fill="#F87171"/>
+          <circle cx="670" cy="180.4" r="11" fill="none" stroke="#F87171" stroke-width="1.5" opacity="0.35"/>
+
+          <circle cx="790" cy="145.9" r="5" fill="#A78BFA"/>
+          <circle cx="790" cy="145.9" r="11" fill="none" stroke="#A78BFA" stroke-width="1.5" opacity="0.35"/>
+
+          <line x1="600" y1="114" x2="660" y2="172" stroke="#F87171" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>
+          <rect x="500" y="86" width="180" height="28" rx="6" fill="rgba(248,113,113,0.12)" stroke="rgba(248,113,113,0.3)" stroke-width="1"/>
+          <text x="590" y="105" text-anchor="middle" fill="#FCA5A5" font-size="11" font-family="Inter, sans-serif" font-weight="500">Site redesign hid your menu</text>
+
+          <line x1="870" y1="64" x2="800" y2="140" stroke="#A78BFA" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>
+          <rect x="790" y="36" width="160" height="28" rx="6" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+          <text x="870" y="55" text-anchor="middle" fill="#C4B5FD" font-size="11" font-family="Inter, sans-serif" font-weight="500">Fixed — AI can read you again</text>
+
+          <circle cx="1030" cy="120.6" r="16" fill="#A78BFA" opacity="0.15"/>
+          <circle cx="1030" cy="120.6" r="6" fill="#A78BFA"/>
+          <rect x="1000" y="80" width="60" height="26" rx="6" fill="#0A0A12" stroke="rgba(167,139,250,0.5)" stroke-width="1"/>
+          <text x="1030" y="98" text-anchor="middle" fill="#F4F4F5" font-size="13" font-family="Inter, sans-serif" font-weight="500">78</text>
+
+          <rect x="80" y="30" width="180" height="36" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
+          <circle cx="100" cy="48" r="3" fill="#A78BFA"/>
+          <text x="115" y="52" fill="#C4B5FD" font-size="13" font-family="Inter, sans-serif" font-weight="500">+42 points · 9 weeks</text>
+        </svg>
+      </div>
+
+      <div class="grid md:grid-cols-2 border-t border-hair">
+        <div class="p-6 md:p-7 border-b md:border-b-0 md:border-r border-hair flex gap-4">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(248,113,113,0.12); color: #F87171;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <p class="text-[11px] font-medium tracking-widest" style="color:#FCA5A5;">AUDIT 6 · SOMETHING BROKE</p>
+            <p class="mt-1.5 font-medium text-[14.5px]">Your score dropped 13 points</p>
+            <p class="mt-1.5 text-secondary text-[13px] leading-relaxed">A website redesign accidentally stopped AI from reading your menu and hours. Your next audit caught it and showed you exactly which page broke — so you could send it straight to your web person.</p>
+          </div>
+        </div>
+        <div class="p-6 md:p-7 flex gap-4">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(167,139,250,0.12); color: #A78BFA;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <p class="text-[11px] font-medium tracking-widest" style="color:#C4B5FD;">AUDIT 7 · BACK ON TRACK</p>
+            <p class="mt-1.5 font-medium text-[14.5px]">You fixed it — and AI started naming you</p>
+            <p class="mt-1.5 text-secondary text-[13px] leading-relaxed">Once the page was restored, AI could read your site again. Within two more audits you were being recommended for "best bakery near me" searches you used to lose to competitors.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="border-t border-hair">
+  <div class="max-w-3xl mx-auto px-6 py-24">
+    <p class="label mb-5">FAQ</p>
+    <h2 class="h-display text-[26px] md:text-[34px]">The questions business owners ask.</h2>
+
+    <div class="mt-14 space-y-3">
+      <details class="card overflow-hidden">
+        <summary class="cursor-pointer p-5 font-medium flex justify-between items-center gap-4 hover:bg-white/[0.02]">
+          <span>Can you guarantee AI will recommend my business?</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-secondary leading-relaxed text-[15px]">No — and anyone selling you that is lying. What we can do is show you exactly where you stand today, what AI is saying about you right now, and what to fix to start showing up. The rest is up to the changes you make.</div>
+      </details>
+      <details class="card overflow-hidden">
+        <summary class="cursor-pointer p-5 font-medium flex justify-between items-center gap-4 hover:bg-white/[0.02]">
+          <span>How is this different from SEO?</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-secondary leading-relaxed text-[15px]">SEO is about ranking on Google's blue links. This is about whether AI engines — ChatGPT, Perplexity, Google AI — mention your business when customers ask them for a recommendation. Different problem, different fixes, both still matter.</div>
+      </details>
+      <details class="card overflow-hidden">
+        <summary class="cursor-pointer p-5 font-medium flex justify-between items-center gap-4 hover:bg-white/[0.02]">
+          <span>I'm not technical. Will I understand the report?</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-secondary leading-relaxed text-[15px]">Yes. The top of the report is plain English: what's working, what's not, and what to fix first. The technical detail is on demand at the bottom — for whoever runs your website. You can forward the report straight to your web person.</div>
+      </details>
+      <details class="card overflow-hidden">
+        <summary class="cursor-pointer p-5 font-medium flex justify-between items-center gap-4 hover:bg-white/[0.02]">
+          <span>Which AI engines do you actually test?</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-secondary leading-relaxed text-[15px]">ChatGPT, Perplexity, and Google AI to start — the ones your customers are most likely to actually use. We're adding Claude and Gemini coverage as the underlying signals stabilize. We tell you per engine what's measured directly and what's inferred — no black boxes.</div>
+      </details>
+      <details class="card overflow-hidden">
+        <summary class="cursor-pointer p-5 font-medium flex justify-between items-center gap-4 hover:bg-white/[0.02]">
+          <span>How long does the audit take?</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-secondary leading-relaxed text-[15px]">Under 60 seconds. You enter your URL and email, we ask the real AI engines, the report is in your inbox. No phone call, no sales pitch.</div>
+      </details>
+      <details class="card overflow-hidden">
+        <summary class="cursor-pointer p-5 font-medium flex justify-between items-center gap-4 hover:bg-white/[0.02]">
+          <span>Do I have to give my credit card?</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-secondary leading-relaxed text-[15px]">No. The audit is free during early access. You enter your name and email, you get the report. Paid plans are coming — your audit results are yours either way.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section id="cta" class="border-t border-hair relative overflow-hidden">
+  <div class="absolute inset-0 glow-purple pointer-events-none" aria-hidden="true"></div>
+  <div class="max-w-4xl mx-auto px-6 py-28 text-center relative">
+    <h2 class="h-display text-3xl md:text-[44px] max-w-3xl mx-auto">See what AI says about <span class="grad-word">your business.</span></h2>
+    <p class="mt-6 text-[18px] text-secondary max-w-xl mx-auto leading-relaxed">60 seconds. Just your name, email, and website. We'll send the report.</p>
+    <form class="email-form mt-10 max-w-[520px] mx-auto" onsubmit="event.preventDefault(); var i=this.querySelector('input[type=email]'); location.href='/login/?email='+encodeURIComponent(i&&i.value?i.value:'');">
+      <div class="email-row">
+        <input class="email-input" type="text" placeholder="Your first name" autocomplete="given-name" required style="flex: 1 1 140px;" />
+        <input class="email-input" type="email" placeholder="Your work email" autocomplete="email" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Show me what AI says →</button>
+    </form>
+    <p class="mt-8 text-[13px] text-muted">Or email <span class="accent">hello@visibletoai.io</span> with your website — we'll run the audit and reply with the results.</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-hair">
+  <div class="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="flex items-center gap-2.5">
+      <svg width="22" height="16" viewBox="0 0 32 24" fill="none" aria-hidden="true">
+        <path d="M 2 12 Q 16 2, 30 12 Q 16 22, 2 12 Z" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="16" cy="12" r="3.5" fill="#A78BFA"/>
+      </svg>
+      <span class="text-sm text-secondary"><span style="font-family:'Playfair Display',Georgia,serif;font-weight:500;color:var(--text-primary);">Visible <em style="font-style:italic;">to</em> <span style="color:var(--accent);">AI</span></span> · See what AI says about your business — and fix what's costing you customers</span>
+    </div>
+    <div class="flex items-center gap-5 text-xs text-muted">
+      <a href="#pricing-note" class="nav-link" style="font-size:12px;">Pricing</a>
+      <span>© 2026 Visible to AI</span>
+    </div>
+  </div>
+  <div id="pricing-note" class="max-w-6xl mx-auto px-6 pb-8 text-xs text-muted">
+    <span class="accent">Pricing:</span> Free during early access. Paid plans coming soon — your audit results are yours either way.
+  </div>
+</footer>
+
+</div>
+</body>
 </html>

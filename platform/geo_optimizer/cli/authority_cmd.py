@@ -76,4 +76,3 @@ def _print_text(result) -> None:
             click.echo(f"  → {rec}")
 
     click.echo("")
-    click.echo("Entity authority is built over time — track it with https://geoready.dev")

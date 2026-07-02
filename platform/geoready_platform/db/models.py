@@ -118,6 +118,44 @@ class ApiKey(Base):
     org: Mapped[Org] = relationship(back_populates="api_keys")
 
 
+class MagicLinkToken(Base):
+    """A single-use, short-lived passwordless sign-in token.
+
+    Only the SHA-256 hash of the token is stored (the raw token is high-entropy,
+    so a fast deterministic hash is sufficient and lets us look it up directly).
+    A token is valid until ``expires_at`` and only while ``used_at`` is null.
+    """
+
+    __tablename__ = "magic_link_tokens"
+    __table_args__ = (Index("ix_magiclink_hash", "token_hash"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class BillingAccount(Base):
+    """Links an org to its Stripe customer + subscription. The org's *plan*
+    (entitlements) still lives on ``Org.plan``; this just records the Stripe IDs
+    so webhooks can map subscription events back to the right org."""
+
+    __tablename__ = "billing_accounts"
+    __table_args__ = (
+        UniqueConstraint("org_id", name="uq_billing_org"),
+        Index("ix_billing_subscription", "stripe_subscription_id"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    org_id: Mapped[str] = mapped_column(ForeignKey("orgs.id", ondelete="CASCADE"), nullable=False)
+    stripe_customer_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    stripe_subscription_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
 # ─── Entity spine ───────────────────────────────────────────────────────────
 
 

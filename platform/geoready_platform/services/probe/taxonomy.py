@@ -25,7 +25,9 @@ from dataclasses import dataclass
 
 # Bump on ANY template/semantics change so persisted provenance stays comparable.
 # v3: Share-of-Model restricted to discovery (no-name) prompts.
-TAXONOMY_VERSION = "v3"
+# v4: reworded templates to read naturally for product categories (e.g.
+#     "jewellery") and drop service-only phrasing like "who should I hire".
+TAXONOMY_VERSION = "v4"
 
 
 @dataclass(frozen=True)
@@ -47,9 +49,9 @@ CATEGORIES: tuple[PromptCategory, ...] = (
         counts_for_factual=False,
         includes_name=False,
         templates=(
-            "What are the best {category} in {city}?",
-            "Which {category} in {city} would you recommend and why?",
-            "Who are the most recommended {category} near {city}?",
+            "What are the best {category} businesses in {city}?",
+            "Which {category} business in {city} would you recommend, and why?",
+            "Who are the most recommended {category} businesses in {city}?",
         ),
     ),
     PromptCategory(
@@ -58,8 +60,8 @@ CATEGORIES: tuple[PromptCategory, ...] = (
         counts_for_factual=False,
         includes_name=False,
         templates=(
-            "I need {category} in {city} — who should I hire?",
-            "I'm looking for a reliable {category} in {city}. Any suggestions?",
+            "Can you recommend a good {category} business in {city}?",
+            "Where's the best place to go for {category} in {city}?",
         ),
     ),
     # ── Branded prompts (name embedded) — NEVER count toward SoM ─────────────
@@ -72,8 +74,8 @@ CATEGORIES: tuple[PromptCategory, ...] = (
         includes_name=True,
         templates=(
             "What are the best alternatives to {name} for {category} in {city}?",
-            "How does {name} compare to other {category} in {city}?",
-            "Is {name} a good choice for {category}, or are there better options?",
+            "How does {name} compare to other {category} businesses in {city}?",
+            "Is {name} a good choice for {category}, or are there better options in {city}?",
         ),
     ),
     PromptCategory(
@@ -82,7 +84,7 @@ CATEGORIES: tuple[PromptCategory, ...] = (
         counts_for_factual=True,
         includes_name=True,
         templates=(
-            "Is {name} a reputable, trustworthy {category}?",
+            "Is {name} a reputable, trustworthy {category} business?",
             "What do customer reviews say about {name}?",
         ),
     ),
@@ -92,8 +94,8 @@ CATEGORIES: tuple[PromptCategory, ...] = (
         counts_for_factual=True,
         includes_name=True,
         templates=(
-            "Where is {name} located, what are their hours, and how do I contact them?",
-            "What services does {name} offer?",
+            "Where is {name} located, what are their opening hours, and how do I contact them?",
+            "What products or services does {name} offer?",
         ),
     ),
     PromptCategory(

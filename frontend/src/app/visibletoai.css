@@ -1,0 +1,129 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Visible to AI — app design system.
+   The shared visual language for every logged-in app screen (report, dashboard,
+   onboarding). Mirrors the marketing landing page so the product feels like one
+   thing. Tailwind v4 utilities still apply on top of these classes.
+   ───────────────────────────────────────────────────────────────────────── */
+
+@import "tailwindcss";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource-variable/playfair-display";
+
+:root {
+  --vta-bg: #0A0A12;
+  --vta-bg-elevated: #11111B;
+  --vta-surface-1: #16161F;
+  --vta-surface-2: #1C1C28;
+  --vta-border: rgba(255, 255, 255, 0.06);
+  --vta-border-strong: rgba(255, 255, 255, 0.12);
+  --vta-border-accent: rgba(167, 139, 250, 0.25);
+  --vta-text-primary: #F4F4F5;
+  --vta-text-secondary: #A1A1AA;
+  --vta-text-muted: #71717A;
+  --vta-accent: #A78BFA;
+  --vta-accent-strong: #8B5CF6;
+  --vta-accent-soft-bg: rgba(167, 139, 250, 0.08);
+  --vta-accent-soft-text: #C4B5FD;
+  --vta-red: #F87171;
+  --vta-red-soft: rgba(248, 113, 113, 0.12);
+  --vta-amber: #FBBF24;
+  --vta-amber-soft: rgba(251, 191, 36, 0.12);
+  --vta-green: #34D399;
+  --vta-green-soft: rgba(52, 211, 153, 0.12);
+}
+
+/* Scope everything to .vta so the app's dark theme never leaks into the
+   marketing pages (and vice-versa). Every app screen renders inside .vta. */
+.vta {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--vta-text-primary);
+  background: var(--vta-bg);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.vta .v-text-secondary { color: var(--vta-text-secondary); }
+.vta .v-text-muted { color: var(--vta-text-muted); }
+.vta .v-accent { color: var(--vta-accent); }
+.vta .v-surface-1 { background: var(--vta-surface-1); }
+.vta .v-surface-2 { background: var(--vta-surface-2); }
+.vta .v-border-hair { border-color: var(--vta-border); }
+
+.vta .v-display {
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  line-height: 1.3;
+}
+
+.vta .v-grad {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--vta-accent) 0%, #E879F9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding-right: 0.06em;
+}
+
+.vta .v-label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vta-text-muted);
+  font-weight: 500;
+}
+
+.vta .v-tabular { font-variant-numeric: tabular-nums; }
+
+.vta .v-card {
+  background: var(--vta-surface-1);
+  border: 1px solid var(--vta-border);
+  border-radius: 16px;
+}
+
+.vta .v-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.vta .v-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+.vta .v-btn-primary {
+  background: var(--vta-accent-strong);
+  color: white;
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.2), 0 10px 30px -10px rgba(139, 92, 246, 0.5);
+}
+.vta .v-btn-primary:hover { background: var(--vta-accent); transform: translateY(-1px); }
+.vta .v-btn-ghost { background: transparent; color: var(--vta-text-primary); border: 1px solid var(--vta-border-strong); }
+.vta .v-btn-ghost:hover { border-color: rgba(255, 255, 255, 0.25); background: var(--vta-surface-1); }
+
+.vta .v-hairline { height: 1px; background: var(--vta-border); }
+.vta .v-glow { background: radial-gradient(ellipse 700px 380px at top, rgba(139, 92, 246, 0.14), transparent 70%); }
+
+.vta .v-navlink { color: var(--vta-text-secondary); font-size: 14px; transition: color 0.15s ease; }
+.vta .v-navlink:hover { color: var(--vta-text-primary); }
+
+.vta details > summary { list-style: none; cursor: pointer; }
+.vta details > summary::-webkit-details-marker { display: none; }
+.vta details[open] .v-chev { transform: rotate(90deg); }
+.vta .v-chev { transition: transform 0.2s ease; }
+
+.vta .v-move-num { font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif; font-size: 30px; line-height: 1; }

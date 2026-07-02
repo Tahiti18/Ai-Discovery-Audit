@@ -10,6 +10,7 @@
  */
 
 import { getApiKey } from "./platformStore";
+import { getAccessToken } from "../app/session";
 
 // Direct to the platform API (CORS-enabled for local dev). Override with
 // PUBLIC_PLATFORM_API_BASE for other environments.
@@ -52,6 +53,17 @@ export interface Entity {
 export interface ProbeEnqueued {
   probe_run_id: string;
   status: string;
+}
+export interface MagicLinkRequested {
+  sent: boolean;
+  dev_login_url?: string | null;
+  dev_token?: string | null;
+}
+export interface VerifiedSession {
+  access_token: string;
+  token_type: string;
+  user: { id: string; email: string; name: string | null };
+  org: { id: string; name: string; plan: string; role: string };
 }
 export interface Competitor {
   name: string;
@@ -132,8 +144,14 @@ async function request<T>(
 ): Promise<ApiResult<T>> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (withAuth) {
-    const key = getApiKey();
-    if (key) headers["X-API-Key"] = key;
+    // Prefer the magic-link session JWT; fall back to a local API key if present.
+    const token = getAccessToken();
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      const key = getApiKey();
+      if (key) headers["X-API-Key"] = key;
+    }
   }
   // Hard timeout so a hung request can never freeze the UI (e.g. a blocked
   // enqueue). The caller gets a friendly, actionable error instead of spinning.
@@ -149,6 +167,15 @@ async function request<T>(
     const text = await res.text();
     const json = text ? JSON.parse(text) : null;
     if (!res.ok) {
+      // A 401 on a JWT-authed call means the session expired or was revoked.
+      // Self-heal: clear the dead session and hand the user back to sign-in,
+      // instead of surfacing "Invalid token" errors all over the app.
+      if (res.status === 401 && withAuth && getAccessToken() && typeof window !== "undefined") {
+        const { clearSession } = await import("../app/session");
+        clearSession();
+        window.location.href = "/login/?expired=1";
+        return { data: null, error: "Your session expired — signing you back in.", status: 401 };
+      }
       let detail = String((json && (json.detail || json.error || json.message)) || `HTTP ${res.status}`);
       // Friendlier local-dev message for the probe quota (it's just an env var).
       if (res.status === 429 && /quota/i.test(detail)) {
@@ -181,6 +208,16 @@ async function request<T>(
 export const api = {
   health: () => request<{ status: string; db: boolean }>("GET", "/healthz", undefined, false, TIMEOUT.health),
 
+  // ─── Magic-link auth (no credentials needed on these two) ───────────────────
+  requestMagicLink: (email: string) =>
+    request<MagicLinkRequested>("POST", "/v1/auth/request", { email }, false, TIMEOUT.quick),
+  verifyMagicLink: (token: string) =>
+    request<VerifiedSession>("POST", "/v1/auth/verify", { token }, false, TIMEOUT.quick),
+
+  // ─── Billing: start a hosted Stripe Checkout ────────────────────────────────
+  createCheckout: (plan: "pro" | "founding" | "business") =>
+    request<{ url: string }>("POST", "/v1/billing/checkout", { plan }, true, TIMEOUT.quick),
+
   createOrg: (name: string, ownerEmail: string) =>
     request<OrgCreated>("POST", "/v1/orgs", { name, owner_email: ownerEmail }, false, TIMEOUT.quick),
 
@@ -208,6 +245,27 @@ export const api = {
     request<{ audit_job_id: string; status: string }>("POST", `/v1/entities/${entityId}/audits`),
   getAudit: (jobId: string) => request<AuditJob>("GET", `/v1/audits/${jobId}`),
 };
+
+/** Fetch the complete technical-report HTML (authed). Returns raw HTML so the
+ *  caller can open it as a blob — a plain <a> can't send the Bearer header. */
+export async function fetchTechnicalReportHtml(
+  entityId: string,
+): Promise<{ html: string | null; error: string | null; status?: number }> {
+  const token = getAccessToken();
+  try {
+    const res = await fetch(`${BASE}/v1/entities/${entityId}/technical-report`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`;
+      try { const j = await res.json(); detail = j.detail || detail; } catch { /* not json */ }
+      return { html: null, error: detail, status: res.status };
+    }
+    return { html: await res.text(), error: null, status: res.status };
+  } catch (e) {
+    return { html: null, error: e instanceof Error ? e.message : "Network error" };
+  }
+}
 
 // ─── Probe polling (backoff + cancel + timeout) ──────────────────────────────
 

@@ -359,25 +359,25 @@ def format_audit_text(result: AuditResult) -> str:
         lines.append(f"  [{bar}] {be_pts}/10")
         if be.brand_name_consistent:
             names = ", ".join(be.names_found[:3]) if be.names_found else ""
-            lines.append(f"  ✅ Brand name coerente{f' ({names})' if names else ''}")
+            lines.append(f"  ✅ Brand name consistent{f' ({names})' if names else ''}")
         else:
-            lines.append("  ⚠️  Brand name incoerente tra schema, meta e contenuto")
+            lines.append("  ⚠️  Brand name inconsistent across schema, meta, and content")
         if be.kg_pillar_count > 0:
             lines.append(f"  ✅ {be.kg_pillar_count}/4 Knowledge Graph pillars")
         else:
-            lines.append("  ⚠️  Nessun link a Knowledge Graph (Wikipedia, Wikidata, LinkedIn)")
+            lines.append("  ⚠️  No Knowledge Graph links (Wikipedia, Wikidata, LinkedIn)")
         if be.has_about_link:
-            lines.append("  ✅ About page collegata")
+            lines.append("  ✅ About page linked")
         else:
-            lines.append("  ⚠️  About page non rilevata")
+            lines.append("  ⚠️  About page not detected")
         if be.has_contact_info:
-            lines.append("  ✅ Informazioni di contatto presenti")
+            lines.append("  ✅ Contact information present")
         else:
-            lines.append("  ⚠️  Informazioni di contatto mancanti")
+            lines.append("  ⚠️  Contact information missing")
         if be.faq_depth > 0:
-            lines.append(f"  ✅ {be.faq_depth} FAQ trovate")
+            lines.append(f"  ✅ {be.faq_depth} FAQs found")
         if be.has_recent_articles:
-            lines.append("  ✅ Articoli con dateModified trovati")
+            lines.append("  ✅ Articles with dateModified found")
 
     # CDN Check
     if result.cdn_check and result.cdn_check.checked:
@@ -561,11 +561,6 @@ def format_audit_text(result: AuditResult) -> str:
     else:
         for i, action in enumerate(result.recommendations, 1):
             lines.append(f"  {i}. {action}")
-
-    # CLI→platform funnel: the CLI is one-shot, continuity lives in the platform
-    lines.append("")
-    lines.append("  💡 One-shot audit. Score history, regression alerts, and AI citation")
-    lines.append("     tracking live at https://geoready.dev — free to start.")
 
     lines.append("")
     return "\n".join(lines)

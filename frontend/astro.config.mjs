@@ -11,21 +11,25 @@ import geoReady from './integrations/astro-geoready/index.mjs';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://geoready.dev',
+  site: 'https://visibletoai.io',
   trailingSlash: 'always',
   integrations: [
     react(),
     geoReady({
-      siteName: 'GeoReady',
+      siteName: 'Visible to AI',
       description:
-        'AI visibility audit, monitoring, and citation tracking — built on the open-source GEO Optimizer engine.',
+        'See what AI says about your business — and fix what’s costing you customers.',
     }),
   ],
 
   vite: {
     plugins: [tailwindcss()],
     preview: {
-      allowedHosts: ['geo-optimizer-skill-production.up.railway.app'],
+      allowedHosts: [
+        'geo-optimizer-skill-production.up.railway.app',
+        'visibletoai.io',
+        'www.visibletoai.io',
+      ],
     },
     server: {
       proxy: {

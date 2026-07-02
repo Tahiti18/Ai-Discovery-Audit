@@ -75,13 +75,25 @@ def _provider_error_summary(provider: str, errors: list[str]) -> str:
 
 
 def _check_quota(session: Session, org_id: str) -> None:
-    settings = get_settings()
+    """Enforce the org's plan check allowance. Paid plans are unlimited
+    (``checks_per_day is None``); free is capped."""
+    from geoready_platform.db.models import Org
+    from geoready_platform.services.plans import limits_for
+
+    org = session.get(Org, org_id)
+    limits = limits_for(org.plan if org else None)
+    if limits.checks_per_day is None:
+        return  # unlimited
+
     since = _utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
     count = session.execute(
         select(func.count(ProbeRun.id)).where(ProbeRun.org_id == org_id, ProbeRun.created_at >= since)
     ).scalar_one()
-    if count >= settings.free_probes_per_day:
-        raise ProbeQuotaExceededError(f"Daily probe quota ({settings.free_probes_per_day}) reached")
+    if count >= limits.checks_per_day:
+        raise ProbeQuotaExceededError(
+            f"You've used all {limits.checks_per_day} of today's free checks. "
+            "Upgrade for unlimited checks, or try again tomorrow."
+        )
 
 
 def _mark_dispatch_failure(run_id: str, exc: BaseException) -> None:

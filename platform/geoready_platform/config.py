@@ -10,6 +10,18 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from functools import lru_cache
+from pathlib import Path
+
+# Load platform/.env (gitignored) so local secrets — Stripe keys, the provider
+# key, etc. — live in one file instead of being passed on the command line.
+# Real environments set these as actual env vars; load_dotenv never overrides
+# values already present in the environment.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+except Exception:  # noqa: BLE001 — dotenv is a convenience, never required
+    pass
 
 
 def _env_bool(name: str, default: bool) -> bool:
@@ -36,7 +48,9 @@ class Settings:
     # ─── Auth ────────────────────────────────────────────────────────────────
     jwt_secret: str = field(default_factory=lambda: os.environ.get("GR_JWT_SECRET", "dev-insecure-change-me"))
     jwt_algorithm: str = field(default_factory=lambda: os.environ.get("GR_JWT_ALG", "HS256"))
-    jwt_ttl_seconds: int = field(default_factory=lambda: int(os.environ.get("GR_JWT_TTL_SECONDS", "3600")))
+    # 14 days by default: this is a consumer magic-link product — a 1-hour
+    # session would force a re-login mid-workday. Override per environment.
+    jwt_ttl_seconds: int = field(default_factory=lambda: int(os.environ.get("GR_JWT_TTL_SECONDS", str(14 * 24 * 3600))))
 
     # ─── AI provider keys (slotted now, unused until later phases) ────────────
     openai_api_key: str | None = field(default_factory=lambda: os.environ.get("OPENAI_API_KEY"))
@@ -78,6 +92,50 @@ class Settings:
     # ─── Perception probe ────────────────────────────────────────────────────
     probe_max_prompts: int = field(default_factory=lambda: int(os.environ.get("GR_PROBE_MAX_PROMPTS", "8")))
     probe_provider: str | None = field(default_factory=lambda: os.environ.get("GR_PROBE_PROVIDER"))
+
+    # ─── Billing (Stripe) ────────────────────────────────────────────────────
+    # All read from env; empty in dev until real keys are pasted in. When the
+    # secret key is unset, billing endpoints return a clear "not configured"
+    # error instead of crashing. Prices are Stripe price IDs (price_...).
+    stripe_secret_key: str | None = field(default_factory=lambda: os.environ.get("STRIPE_SECRET_KEY"))
+    stripe_publishable_key: str | None = field(default_factory=lambda: os.environ.get("STRIPE_PUBLISHABLE_KEY"))
+    stripe_webhook_secret: str | None = field(default_factory=lambda: os.environ.get("STRIPE_WEBHOOK_SECRET"))
+    stripe_price_pro: str | None = field(default_factory=lambda: os.environ.get("STRIPE_PRICE_PRO"))
+    stripe_price_founding: str | None = field(default_factory=lambda: os.environ.get("STRIPE_PRICE_FOUNDING"))
+    stripe_price_business: str | None = field(default_factory=lambda: os.environ.get("STRIPE_PRICE_BUSINESS"))
+
+    @property
+    def billing_enabled(self) -> bool:
+        return bool(self.stripe_secret_key)
+
+    # ─── Auth / magic-link ───────────────────────────────────────────────────
+    # Base URL of the frontend, used to build the sign-in link in magic-link
+    # emails. Locally this is the Astro dev server; production sets it to the
+    # real domain (e.g. https://visibletoai.io).
+    app_base_url: str = field(default_factory=lambda: os.environ.get("GR_APP_BASE_URL", "http://localhost:4321"))
+    # Transactional email via Resend. Setting RESEND_API_KEY turns real emails
+    # on (overridable with GR_EMAIL_ENABLED=false). With no key and no explicit
+    # flag, dev mode returns the sign-in link on-page instead (localhost only).
+    resend_api_key: str | None = field(default_factory=lambda: os.environ.get("RESEND_API_KEY"))
+    email_from: str = field(
+        default_factory=lambda: os.environ.get("GR_EMAIL_FROM", "Visible to AI <signin@visibletoai.io>")
+    )
+    email_enabled: bool = field(
+        default_factory=lambda: _env_bool("GR_EMAIL_ENABLED", bool(os.environ.get("RESEND_API_KEY")))
+    )
+
+    @property
+    def auth_dev_links_enabled(self) -> bool:
+        """Whether /v1/auth/request may echo the sign-in link in the response.
+
+        SECURITY: echoing the link lets anyone who can reach the API sign in as
+        any email — acceptable ONLY on a local machine. Auto-enabled when the
+        app base URL is localhost; anywhere else it must be forced explicitly
+        with GR_AUTH_DEV_LINKS=true (don't)."""
+        if _env_bool("GR_AUTH_DEV_LINKS", False):
+            return True
+        host = self.app_base_url.split("://", 1)[-1].split("/", 1)[0].split(":", 1)[0]
+        return host in ("localhost", "127.0.0.1", "[::1]")
 
     @property
     def is_sqlite(self) -> bool:

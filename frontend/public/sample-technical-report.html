@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GEO Technical Report — https://my-bakery.com</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A12;--surface:#16161F;--surface2:#1C1C28;--border:rgba(255,255,255,.07);
+--text:#E4E4E7;--muted:#A1A1AA;--accent:#A78BFA;--green:#34D399;--red:#F87171;--amber:#FBBF24}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+background:var(--bg);color:var(--text);padding:2.5rem 1.25rem;max-width:880px;margin:0 auto;
+-webkit-font-smoothing:antialiased}
+.header{text-align:center;margin-bottom:2.5rem}
+.brand{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+h1{font-size:1.4rem;margin-bottom:.4rem;font-weight:600}
+.url{color:var(--muted);font-size:.9rem;word-break:break-all;margin-bottom:.25rem}
+.meta{color:var(--muted);font-size:.8rem}
+.score-ring{display:inline-flex;align-items:center;justify-content:center;
+width:128px;height:128px;border-radius:50%;border:6px solid #FBBF24;
+margin:1.5rem 0 .5rem;font-size:2.4rem;font-weight:700;color:#FBBF24}
+.band{font-size:1rem;font-weight:600;color:#FBBF24;letter-spacing:.04em}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+margin-bottom:1rem;overflow:hidden}
+.sec-head{background:var(--surface2);padding:.85rem 1.25rem;font-weight:600;font-size:.92rem;
+letter-spacing:.01em;border-bottom:1px solid var(--border)}
+.sec-body{padding:1rem 1.25rem;font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+font-size:.82rem;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.ln{display:block}
+.c-green{color:var(--green)}
+.c-red{color:var(--red)}
+.c-amber{color:var(--amber)}
+.c-accent{color:var(--accent)}
+.footer{text-align:center;margin-top:2rem;color:#64748b;font-size:.8rem}
+.footer a{color:var(--accent);text-decoration:none}
+.pdf-btn{display:inline-flex;align-items:center;gap:8px;margin-top:1.4rem;padding:.7rem 1.3rem;border-radius:10px;border:none;cursor:pointer;
+background:var(--accent);color:#fff;font-size:.92rem;font-weight:600}
+.pdf-btn:hover{filter:brightness(1.12)}
+@media print{body{background:#fff;color:#111}.section{break-inside:avoid}.no-print{display:none!important}}
+</style>
+</head>
+<body>
+<div class="header">
+    <div class="brand">Visible to AI · Technical Report</div>
+    <h1>GEO Technical Audit</h1>
+    <div class="url">https://my-bakery.com</div>
+    <div class="meta">HTTP 200 · 168,771 bytes · 19156 ms · 2026-06-28 23:04 UTC</div>
+    <div class="score-ring">36</div>
+    <div class="band">FOUNDATION — 36/100</div>
+    <button class="pdf-btn no-print" onclick="window.print()">⬇ Save as PDF</button>
+</div>
+<div class="section"><div class="sec-head">1. ROBOTS.TXT — AI Bot Access</div><div class="sec-body"><span class="ln c-green">  ✅ robots.txt found</span><span class="ln c-green">  ✅ GPTBot allowed ✓</span><span class="ln c-green">  ✅ OAI-SearchBot allowed ✓</span><span class="ln c-green">  ✅ ChatGPT-User allowed ✓</span><span class="ln c-green">  ✅ anthropic-ai allowed ✓</span><span class="ln c-green">  ✅ ClaudeBot allowed ✓</span><span class="ln c-green">  ✅ Claude-SearchBot allowed ✓</span><span class="ln c-green">  ✅ claude-web allowed ✓</span><span class="ln c-green">  ✅ PerplexityBot allowed ✓</span><span class="ln c-green">  ✅ Perplexity-User allowed ✓</span><span class="ln c-green">  ✅ Google-Extended allowed ✓</span><span class="ln c-green">  ✅ Google-CloudVertexBot allowed ✓</span><span class="ln c-green">  ✅ Bingbot allowed ✓</span><span class="ln c-green">  ✅ Applebot-Extended allowed ✓</span><span class="ln c-green">  ✅ cohere-ai allowed ✓</span><span class="ln c-green">  ✅ DuckAssistBot allowed ✓</span><span class="ln c-green">  ✅ Bytespider allowed ✓</span><span class="ln c-green">  ✅ meta-externalagent allowed ✓</span><span class="ln c-green">  ✅ Meta-ExternalFetcher allowed ✓</span><span class="ln c-green">  ✅ facebookexternalhit allowed ✓</span><span class="ln c-green">  ✅ Amazonbot allowed ✓</span><span class="ln c-green">  ✅ AI2Bot allowed ✓</span><span class="ln c-green">  ✅ AI2Bot-Dolma allowed ✓</span><span class="ln c-green">  ✅ xAI-Bot allowed ✓</span><span class="ln c-green">  ✅ Applebot allowed ✓</span><span class="ln c-green">  ✅ PetalBot allowed ✓</span><span class="ln c-green">  ✅ YouBot allowed ✓</span><span class="ln c-green">  ✅ CCBot allowed ✓</span><span class="ln c-green">  ✅ All critical CITATION bots are correctly configured</span></div></div>
+<div class="section"><div class="sec-head">2. LLMS.TXT — AI Index File</div><div class="sec-body"><span class="ln c-red">  ❌ llms.txt not found — essential for AI indexing!</span></div></div>
+<div class="section"><div class="sec-head">3. SCHEMA JSON-LD — Structured Data</div><div class="sec-body"><span class="ln c-red">  ❌ No JSON-LD schema found on homepage</span></div></div>
+<div class="section"><div class="sec-head">4. META TAG — SEO &amp; Open Graph</div><div class="sec-body"><span class="ln c-green">  ✅ Title: My-Bakery.com – Bakery , Breads , Pastries , Cakes – Austin – Austin</span><span class="ln c-red">  ❌ Meta description missing</span><span class="ln c-green">  ✅ Canonical: https://www.my-bakery.com/</span></div></div>
+<div class="section"><div class="sec-head">5. CONTENT QUALITY — GEO Best Practices</div><div class="sec-body"><span class="ln c-amber">  ⚠️  H1 missing on homepage</span><span class="ln c-green">  ✅ 10 headings</span><span class="ln c-green">  ✅ 8 numbers/statistics found ✓</span><span class="ln c-green">  ✅ ~405 words</span><span class="ln c-green">  ✅ 2 external links ✓</span></div></div>
+<div class="section"><div class="sec-head">6. TECHNICAL SIGNALS</div><div class="sec-body"><span class="ln c-green">  ✅ Language: en-US</span><span class="ln c-green">  ✅ RSS/Atom feed found</span><span class="ln c-amber">  ⚠️  No dateModified signal</span></div></div>
+<div class="section"><div class="sec-head">7. AI DISCOVERY ENDPOINTS</div><div class="sec-body"><span class="ln c-amber">  ⚠️  /.well-known/ai.txt missing</span><span class="ln c-amber">  ⚠️  /ai/summary.json missing or invalid</span><span class="ln c-amber">  ⚠️  /ai/faq.json missing</span></div></div>
+<div class="section"><div class="sec-head">8. BRAND &amp; ENTITY SIGNALS</div><div class="sec-body"><span class="ln">  [░░░░░] 1/10</span><span class="ln c-amber">  ⚠️  Brand name inconsistent across schema, meta, and content</span><span class="ln c-amber">  ⚠️  No Knowledge Graph links (Wikipedia, Wikidata, LinkedIn)</span><span class="ln c-green">  ✅ About page linked</span><span class="ln c-amber">  ⚠️  Contact information missing</span></div></div>
+<div class="section"><div class="sec-head">9. CDN AI CRAWLER ACCESS</div><div class="sec-body"><span class="ln c-red">  ❌ AI crawlers blocked by CDN/WAF</span><span class="ln c-red">  ❌ GPTBot: HTTP 0</span><span class="ln c-red">  ❌ ClaudeBot: HTTP 0</span><span class="ln c-green">  ✅ PerplexityBot: HTTP 301</span></div></div>
+<div class="section"><div class="sec-head">10. JS RENDERING CHECK</div><div class="sec-body"><span class="ln c-green">  ✅ 391 words and 16 headings found in raw HTML. Content is accessible without JavaScript.</span></div></div>
+<div class="section"><div class="sec-head">11. PROMPT INJECTION DETECTION</div><div class="sec-body"><span class="ln c-green">  ✅ Severity: CLEAN (0 pattern)</span></div></div>
+<div class="section"><div class="sec-head">12. TRUST STACK SCORE</div><div class="sec-body"><span class="ln">  Grade: D (6/25) — Trust level: low</span><span class="ln">  [██░░░] Technical Trust: 2/5</span><span class="ln">  [█░░░░] Identity Trust: 1/5</span><span class="ln">  [█░░░░] Social Trust: 1/5</span><span class="ln">  [█░░░░] Academic Trust: 1/5</span><span class="ln">  [█░░░░] Consistency Trust: 1/5</span></div></div>
+<div class="section"><div class="sec-head">13. RAG CHUNK READINESS</div><div class="sec-body"><span class="ln">  Sections: 3 (0 in 100-150 word range)</span><span class="ln">  Avg section words: 4.0</span><span class="ln c-red">  Definition opening: ❌</span><span class="ln">  Heading boundaries: 533%</span><span class="ln">  Anchor sentences: 10</span><span class="ln">  Chunk readiness: 35/100</span></div></div>
+<div class="section"><div class="sec-head">15. CONTENT DECAY PREDICTION</div><div class="sec-body"><span class="ln c-amber">  Risk: 🟡 MEDIUM | Evergreen: 92/100</span><span class="ln">  Earliest decay: ~1460 days</span><span class="ln">  [temporal] hello@my-bakery.com © Copyrights 2023 My Bakery Website De</span></div></div>
+<div class="section"><div class="sec-head">16. PLATFORM CITATION PROFILE</div><div class="sec-body"><span class="ln">  CHATGPT: 30/100</span><span class="ln c-green">    ✅ GPTBot allowed in robots.txt</span><span class="ln c-green">    ✅ Citability score 68/100</span><span class="ln c-accent">    💡 Add /llms.txt for LLM-friendly site summary</span><span class="ln c-accent">    💡 Add FAQPage schema for Q&amp;A-style answers</span><span class="ln">  PERPLEXITY: 42/100</span><span class="ln c-green">    ✅ PerplexityBot allowed</span><span class="ln c-green">    ✅ RSS feed available</span><span class="ln c-accent">    💡 Add /llms.txt with links to key resources</span><span class="ln c-accent">    💡 Add dateModified schema or freshness indicators</span><span class="ln">  GOOGLE_AI: 28/100</span><span class="ln c-green">    ✅ Google-Extended allowed</span><span class="ln c-green">    ✅ Citability score 68/100</span><span class="ln c-green">    ✅ Content available without JS (SSR-safe)</span><span class="ln c-accent">    💡 Add JSON-LD schema markup</span><span class="ln c-accent">    💡 Complete title, description, and canonical meta tags</span></div></div>
+<div class="section"><div class="sec-head">17. CONTEXT WINDOW OPTIMIZATION</div><div class="sec-body"><span class="ln">  Tokens: ~508 (391 words)</span><span class="ln">  Front-loading: 38% | Filler: 1%</span><span class="ln">  Truncation risk: 🟢 low</span><span class="ln">  Fits: perplexity, chatgpt, claude</span><span class="ln">  Efficiency: 80/100</span></div></div>
+<div class="section"><div class="sec-head">18. INSTRUCTION FOLLOWING READINESS</div><div class="sec-body"><span class="ln">  Actions: 4 labeled, 0 unlabeled (100/100)</span><span class="ln">  Forms: 0/0 labeled, 0 typed (100/100)</span><span class="ln c-green">  Error recovery: aria-live ✅ | roles ❌</span><span class="ln">  Readiness: 90/100 (advanced)</span></div></div>
+<div class="section"><div class="sec-head">19. MULTIMODAL READINESS</div><div class="sec-body"><span class="ln">  Images: 12/28 with descriptive alt (43%) | captions: 0</span><span class="ln">  Readiness: missing</span></div></div>
+<div class="section"><div class="sec-head">📊 FINAL GEO SCORE</div><div class="sec-body"><span class="ln">  [███████░░░░░░░░░░░░░] 36/100</span><span class="ln c-amber">  ⚠️  FOUNDATION — Core elements missing, implement priority fixes</span><span class="ln">  Score bands: 0–35 = critical | 36–67 = foundation | 68–85 = good | 86–100 = excellent</span><span class="ln">  📋 PRIORITY NEXT STEPS:</span><span class="ln">  1. Create /llms.txt for AI indexing: geo llms --base-url https://my-bakery.com. Note: llms.txt is an organizational signal, not a proven ranking factor. It helps structure content for AI systems.</span><span class="ln">  2. Add WebSite JSON-LD schema to homepage</span><span class="ln">  3. Add Organization JSON-LD schema with name, url, and logo</span><span class="ln">  4. Add FAQPage schema with site FAQs</span><span class="ln">  5. Add sameAs links in Organization schema to Wikipedia, Wikidata, LinkedIn, or Crunchbase for Knowledge Graph disambiguation</span><span class="ln">  6. Add address, telephone or contactPoint to Organization schema for entity validation</span><span class="ln">  7. Add Open Graph tags (og:title, og:description, og:image) for AI and social previews</span><span class="ln">  8. Add optimized meta description (150-160 characters)</span><span class="ln">  9. Keyword stuffing detected: &#x27;bakery&#x27; at 3.5% density — diversify vocabulary</span><span class="ln">  10. Add a single H1 heading that clearly states the page topic</span><span class="ln">  11. Create /.well-known/ai.txt to define AI crawler permissions</span><span class="ln">  12. Create /ai/summary.json with site name and description for AI engines</span><span class="ln">  13. Create /ai/faq.json with structured FAQ for AI search visibility</span><span class="ln">  14. Create /ai/service.json to describe service capabilities for AI</span><span class="ln">  15. Add potentialAction (SearchAction) to WebSite schema for AI agent discoverability</span><span class="ln">  16. Add descriptive labels to forms (label, aria-label) to make them usable by AI agents</span><span class="ln">  17. Consider adding WebMCP toolname/tooldescription attributes to interactive elements for Chrome AI agent support</span><span class="ln">  18. 16 of 28 images lack descriptive alt text — multimodal AI engines (Gemini, GPT-4o) read images through their alt text</span><span class="ln c-amber">  19. ⚠️ CDN/WAF blocks AI crawlers: GPTBot, ClaudeBot. Configure your CDN to allow AI bot User-Agents (GPTBot, ClaudeBot, PerplexityBot).</span></div></div>
+<div class="footer">
+    Generated by <a href="https://github.com/Tahiti18/geo-optimizer-skill">GEO Optimizer</a> · the engine behind Visible to AI
+</div>
+</body>
+</html>
