@@ -21,7 +21,7 @@ import json
 import logging
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 logger = logging.getLogger(__name__)
 
@@ -155,7 +155,10 @@ def detect_misinformation(
         name=name, domain=domain, website_snippet=website_snippet, answers=answers,
     )
     raw = _post_openrouter(prompt=prompt, api_key=api_key, model=model or DEFAULT_MODEL)
-    return _parse_response(raw)
+    findings = _parse_response(raw)
+    # Post-process: any wrong_website finding whose URL actually redirects to
+    # the canonical domain gets downgraded — the traffic still lands correctly.
+    return _verify_redirects(findings, canonical_domain=domain)
 
 
 def _post_openrouter(*, prompt: str, api_key: str, model: str) -> str:
@@ -246,6 +249,91 @@ def _parse_response(raw: str) -> list[MisinformationFinding]:
     # High severity first, then medium, then low.
     order = {"high": 0, "medium": 1, "low": 2}
     return sorted(out, key=lambda f: (order.get(f.severity, 9), -f.confidence))[:10]
+
+
+# Any http(s) URL. Stopping at whitespace, quotes, angle brackets and parens
+# — good enough for LLM prose evidence; not a general RFC-3986 parser.
+_URL_PATTERN = re.compile(r"https?://[^\s\"'<>()\[\]]+", re.IGNORECASE)
+
+
+def _normalize_host(host: str) -> str:
+    """Strip scheme, `www.`, and trailing paths so two hosts can be compared."""
+    h = host.lower().strip()
+    if "://" in h:
+        h = h.split("://", 1)[1]
+    h = h.split("/", 1)[0]
+    return h[4:] if h.startswith("www.") else h
+
+
+def _verify_redirects(
+    findings: list[MisinformationFinding], *, canonical_domain: str | None
+) -> list[MisinformationFinding]:
+    """For each ``wrong_website`` finding, follow any URL in the evidence with a
+    HEAD request. If it lands on the canonical domain, the redirect is doing
+    its job — downgrade severity to ``low`` and rewrite the fix so the report
+    doesn't cry wolf.
+
+    Never raises: HEAD failures are treated as "couldn't verify, keep the
+    LLM's original severity." Timeout is short and hard-capped."""
+    if not canonical_domain or not findings:
+        return findings
+    canonical = _normalize_host(canonical_domain)
+    if not canonical:
+        return findings
+
+    import httpx
+
+    updated: list[MisinformationFinding] = []
+    for f in findings:
+        if f.issue_type != "wrong_website" or f.severity == "low":
+            updated.append(f)
+            continue
+
+        redirected_ok = False
+        for candidate in _URL_PATTERN.findall(f.evidence)[:2]:  # cap to 2 to bound work
+            # Only https targets — refuse http:// to avoid mixed-content signals
+            # and refuse anything that looks like an attempt to break out.
+            if not candidate.lower().startswith("https://"):
+                continue
+            try:
+                with httpx.Client(
+                    timeout=8.0, follow_redirects=True,
+                    headers={"User-Agent": "VisibleToAI/1.0 (+https://visibletoai.io/bot)"},
+                ) as client:
+                    # HEAD first (fast, no body); some sites 405 on HEAD → fall back to GET.
+                    resp = client.head(candidate)
+                    if resp.status_code >= 400:
+                        resp = client.get(candidate)
+                final_host = _normalize_host(str(resp.url))
+                if final_host == canonical:
+                    redirected_ok = True
+                    break
+            except Exception:  # noqa: BLE001 — network failure = "can't verify, keep as-is"
+                continue
+
+        if redirected_ok:
+            logger.info(
+                "Misinformation: wrong_website %r redirects to canonical — downgraded",
+                candidate,
+            )
+            updated.append(replace(
+                f,
+                severity="low",
+                description=(
+                    f.description
+                    + " (Traffic redirects correctly to your current domain, so nothing is being lost — but AI is still publishing an outdated URL identity.)"
+                )[:280],
+                fix=(
+                    "The redirect is doing its job — no urgent action. To help AI "
+                    "learn your canonical URL faster: add sameAs links in your "
+                    "Organization schema, update your Google Business Profile, "
+                    "and ask any citation you control to update the link."
+                )[:280],
+            ))
+        else:
+            updated.append(f)
+
+    return updated
 
 
 def to_json(findings: list[MisinformationFinding]) -> list[dict]:
