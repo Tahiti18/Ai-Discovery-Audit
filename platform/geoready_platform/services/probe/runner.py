@@ -132,6 +132,34 @@ def _resolve_prompts(*, entity_id: str, entity_facts: dict, max_prompts: int, ap
     return [StaticPrompt(category=p.category, text=p.text) for p in generated[:max_prompts]]
 
 
+def _detect_misinformation_or_empty(
+    *, name: str, domain: str | None, website_url: str, answers: list[str], api_key: str,
+) -> list[dict]:
+    """Fetch the homepage snippet, run the misinformation detector, return the
+    findings serialised for storage on ProbeRun.flags. Any failure returns an
+    empty list — never blocks a run."""
+    from geoready_platform.services.probe.misinformation import (
+        MisinformationError, detect_misinformation, to_json,
+    )
+    from geoready_platform.services.probe.website_snippet import fetch_snippet
+
+    snippet = fetch_snippet(website_url)
+    if not snippet:
+        logger.info("Misinformation detector: no homepage snippet, skipping")
+        return []
+    try:
+        findings = detect_misinformation(
+            name=name, domain=domain, website_snippet=snippet,
+            answers=answers, api_key=api_key,
+        )
+    except MisinformationError as exc:
+        logger.warning("Misinformation detector failed: %s", exc)
+        return []
+    if findings:
+        logger.info("Misinformation detector found %d issues", len(findings))
+    return to_json(findings)
+
+
 def _extract_competitors_or_fallback(
     *, name: str, category: str | None, city: str | None, domain: str | None,
     rows: list[dict], fallback: list[dict], api_key: str,
@@ -440,11 +468,6 @@ def execute_probe_run(run_id: str) -> None:
             )
 
         som = share_of_model.compute_share_of_model(analyzed)
-        run_flags = [
-            {**f, "perception_index": i}
-            for i, row in enumerate(rows)
-            for f in row["flags"]
-        ]
 
         # A run where EVERY prompt failed at the provider (e.g. 401) produced no
         # readable answers — it is a provider/auth failure, not a 0-visibility
@@ -454,6 +477,27 @@ def execute_probe_run(run_id: str) -> None:
         provider_errors = [row["error"] for row in rows if row["error"]]
         all_failed = bool(rows) and answered == 0 and len(provider_errors) == len(rows)
         run_error = _provider_error_summary(provider, provider_errors) if all_failed else None
+
+        # Phase B.4: misinformation detection — flag facts AI stated wrong.
+        # Reads the homepage + all answers, returns a list of {issue, evidence,
+        # fix}. Failures are non-fatal; they just leave the flag list empty.
+        misinfo_flags: list[dict] = []
+        if not all_failed and answered > 0:
+            misinfo_flags = _detect_misinformation_or_empty(
+                name=facts["name"], domain=facts.get("domain"),
+                website_url=facts.get("website_url") or "",
+                answers=[r["raw_response"] for r in rows if r.get("raw_response")],
+                api_key=api_key,
+            )
+
+        run_flags = [
+            {**f, "perception_index": i}
+            for i, row in enumerate(rows)
+            for f in row["flags"]
+        ]
+        # Append misinformation findings as top-level run flags — they aren't
+        # tied to a single response so they carry no perception_index.
+        run_flags.extend(misinfo_flags)
 
         # Phase B.5: semantic competitor extraction.
         # Ask the LLM to identify who a buyer would ACTUALLY consider instead —

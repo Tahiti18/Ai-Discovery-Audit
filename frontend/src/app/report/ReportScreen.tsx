@@ -90,14 +90,12 @@ export function ReportScreen({ data }: { data: ReportData }) {
   const home = data.homeHref ?? "/app/";
 
   const derived = useMemo(() => {
+    // Single source of truth = the responses actually rendered on this page.
+    // Using run.share_of_model here caused the "25% vs 2 of 5" mismatch
+    // because the backend and the frontend counted "discovery" differently.
     const discovery = responses.filter((r) => DISCOVERY_CATEGORIES.has(r.prompt_category ?? ""));
     const discoveryHits = discovery.filter((r) => r.brand_mentioned).length;
-    const discoveryPct =
-      run.share_of_model != null
-        ? Math.round(run.share_of_model * 100)
-        : discovery.length
-          ? Math.round((discoveryHits / discovery.length) * 100)
-          : 0;
+    const discoveryPct = discovery.length ? Math.round((discoveryHits / discovery.length) * 100) : 0;
     const brandChecks = responses.filter((r) => !DISCOVERY_CATEGORIES.has(r.prompt_category ?? ""));
     const brandHits = brandChecks.filter((r) => r.brand_mentioned).length;
     const brandStrong = brandChecks.length > 0 && brandHits >= Math.ceil(brandChecks.length / 2);
@@ -109,7 +107,9 @@ export function ReportScreen({ data }: { data: ReportData }) {
     const evidenceGroups = TAG_ORDER
       .map((tag) => ({ tag, rows: tagged.filter((x) => x.tag === tag) }))
       .filter((g) => g.rows.length > 0);
-    return { discoveryPct, brandStrong, competitors, maxMentions, evidenceGroups, discoveryHits, discoveryTotal: discovery.length };
+    // Misinformation findings surfaced by the LLM fact-checker.
+    const misinformation = (run.flags ?? []).filter((f) => f.source === "llm_misinformation");
+    return { discoveryPct, brandStrong, competitors, maxMentions, evidenceGroups, discoveryHits, discoveryTotal: discovery.length, misinformation };
   }, [run, responses]);
 
   const cityCat = [entity.category, entity.geo].filter(Boolean).join(" · ");
@@ -184,9 +184,9 @@ export function ReportScreen({ data }: { data: ReportData }) {
                     <span className="v-grad">{derived.discoveryPct === 0 ? "you're not in the answer." : `you appear ${derived.discoveryPct}% of the time.`}</span>
                   </h2>
                   <p className="v-text-secondary mt-3 leading-relaxed" style={{ fontSize: 15 }}>
-                    Across the "best {entity.category} in {entity.geo}" style questions, AI named{" "}
-                    {derived.discoveryHits === 0 ? "other businesses — never " : "you in some answers and competitors in others, including "}
-                    {entity.canonical_name}{derived.discoveryHits === 0 ? "." : "."} That's the visibility you're {derived.discoveryPct < 50 ? "losing to competitors" : "building"} right now.
+                    {derived.discoveryHits === 0
+                      ? `Across ${derived.discoveryTotal} "best ${entity.category} in ${entity.geo}"–style questions, AI named other businesses and never named ${entity.canonical_name}. That's the visibility you're losing to competitors right now.`
+                      : `You showed up in ${derived.discoveryHits} of ${derived.discoveryTotal} discovery questions${derived.discoveryPct < 50 ? ` — the other ${derived.discoveryTotal - derived.discoveryHits} handed a competitor to your customer instead.` : ` — a solid share, but there's still room to widen it.`}`}
                   </p>
                 </div>
               </div>
@@ -202,7 +202,13 @@ export function ReportScreen({ data }: { data: ReportData }) {
                     <span className="v-tabular" style={{ fontSize: 22, fontWeight: 500, color: "var(--vta-red)" }}>{derived.discoveryPct}%</span>
                   </div>
                   <p className="v-text-secondary leading-relaxed" style={{ fontSize: 13 }}>
-                    "Best {entity.category} in {entity.geo}?" — AI {derived.discoveryPct === 0 ? "names competitors" : "sometimes names you"}. You're {derived.discoveryPct < 50 ? "largely invisible" : "partly visible"} to customers who don't already know you.
+                    "Best {entity.category} in {entity.geo}?" — {derived.discoveryPct === 0
+                      ? "AI names competitors instead. You're invisible to customers who don't already know you."
+                      : derived.discoveryPct < 25
+                        ? "AI rarely names you. Most customers who don't already know you never hear about you from AI."
+                        : derived.discoveryPct < 50
+                          ? "AI names you some of the time, competitors the rest. Plenty of room to widen your share."
+                          : "AI names you often — you're already winning the majority of no-name buyer searches."}
                   </p>
                 </div>
                 <div className="rounded-xl p-5" style={{ background: "var(--vta-bg-elevated)", border: `1px solid ${derived.brandStrong ? "var(--vta-green-soft)" : "var(--vta-amber-soft)"}` }}>
@@ -217,11 +223,54 @@ export function ReportScreen({ data }: { data: ReportData }) {
               </div>
               {derived.brandStrong && derived.discoveryPct < 50 && (
                 <p className="v-text-secondary mt-4 leading-relaxed" style={{ fontSize: 14 }}>
-                  <strong style={{ color: "var(--vta-text-primary)" }}>This is the whole story:</strong> AI rates you highly when someone already knows your name — but never puts you forward to someone who doesn't. That's a fixable visibility problem, not a reputation problem.
+                  <strong style={{ color: "var(--vta-text-primary)" }}>This is the whole story:</strong> AI rates you highly when someone already knows your name — but
+                  {derived.discoveryPct === 0
+                    ? " never puts you forward to someone who doesn't."
+                    : ` only puts you forward ${derived.discoveryPct}% of the time to someone who doesn't.`}
+                  {" "}That's a fixable visibility problem, not a reputation problem.
                 </p>
               )}
             </div>
           </section>
+
+          {/* WHAT AI IS GETTING WRONG — flag high-severity misinformation prominently */}
+          {derived.misinformation.length > 0 && (
+            <section className="v-card mt-6 overflow-hidden" style={{ borderColor: "var(--vta-amber-soft)" }}>
+              <div className="p-6 md:p-7" style={{ background: "var(--vta-amber-soft)" }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--vta-amber)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <h3 className="v-display" style={{ fontSize: "clamp(20px,2.6vw,24px)", color: "var(--vta-text-primary)" }}>
+                    AI is telling buyers things about you that aren't true
+                  </h3>
+                </div>
+                <p className="v-text-secondary" style={{ fontSize: 14 }}>
+                  {derived.misinformation.length} misstatement{derived.misinformation.length === 1 ? "" : "s"} detected against your current homepage. Fix each source and AI's next crawl corrects itself.
+                </p>
+              </div>
+              <div className="divide-y v-border-hair">
+                {derived.misinformation.map((m, i) => (
+                  <div key={i} className="p-5 md:p-6">
+                    <div className="flex flex-wrap items-baseline gap-2 mb-2">
+                      <span style={{ fontSize: 15, fontWeight: 500 }}>{m.description}</span>
+                      <span className="v-pill" style={m.severity === "high" ? { background: "var(--vta-red-soft)", color: "#FCA5A5" } : m.severity === "medium" ? { background: "var(--vta-amber-soft)", color: "#FCD34D" } : { background: "var(--vta-surface-2)", color: "var(--vta-text-secondary)" }}>
+                        {m.severity === "high" ? "High severity" : m.severity === "medium" ? "Worth fixing" : "Nice to fix"}
+                      </span>
+                    </div>
+                    {m.evidence && (
+                      <p className="v-text-muted italic mb-2" style={{ fontSize: 13 }}>
+                        AI said: "{clip(m.evidence, 200)}"
+                      </p>
+                    )}
+                    {m.fix && (
+                      <p className="v-text-secondary" style={{ fontSize: 14 }}>
+                        <strong style={{ color: "var(--vta-text-primary)" }}>Fix:</strong> {m.fix}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Next moves */}
           {moves.length > 0 && (

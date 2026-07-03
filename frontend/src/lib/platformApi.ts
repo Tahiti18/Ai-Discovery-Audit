@@ -74,6 +74,12 @@ export interface ProbeFlag {
   severity?: string;
   evidence?: string;
   perception_index?: number;
+  // Only present on LLM-misinformation flags (source === "llm_misinformation").
+  source?: string;
+  issue_type?: string;
+  description?: string;
+  fix?: string;
+  confidence?: number;
 }
 export interface ProbeRun {
   id: string;
