@@ -89,6 +89,15 @@ export function ReportScreen({ data }: { data: ReportData }) {
   const { entity, run, responses, moves, technicalReportHref, onDownloadTechnical, technicalScore, onRunAgain } = data;
   const home = data.homeHref ?? "/app/";
 
+  // Strip parenthetical labels from the entity name for report copy — the owner
+  // may have added "(new site)"/"(staging)" to distinguish it in the dashboard,
+  // but that label makes the verdict text read weirdly ("never named Era More
+  // Than Gold (new site)"). The dashboard list keeps the labelled name.
+  const brandName = useMemo(
+    () => (entity.canonical_name || "").replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim() || entity.canonical_name,
+    [entity.canonical_name],
+  );
+
   const derived = useMemo(() => {
     // Single source of truth = the responses actually rendered on this page.
     // Using run.share_of_model here caused the "25% vs 2 of 5" mismatch
@@ -152,7 +161,7 @@ export function ReportScreen({ data }: { data: ReportData }) {
             <a href={home} className="v-navlink" style={{ fontSize: 13 }}>← {onRunAgain ? "My businesses" : "Home"}</a>
             <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <h1 className="v-display" style={{ fontSize: "clamp(28px,5vw,38px)" }}>{entity.canonical_name}</h1>
+                <h1 className="v-display" style={{ fontSize: "clamp(28px,5vw,38px)" }}>{brandName}</h1>
                 <p className="v-text-secondary mt-1" style={{ fontSize: 14 }}>
                   {hostOf(entity.website_url)}{cityCat ? ` · ${cityCat}` : ""}
                 </p>
@@ -185,7 +194,7 @@ export function ReportScreen({ data }: { data: ReportData }) {
                   </h2>
                   <p className="v-text-secondary mt-3 leading-relaxed" style={{ fontSize: 15 }}>
                     {derived.discoveryHits === 0
-                      ? `Across ${derived.discoveryTotal} "best ${entity.category} in ${entity.geo}"–style questions, AI named other businesses and never named ${entity.canonical_name}. That's the visibility you're losing to competitors right now.`
+                      ? `Across ${derived.discoveryTotal} "best ${entity.category} in ${entity.geo}"–style questions, AI named other businesses and never named ${brandName}. That's the visibility you're losing to competitors right now.`
                       : `You showed up in ${derived.discoveryHits} of ${derived.discoveryTotal} discovery questions${derived.discoveryPct < 50 ? ` — the other ${derived.discoveryTotal - derived.discoveryHits} handed a competitor to your customer instead.` : ` — a solid share, but there's still room to widen it.`}`}
                   </p>
                 </div>
@@ -217,7 +226,7 @@ export function ReportScreen({ data }: { data: ReportData }) {
                     <span style={{ fontSize: 15, fontWeight: 500, color: derived.brandStrong ? "var(--vta-green)" : "var(--vta-amber)" }}>{derived.brandStrong ? "Strong ✓" : "Mixed"}</span>
                   </div>
                   <p className="v-text-secondary leading-relaxed" style={{ fontSize: 13 }}>
-                    "Is {entity.canonical_name} reputable?" — AI {derived.brandStrong ? "describes you accurately and well. It knows you're a real, trusted business." : "has gaps in what it knows about you."}
+                    "Is {brandName} reputable?" — AI {derived.brandStrong ? "describes you accurately and well. It knows you're a real, trusted business." : "has gaps in what it knows about you."}
                   </p>
                 </div>
               </div>
