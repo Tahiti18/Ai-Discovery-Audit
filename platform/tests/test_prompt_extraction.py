@@ -17,14 +17,25 @@ from geoready_platform.services.probe import prompt_extraction as pe
 def test_build_prompt_includes_all_facts_and_category_menu():
     p = pe.build_prompt(
         name="Era More Than Gold", category="jewellery + Swiss watches",
-        city="Limassol", domain="eramorethangold.com",
+        city="Limassol", domain="eramorethangold.com", target_count=15,
     )
     assert "Era More Than Gold" in p
     assert "jewellery + Swiss watches" in p and "Limassol" in p
     assert "eramorethangold.com" in p
     for cat in pe._VALID_CATEGORIES:
         assert cat in p
-    assert "5 of the 8" in p and "3 of the 8" in p  # discovery + branded split
+    # 15 total, 5 branded (15//3), 10 discovery — adaptive to target_count.
+    assert "10 of the 15" in p and "5 of the 15" in p
+
+
+def test_build_prompt_includes_website_snippet_when_provided():
+    """The homepage text is what enables product/brand-specific queries."""
+    p = pe.build_prompt(
+        name="X", category="jewellers", city="Y", domain="x.com",
+        website_snippet="We are an authorised dealer for Breitling, Chopard, and Rado.",
+    )
+    assert "Breitling, Chopard, and Rado" in p
+    assert "long-tail" in p.lower()
 
 
 # ─── parser + invariants ─────────────────────────────────────────────────────

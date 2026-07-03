@@ -90,7 +90,10 @@ class Settings:
     )
 
     # ─── Perception probe ────────────────────────────────────────────────────
-    probe_max_prompts: int = field(default_factory=lambda: int(os.environ.get("GR_PROBE_MAX_PROMPTS", "8")))
+    # 15 gives room for a proper matrix view of AI visibility: broad category
+    # queries + long-tail product/brand queries + branded checks. Costs ~$0.05
+    # per audit via OpenRouter (~$0.001 each). Override with GR_PROBE_MAX_PROMPTS.
+    probe_max_prompts: int = field(default_factory=lambda: int(os.environ.get("GR_PROBE_MAX_PROMPTS", "15")))
     probe_provider: str | None = field(default_factory=lambda: os.environ.get("GR_PROBE_PROVIDER"))
 
     # ─── Billing (Stripe) ────────────────────────────────────────────────────

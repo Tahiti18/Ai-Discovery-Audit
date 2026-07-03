@@ -37,26 +37,52 @@ export interface ReportData {
   onRunAgain?: () => void;
 }
 
-// Discovery = no-name buyer questions (the commercially important ones).
+// Discovery = no-name buyer questions (Share-of-Model is computed from these).
+// `comparison` embeds the brand name so it is NOT discovery, even though it
+// used to be misclassified as one here — that caused the "2 of 5" vs "25%"
+// math mismatch.
 const DISCOVERY_CATEGORIES = new Set([
   "category_recommendation",
   "problem_solution",
-  "comparison",
 ]);
 
-type Tag = "not-mentioned" | "accurate" | "wrong";
+// Four semantic outcomes. Order matters for display: reds/ambers first (the
+// actionable findings), greens last (the wins).
+type Tag = "not-mentioned" | "wrong" | "brand-check" | "mentioned";
 
 function tagOf(p: Perception): Tag {
   const discovery = DISCOVERY_CATEGORIES.has(p.prompt_category ?? "");
-  if (discovery && !p.brand_mentioned) return "not-mentioned";
   if ((p.flags?.length ?? 0) > 0) return "wrong";
-  return "accurate";
+  if (discovery) return p.brand_mentioned ? "mentioned" : "not-mentioned";
+  return "brand-check";
 }
 
 const TAG_STYLE: Record<Tag, { label: string; bg: string; fg: string }> = {
   "not-mentioned": { label: "Not mentioned", bg: "var(--vta-red-soft)", fg: "#FCA5A5" },
-  accurate: { label: "Accurate", bg: "var(--vta-green-soft)", fg: "#6EE7B7" },
-  wrong: { label: "Gets it wrong", bg: "var(--vta-amber-soft)", fg: "#FCD34D" },
+  "wrong":         { label: "Gets it wrong", bg: "var(--vta-amber-soft)", fg: "#FCD34D" },
+  "mentioned":     { label: "You appeared",  bg: "var(--vta-green-soft)", fg: "#6EE7B7" },
+  "brand-check":   { label: "Brand check",   bg: "var(--vta-accent-soft-bg)", fg: "var(--vta-accent-soft-text)" },
+};
+
+const TAG_ORDER: Tag[] = ["not-mentioned", "wrong", "mentioned", "brand-check"];
+
+const TAG_GROUP_COPY: Record<Tag, { title: string; sub: string }> = {
+  "not-mentioned": {
+    title: "You weren't in the answer",
+    sub: "Discovery questions where AI recommended other businesses — the visibility you're losing.",
+  },
+  "wrong": {
+    title: "AI got something wrong",
+    sub: "Answers where AI gave incorrect facts about your business — fix the source and the AI updates.",
+  },
+  "mentioned": {
+    title: "You appeared in discovery",
+    sub: "Discovery questions where AI named you unprompted — the visibility you're winning.",
+  },
+  "brand-check": {
+    title: "What AI knows about you by name",
+    sub: "Baseline check — what AI says when a buyer already knows your business name.",
+  },
 };
 
 export function ReportScreen({ data }: { data: ReportData }) {
@@ -77,11 +103,13 @@ export function ReportScreen({ data }: { data: ReportData }) {
     const brandStrong = brandChecks.length > 0 && brandHits >= Math.ceil(brandChecks.length / 2);
     const competitors = (run.competitors ?? []).slice(0, 10);
     const maxMentions = competitors.reduce((m, c) => Math.max(m, c.mentions), 1);
-    // Evidence: prefer a spread — a couple of "not mentioned", one accurate, one wrong.
+    // All responses grouped by outcome, red/amber first so the actionable
+    // findings are at the top and greens are the "wins" tail.
     const tagged = responses.map((r) => ({ p: r, tag: tagOf(r) }));
-    const pick = (t: Tag, n: number) => tagged.filter((x) => x.tag === t).slice(0, n);
-    const evidence = [...pick("not-mentioned", 2), ...pick("accurate", 1), ...pick("wrong", 1)];
-    return { discoveryPct, brandStrong, competitors, maxMentions, evidence, discoveryHits, discoveryTotal: discovery.length };
+    const evidenceGroups = TAG_ORDER
+      .map((tag) => ({ tag, rows: tagged.filter((x) => x.tag === tag) }))
+      .filter((g) => g.rows.length > 0);
+    return { discoveryPct, brandStrong, competitors, maxMentions, evidenceGroups, discoveryHits, discoveryTotal: discovery.length };
   }, [run, responses]);
 
   const cityCat = [entity.category, entity.geo].filter(Boolean).join(" · ");
@@ -240,25 +268,41 @@ export function ReportScreen({ data }: { data: ReportData }) {
             </section>
           )}
 
-          {/* Evidence */}
-          {derived.evidence.length > 0 && (
+          {/* Evidence — every question, grouped by outcome, actionable groups first */}
+          {derived.evidenceGroups.length > 0 && (
             <section className="mt-8">
-              <h3 className="v-display mb-2" style={{ fontSize: "clamp(22px,3vw,26px)" }}>The actual AI answers</h3>
-              <p className="v-text-secondary mb-5" style={{ fontSize: 14 }}>No score to take on faith — here's exactly what AI said when asked about businesses like yours.</p>
-              <div className="space-y-3">
-                {derived.evidence.map(({ p, tag }) => {
+              <h3 className="v-display mb-2" style={{ fontSize: "clamp(22px,3vw,26px)" }}>Every question we asked AI</h3>
+              <p className="v-text-secondary mb-6" style={{ fontSize: 14 }}>
+                No score to take on faith — every question and every answer, grouped by what happened. Click any row to read what AI actually said.
+              </p>
+              <div className="space-y-8">
+                {derived.evidenceGroups.map(({ tag, rows }) => {
                   const s = TAG_STYLE[tag];
+                  const copy = TAG_GROUP_COPY[tag];
                   return (
-                    <details key={p.id} className="v-card overflow-hidden">
-                      <summary className="p-5 flex items-start gap-3">
-                        <span className="v-pill mt-0.5" style={{ background: s.bg, color: s.fg }}>{s.label}</span>
-                        <span className="flex-1" style={{ fontSize: 15, fontWeight: 500 }}>"{p.prompt}"</span>
-                        <svg className="v-chev mt-1 flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--vta-text-muted)" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-                      </summary>
-                      <div className="px-5 pb-5 v-text-secondary leading-relaxed border-t v-border-hair pt-4" style={{ fontSize: 14 }}>
-                        {clip(p.raw_response, 460)}
+                    <div key={tag}>
+                      <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <h4 style={{ fontSize: 16, fontWeight: 500 }}>{copy.title}</h4>
+                        <span className="v-pill" style={{ background: s.bg, color: s.fg }}>
+                          {rows.length} {rows.length === 1 ? "question" : "questions"}
+                        </span>
                       </div>
-                    </details>
+                      <p className="v-text-secondary mb-3" style={{ fontSize: 13 }}>{copy.sub}</p>
+                      <div className="space-y-2">
+                        {rows.map(({ p }) => (
+                          <details key={p.id} className="v-card overflow-hidden">
+                            <summary className="p-4 flex items-start gap-3">
+                              <span className="v-tabular mt-0.5 v-text-muted" style={{ fontSize: 12, minWidth: 14 }}>›</span>
+                              <span className="flex-1" style={{ fontSize: 14.5, fontWeight: 500 }}>"{p.prompt}"</span>
+                              <svg className="v-chev mt-1 flex-shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--vta-text-muted)" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
+                            </summary>
+                            <div className="px-4 pb-4 v-text-secondary leading-relaxed border-t v-border-hair pt-3" style={{ fontSize: 13.5 }}>
+                              {clip(p.raw_response, 900)}
+                            </div>
+                          </details>
+                        ))}
+                      </div>
+                    </div>
                   );
                 })}
               </div>

@@ -38,7 +38,13 @@ _MAX_OUTPUT_CHARS = 10_000
 
 # Bump when the generator prompt/schema changes materially — cached prompts on
 # older versions get regenerated on next run.
-GENERATOR_VERSION = "gen_v1"
+# v2: expanded to 15 prompts and website-informed (adds long-tail product/brand
+#     queries like "Breitling Limassol" when the site actually mentions them).
+GENERATOR_VERSION = "gen_v2"
+
+# How many prompts to ask the generator for. Sits alongside `probe_max_prompts`
+# — the runner takes at most `probe_max_prompts` from the generated set.
+DEFAULT_TARGET_COUNT = 15
 
 # The exact category keys the probe pipeline understands. Kept in step with
 # taxonomy.CATEGORIES; if the LLM invents anything else, we drop that prompt.
@@ -74,40 +80,76 @@ Return valid JSON only — no markdown fences, no prose outside the JSON.
 
 
 def build_prompt(
-    *, name: str, category: str | None, city: str | None, domain: str | None
+    *, name: str, category: str | None, city: str | None,
+    domain: str | None, website_snippet: str | None = None,
+    target_count: int = DEFAULT_TARGET_COUNT,
 ) -> str:
-    """Produce the user prompt for the generator. Pure — trivially testable."""
+    """Produce the user prompt for the generator. Pure — trivially testable.
+
+    When ``website_snippet`` is provided, the LLM extracts specific product /
+    brand / service mentions from the site and writes long-tail queries around
+    them (e.g. "Breitling Limassol", "engagement rings Limassol"). This is
+    where product-specific questions come from.
+    """
     entity_lines = [
         f"- Name: {name}",
-        f"- Sells / provides: {category or 'unknown'}",
+        f"- Category / offering: {category or 'unknown'}",
         f"- Location: {city or 'unknown'}",
     ]
     if domain:
         entity_lines.append(f"- Website: {domain}")
 
+    website_block = ""
+    if website_snippet:
+        website_block = (
+            "\nThe business's homepage says the following (use this to identify "
+            "SPECIFIC products, brands, and services they sell — then write "
+            "long-tail buyer queries around those exact items):\n"
+            "---\n"
+            f"{website_snippet}\n"
+            "---\n"
+        )
+
+    # Split target_count into ~2/3 discovery + ~1/3 branded, adaptive.
+    n_branded = max(3, target_count // 3)
+    n_discovery = target_count - n_branded
+
     return f"""\
 Business we're auditing:
 {chr(10).join(entity_lines)}
+{website_block}
+Generate exactly {target_count} realistic buyer questions to test AI visibility
+for this business. Mix them across these two groups:
 
-Generate exactly 8 realistic buyer questions to test AI visibility for this
-business. Mix them across these two groups:
+GROUP A — "Discovery" questions ({n_discovery} of the {target_count}). Do NOT
+mention the business by name. These test whether AI recommends this kind of
+business (or its specific products) to a stranger. Cover a mix of:
+- Generic category recommendation ("best X in Y", "top X in Y") — 2–3 of these
+- **Product / brand / service specifics — this is the most important group.**
+  If the site mentions specific brands (e.g. Breitling, Chopard, Rado, Tissot,
+  Cartier, TAG Heuer, Hamilton, Longines, etc.), specific services (watch
+  repair, appraisal, engagement rings, custom design), or specific product
+  categories (Swiss watches, diamond rings, gold chains, silver pieces), write
+  queries around those EXACT items. Example shapes:
+    * "{{brand}} dealer in {{city}}"
+    * "where to buy {{brand}} watches {{city}}"
+    * "{{service}} in {{city}}"
+    * "{{specific product}} in {{city}}"
+- Buying intent / situational ("I want to buy X in Y", "where do people go for X")
+- Price / quality tier where obvious ("luxury X in Y", "affordable X in Y")
 
-GROUP A — "Discovery" questions (5 of the 8). Do NOT mention the business by
-name. These test whether AI recommends this kind of business in this location
-to a stranger. Cover a mix of:
-- Generic recommendation-seeking ("best X in Y", "who to go to for X in Y")
-- Product / service specifics (concrete products or services this business
-  actually sells or provides, if inferable from the category or the domain)
-- Buying intent / situational ("I'm looking to buy X in Y", "where do people
-  in Y go for X")
-- Price / quality tier where the category obviously has one
-(Pick 5 that feel like a real, varied buyer would send them.)
+Prefer long-tail product-specific queries over generic category queries. A real
+buyer typing "Rado watches Limassol" is closer to a sale than one typing "best
+jewellers." Aim for at least 5 product/brand/service-specific queries when the
+site provides enough detail.
 
-GROUP B — "Branded" questions (3 of the 8). USE the business name. These test
-what AI already knows about this specific business.
+GROUP B — "Branded" questions ({n_branded} of the {target_count}). USE the
+business name. These test what AI already knows about this specific business.
 - 1 "comparison": alternatives to {name} in this city
 - 1 "legitimacy": is {name} reputable / trustworthy
-- 1 "factual" or "awareness": basic facts (location, hours, offerings, history)
+- 1 "factual_attributes" or "awareness": basic facts (location, hours,
+  offerings, history)
+- Extra branded slots (if {n_branded} > 3): mix of the same three types
 
 Tag each question with one of these EXACT category strings:
 - "category_recommendation" (discovery: "best X in Y" style)
@@ -140,20 +182,25 @@ def generate_prompts_for_entity(
     domain: str | None,
     api_key: str,
     model: str | None = None,
+    website_snippet: str | None = None,
+    target_count: int = DEFAULT_TARGET_COUNT,
 ) -> list[GeneratedPrompt]:
     """Call the LLM generator and return validated buyer questions.
 
-    Raises ``PromptGenerationError`` on any failure so the caller can fall back
-    to the static template generator. Never returns a partial result unless it
-    contains at least one valid discovery question and one branded question —
-    otherwise the fallback is more useful.
+    When ``website_snippet`` is provided (extracted homepage text), the LLM
+    writes long-tail product/brand queries around what the site actually sells
+    — much higher signal than category-only guessing. On any failure raises
+    ``PromptGenerationError`` so the caller falls back to the static generator.
     """
     if not api_key:
         raise PromptGenerationError("No OpenRouter key configured")
     if not name.strip():
         raise PromptGenerationError("Business name is required")
 
-    prompt = build_prompt(name=name, category=category, city=city, domain=domain)
+    prompt = build_prompt(
+        name=name, category=category, city=city, domain=domain,
+        website_snippet=website_snippet, target_count=target_count,
+    )
     raw = _post_openrouter(prompt=prompt, api_key=api_key, model=model or DEFAULT_MODEL)
     parsed = _parse_response(raw, name=name)
 

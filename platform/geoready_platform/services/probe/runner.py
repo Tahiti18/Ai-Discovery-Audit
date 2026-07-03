@@ -98,11 +98,23 @@ def _resolve_prompts(*, entity_id: str, entity_facts: dict, max_prompts: int, ap
             logger.info("Probe: using %d cached custom prompts for entity %s", len(cached), entity_id)
             return [StaticPrompt(category=p.category, text=p.text) for p in cached[:max_prompts]]
 
-    # Step 2: generate now and cache.
+    # Step 2: generate now and cache. Fetch the homepage snippet so the LLM
+    # writes long-tail queries around actual products/brands. Snippet fetch
+    # failures are non-fatal — the generator still runs from category alone.
+    from geoready_platform.services.probe.website_snippet import fetch_snippet
+
+    snippet = fetch_snippet(entity_facts.get("website_url") or "")
+    if snippet:
+        logger.info("Probe: fetched %d chars of homepage text for %s", len(snippet), entity_id)
+    else:
+        logger.info("Probe: no homepage snippet available for %s (generator uses category only)", entity_id)
+
     try:
         generated = pe.generate_prompts_for_entity(
             name=entity_facts["name"], category=entity_facts["category"],
-            city=entity_facts["city"], domain=entity_facts["domain"], api_key=api_key,
+            city=entity_facts["city"], domain=entity_facts["domain"],
+            website_snippet=snippet, target_count=max(max_prompts, pe.DEFAULT_TARGET_COUNT),
+            api_key=api_key,
         )
     except pe.PromptGenerationError as exc:
         logger.warning("Prompt generator failed, falling back to static templates: %s", exc)
@@ -332,6 +344,7 @@ def execute_probe_run(run_id: str) -> None:
             "category": entity.category,
             "city": entity.geo,
             "domain": _domain_of(entity.website_url),
+            "website_url": entity.website_url,
         }
         org_id = entity.org_id
         entity_id = entity.id
