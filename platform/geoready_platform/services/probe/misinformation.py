@@ -151,8 +151,12 @@ def detect_misinformation(
     if not any(a and a.strip() for a in answers):
         raise MisinformationError("At least one AI answer required")
 
+    # Strip parenthetical labels (e.g. "(new site)") from the name before it
+    # goes into the fact-checker prompt — same reason as prompt_extraction.
+    from geoready_platform.services.probe.prompt_extraction import _strip_labels
+    clean_name = _strip_labels(name)
     prompt = build_prompt(
-        name=name, domain=domain, website_snippet=website_snippet, answers=answers,
+        name=clean_name, domain=domain, website_snippet=website_snippet, answers=answers,
     )
     raw = _post_openrouter(prompt=prompt, api_key=api_key, model=model or DEFAULT_MODEL)
     findings = _parse_response(raw)

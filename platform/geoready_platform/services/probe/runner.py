@@ -132,6 +132,17 @@ def _resolve_prompts(*, entity_id: str, entity_facts: dict, max_prompts: int, ap
     return [StaticPrompt(category=p.category, text=p.text) for p in generated[:max_prompts]]
 
 
+def _brand_name(canonical_name: str) -> str:
+    """Return the AI-facing brand name — parenthetical labels stripped.
+
+    Owners often add labels to disambiguate entities in their dashboard
+    ("Era More Than Gold (new site)", "Acme Ltd (staging)"). Those labels are
+    fine for the UI but MUST NOT reach AI-facing prompts or fact-check inputs,
+    or every AI question becomes "Is Acme (staging) reputable?" — unusable."""
+    from geoready_platform.services.probe.prompt_extraction import _strip_labels
+    return _strip_labels(canonical_name)
+
+
 def _detect_misinformation_or_empty(
     *, name: str, domain: str | None, website_url: str, answers: list[str], api_key: str,
 ) -> list[dict]:
@@ -368,7 +379,10 @@ def execute_probe_run(run_id: str) -> None:
         run.status = AuditStatus.running.value
         run.started_at = _utcnow()
         facts = {
-            "name": entity.canonical_name,
+            # Strip any parenthetical labels the owner used to disambiguate the
+            # business in their dashboard — those must never leak into AI
+            # questions (e.g. "Is Era (new site) reputable?" is unusable).
+            "name": _brand_name(entity.canonical_name),
             "category": entity.category,
             "city": entity.geo,
             "domain": _domain_of(entity.website_url),

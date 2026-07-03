@@ -99,7 +99,10 @@ export function ReportContainer({ runId }: { runId: string }) {
   );
 }
 
-const DISCOVERY = new Set(["category_recommendation", "problem_solution", "comparison"]);
+// Keep in step with ReportScreen.tsx — comparison is a NAME-BEARING category
+// (embeds the brand), so it's not discovery. Including it here was the source
+// of the "gauge says 20%, move says 4 of 8" contradiction.
+const DISCOVERY = new Set(["category_recommendation", "problem_solution"]);
 
 /** Honest, data-driven next moves from the probe result (no fabrication). The
  *  richer audit-derived moves get layered in when the technical audit is wired. */

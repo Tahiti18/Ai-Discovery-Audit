@@ -197,12 +197,18 @@ def generate_prompts_for_entity(
     if not name.strip():
         raise PromptGenerationError("Business name is required")
 
+    # Strip parenthetical labels the owner may have added to disambiguate the
+    # entity in their dashboard (e.g. "Era More Than Gold (new site)"). The LLM
+    # naturally shortens the name in questions, and our invariant check would
+    # otherwise mistake short-name branded questions for "brand omitted" and
+    # drop them, forcing a fallback to static templates.
+    brand_name = _strip_labels(name)
     prompt = build_prompt(
-        name=name, category=category, city=city, domain=domain,
+        name=brand_name, category=category, city=city, domain=domain,
         website_snippet=website_snippet, target_count=target_count,
     )
     raw = _post_openrouter(prompt=prompt, api_key=api_key, model=model or DEFAULT_MODEL)
-    parsed = _parse_response(raw, name=name)
+    parsed = _parse_response(raw, name=brand_name)
 
     # Sanity gate: must have at least one no-name discovery and one branded, or
     # the report won't have anything meaningful to compare against.
@@ -298,6 +304,18 @@ def _parse_response(raw: str, *, name: str) -> list[GeneratedPrompt]:
 
         out.append(GeneratedPrompt(text=q, category=cat))
     return out
+
+
+_PARENTHETICAL = re.compile(r"\s*\([^)]*\)\s*")
+
+
+def _strip_labels(name: str) -> str:
+    """Remove parenthetical labels from a business name. e.g.
+    'Era More Than Gold (era-jewel.com - new site)' → 'Era More Than Gold'.
+
+    Also collapses runs of whitespace and trims. Preserves case."""
+    cleaned = _PARENTHETICAL.sub(" ", name)
+    return re.sub(r"\s+", " ", cleaned).strip() or name.strip()
 
 
 def to_json(items: list[GeneratedPrompt]) -> list[dict]:

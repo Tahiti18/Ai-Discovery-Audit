@@ -28,6 +28,50 @@ def test_build_prompt_includes_all_facts_and_category_menu():
     assert "10 of the 15" in p and "5 of the 15" in p
 
 
+def test_strip_labels_removes_parentheticals():
+    """Owners often add labels to disambiguate multi-site entities in the
+    dashboard. Those labels must never reach AI-facing prompts."""
+    assert pe._strip_labels("Era More Than Gold") == "Era More Than Gold"
+    assert pe._strip_labels("Era More Than Gold (new site)") == "Era More Than Gold"
+    assert pe._strip_labels("Era More Than Gold (era-jewel.com - new site)") == "Era More Than Gold"
+    assert pe._strip_labels("Acme Ltd (staging)") == "Acme Ltd"
+    # Multiple parentheticals + inner whitespace collapse
+    assert pe._strip_labels("Widget Co (US)  (staging)") == "Widget Co"
+    # Never returns empty even if the label consumed everything.
+    assert pe._strip_labels("(only a label)") == "(only a label)"
+
+
+def test_generate_uses_stripped_name_for_invariant_check(monkeypatch):
+    """Reproduces the era-jewel.com bug: LLM shortens the name in branded
+    prompts (says "Era More Than Gold", not "Era More Than Gold (new site)")
+    and the invariant check must not misclassify those as missing-brand."""
+    payload = (
+        '{"prompts":['
+        # 5 discovery (no name)
+        '{"text":"best Swiss watches Limassol","category":"category_recommendation"},'
+        '{"text":"engagement rings Limassol","category":"problem_solution"},'
+        '{"text":"fine jewellery Cyprus","category":"category_recommendation"},'
+        '{"text":"where to buy Breitling Limassol","category":"problem_solution"},'
+        '{"text":"gold chains Limassol","category":"category_recommendation"},'
+        # 3 branded — LLM uses the SHORT name, not the labelled one
+        '{"text":"alternatives to Era More Than Gold Limassol","category":"comparison"},'
+        '{"text":"is Era More Than Gold reputable","category":"legitimacy"},'
+        '{"text":"Era More Than Gold hours location","category":"factual_attributes"}'
+        ']}'
+    )
+    monkeypatch.setattr(pe, "_post_openrouter", lambda **_: payload)
+    # Name has a parenthetical the LLM would naturally drop:
+    out = pe.generate_prompts_for_entity(
+        name="Era More Than Gold (era-jewel.com - new site)",
+        category="jewellery", city="Limassol", domain="era-jewel.com",
+        api_key="k",
+    )
+    # All 8 rows must be kept — 5 discovery + 3 branded, mixed as required.
+    assert len(out) == 8
+    branded = [p for p in out if p.category in ("comparison", "legitimacy", "factual_attributes")]
+    assert len(branded) == 3
+
+
 def test_build_prompt_includes_website_snippet_when_provided():
     """The homepage text is what enables product/brand-specific queries."""
     p = pe.build_prompt(
