@@ -113,7 +113,13 @@ export interface Perception {
   domain_cited: boolean | null;
   competitors_named: unknown[] | null;
   flags: unknown[] | null;
-  details: { error?: string } | null;
+  details: {
+    error?: string;
+    /** Ranked business names extracted from the AI answer (top ≤10, in order). */
+    ranked_names?: string[];
+    /** 1-indexed position of the entity in ``ranked_names``, or null. */
+    you_position?: number | null;
+  } | null;
   probed_at: string;
 }
 export interface Signal {

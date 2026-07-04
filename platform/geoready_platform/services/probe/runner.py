@@ -132,6 +132,19 @@ def _resolve_prompts(*, entity_id: str, entity_facts: dict, max_prompts: int, ap
     return [StaticPrompt(category=p.category, text=p.text) for p in generated[:max_prompts]]
 
 
+def _build_perception_details(row: dict) -> dict | None:
+    """Bundle the per-response extras onto ``Perception.details`` so the frontend
+    can render the ranking view without re-parsing the raw text."""
+    payload: dict = {}
+    if row.get("error"):
+        payload["error"] = row["error"]
+    if row.get("ranked_names"):
+        payload["ranked_names"] = row["ranked_names"]
+    if row.get("you_position") is not None:
+        payload["you_position"] = row["you_position"]
+    return payload or None
+
+
 def _brand_name(canonical_name: str) -> str:
     """Return the AI-facing brand name — parenthetical labels stripped.
 
@@ -465,6 +478,15 @@ def execute_probe_run(run_id: str) -> None:
                     competitor_names=signals.competitor_names,
                 )
             )
+            # Extract the ranked business list from the AI answer — the report
+            # renders these compact ranking rows instead of the full prose,
+            # which is what buyers actually want to see (position, not phone).
+            from geoready_platform.services.probe.rank_extraction import (
+                brand_position, extract_ranked_names,
+            )
+            ranked_names = extract_ranked_names(resp.text) if is_answered else []
+            you_position = brand_position(ranked_names, facts["name"]) if ranked_names else None
+
             rows.append(
                 {
                     "prompt_category": gp.category,
@@ -478,6 +500,8 @@ def execute_probe_run(run_id: str) -> None:
                     "competitors_named": signals.competitor_domains + signals.competitor_names,
                     "flags": [f.__dict__ for f in flags],
                     "error": resp.error,
+                    "ranked_names": ranked_names,
+                    "you_position": you_position,
                 }
             )
 
@@ -566,7 +590,7 @@ def execute_probe_run(run_id: str) -> None:
                         domain_cited=row["domain_cited"],
                         competitors_named=row["competitors_named"],
                         flags=row["flags"],
-                        details={"error": row["error"]} if row["error"] else None,
+                        details=_build_perception_details(row),
                     )
                 )
     except ProbeRunNotFoundError:

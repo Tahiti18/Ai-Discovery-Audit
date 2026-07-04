@@ -118,7 +118,20 @@ export function ReportScreen({ data }: { data: ReportData }) {
       .filter((g) => g.rows.length > 0);
     // Misinformation findings surfaced by the LLM fact-checker.
     const misinformation = (run.flags ?? []).filter((f) => f.source === "llm_misinformation");
-    return { discoveryPct, brandStrong, competitors, maxMentions, evidenceGroups, discoveryHits, discoveryTotal: discovery.length, misinformation };
+
+    // Ranking matrix — one row per DISCOVERY question, columns = top 3 ranked
+    // businesses AI named. Skips questions with no extracted rankings. This is
+    // the "at a glance" strategic view: which brands win which searches.
+    const matrixRows = responses
+      .filter((r) => DISCOVERY_CATEGORIES.has(r.prompt_category ?? ""))
+      .filter((r) => (r.details?.ranked_names ?? []).length > 0)
+      .map((r) => ({
+        prompt: r.prompt ?? "",
+        top: (r.details?.ranked_names ?? []).slice(0, 5),
+        youPos: r.details?.you_position ?? null,
+      }));
+
+    return { discoveryPct, brandStrong, competitors, maxMentions, evidenceGroups, discoveryHits, discoveryTotal: discovery.length, misinformation, matrixRows };
   }, [run, responses]);
 
   const cityCat = [entity.category, entity.geo].filter(Boolean).join(" · ");
@@ -327,11 +340,59 @@ export function ReportScreen({ data }: { data: ReportData }) {
           )}
 
           {/* Evidence — every question, grouped by outcome, actionable groups first */}
+          {/* RANKING MATRIX — the at-a-glance strategic view */}
+          {derived.matrixRows.length > 0 && (
+            <section className="v-card mt-8 overflow-hidden">
+              <div className="p-6 md:p-7 border-b v-border-hair">
+                <h3 className="v-display" style={{ fontSize: "clamp(22px,3vw,26px)" }}>Where you rank on every buyer question</h3>
+                <p className="v-text-secondary mt-2" style={{ fontSize: 14 }}>
+                  For each discovery question, the businesses AI put in the top 5 — in order. Your position is highlighted where it appears.
+                </p>
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13.5 }}>
+                  <thead>
+                    <tr>
+                      <th className="v-label" style={{ padding: "12px 16px", textAlign: "left", borderBottom: "1px solid var(--vta-border)", background: "var(--vta-surface-2)" }}>Question</th>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <th key={n} className="v-label" style={{ padding: "12px 12px", textAlign: "left", borderBottom: "1px solid var(--vta-border)", background: "var(--vta-surface-2)", whiteSpace: "nowrap" }}>#{n}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {derived.matrixRows.map((row, i) => (
+                      <tr key={i} style={{ borderBottom: "1px solid var(--vta-border)" }}>
+                        <td style={{ padding: "12px 16px", verticalAlign: "top", maxWidth: 260 }}>
+                          <span style={{ fontWeight: 500 }}>{row.prompt}</span>
+                          {row.youPos != null && (
+                            <span className="v-pill ml-2" style={{ background: "var(--vta-green-soft)", color: "#6EE7B7", fontSize: 11 }}>You: #{row.youPos}</span>
+                          )}
+                        </td>
+                        {[0, 1, 2, 3, 4].map((idx) => {
+                          const name = row.top[idx];
+                          const isYou = row.youPos != null && (idx + 1) === row.youPos;
+                          return (
+                            <td key={idx} style={{ padding: "12px 12px", verticalAlign: "top", color: isYou ? "var(--vta-green)" : "var(--vta-text-primary)", fontWeight: isYou ? 500 : 400 }}>
+                              {name ? name : <span className="v-text-muted">—</span>}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="v-text-muted p-4" style={{ fontSize: 12, borderTop: "1px solid var(--vta-border)" }}>
+                Extracted from the ordered lists AI returned. Scroll right on narrow screens.
+              </p>
+            </section>
+          )}
+
           {derived.evidenceGroups.length > 0 && (
             <section className="mt-8">
               <h3 className="v-display mb-2" style={{ fontSize: "clamp(22px,3vw,26px)" }}>Every question we asked AI</h3>
               <p className="v-text-secondary mb-6" style={{ fontSize: 14 }}>
-                No score to take on faith — every question and every answer, grouped by what happened. Click any row to read what AI actually said.
+                Every question, grouped by outcome. Click any row to see AI's ranked answer — no addresses or phone numbers, just who came in 1st, 2nd, 3rd.
               </p>
               <div className="space-y-8">
                 {derived.evidenceGroups.map(({ tag, rows }) => {
@@ -347,18 +408,54 @@ export function ReportScreen({ data }: { data: ReportData }) {
                       </div>
                       <p className="v-text-secondary mb-3" style={{ fontSize: 13 }}>{copy.sub}</p>
                       <div className="space-y-2">
-                        {rows.map(({ p }) => (
-                          <details key={p.id} className="v-card overflow-hidden">
-                            <summary className="p-4 flex items-start gap-3">
-                              <span className="v-tabular mt-0.5 v-text-muted" style={{ fontSize: 12, minWidth: 14 }}>›</span>
-                              <span className="flex-1" style={{ fontSize: 14.5, fontWeight: 500 }}>"{p.prompt}"</span>
-                              <svg className="v-chev mt-1 flex-shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--vta-text-muted)" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-                            </summary>
-                            <div className="px-4 pb-4 v-text-secondary leading-relaxed border-t v-border-hair pt-3" style={{ fontSize: 13.5 }}>
-                              {clip(p.raw_response, 900)}
-                            </div>
-                          </details>
-                        ))}
+                        {rows.map(({ p }) => {
+                          const ranked = p.details?.ranked_names ?? [];
+                          const youPos = p.details?.you_position ?? null;
+                          return (
+                            <details key={p.id} className="v-card overflow-hidden">
+                              <summary className="p-4 flex items-start gap-3">
+                                <span className="v-tabular mt-0.5 v-text-muted" style={{ fontSize: 12, minWidth: 14 }}>›</span>
+                                <span className="flex-1" style={{ fontSize: 14.5, fontWeight: 500 }}>"{p.prompt}"</span>
+                                {youPos != null && (
+                                  <span className="v-pill" style={{ background: "var(--vta-green-soft)", color: "#6EE7B7" }}>You: #{youPos}</span>
+                                )}
+                                <svg className="v-chev mt-1 flex-shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--vta-text-muted)" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
+                              </summary>
+                              <div className="px-4 pb-4 border-t v-border-hair pt-3">
+                                {ranked.length > 0 ? (
+                                  <>
+                                    <p className="v-label mb-2">Who AI ranked, in order</p>
+                                    <ol className="space-y-1" style={{ listStyle: "none", padding: 0 }}>
+                                      {ranked.map((name, i) => {
+                                        const isYou = youPos != null && (i + 1) === youPos;
+                                        return (
+                                          <li key={i} className="flex items-baseline gap-3">
+                                            <span className="v-tabular v-text-muted" style={{ fontSize: 13, minWidth: 22, textAlign: "right" }}>{i + 1}.</span>
+                                            <span style={{ fontSize: 14, color: isYou ? "var(--vta-green)" : "var(--vta-text-primary)", fontWeight: isYou ? 500 : 400 }}>
+                                              {name}{isYou ? "  ← you" : ""}
+                                            </span>
+                                          </li>
+                                        );
+                                      })}
+                                    </ol>
+                                  </>
+                                ) : (
+                                  <p className="v-text-secondary" style={{ fontSize: 13.5 }}>
+                                    {clip(p.raw_response, 500)}
+                                  </p>
+                                )}
+                                {ranked.length > 0 && p.raw_response && (
+                                  <details className="mt-3">
+                                    <summary className="v-navlink" style={{ fontSize: 12, cursor: "pointer" }}>Read the full AI answer →</summary>
+                                    <div className="mt-2 v-text-muted leading-relaxed" style={{ fontSize: 12.5 }}>
+                                      {clip(p.raw_response, 1500)}
+                                    </div>
+                                  </details>
+                                )}
+                              </div>
+                            </details>
+                          );
+                        })}
                       </div>
                     </div>
                   );
