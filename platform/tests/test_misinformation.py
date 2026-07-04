@@ -70,6 +70,58 @@ def test_parse_drops_low_confidence():
     assert m._parse_response(payload) == []
 
 
+def test_valid_issue_types_include_new_coverage_categories():
+    """The v2 expansion covers positive-sounding hallucinations, not just
+    homepage contradictions. These must remain in the valid set."""
+    for new_type in (
+        "wrong_relationship", "wrong_person", "wrong_credentials",
+        "wrong_ratings", "name_confusion",
+    ):
+        assert new_type in m._VALID_ISSUE_TYPES
+
+
+def test_prompt_includes_positive_sounding_examples():
+    """The prompt must explicitly teach the model that positive-sounding
+    fabrications ("official dealer", "100% rating", "sister store") are
+    still misinformation — that was the coverage gap in v1."""
+    p = m.build_prompt(
+        name="Era", domain="era.com", website_snippet="Era sells watches.",
+        answers=["Some AI answer here."],
+    )
+    for hint in (
+        "wrong_relationship", "wrong_person", "wrong_credentials",
+        "wrong_ratings", "name_confusion",
+        "same company", "official", "100%",
+    ):
+        assert hint in p
+
+
+def test_parse_accepts_new_categories():
+    """End-to-end: JSON tagged with the new issue types round-trips cleanly."""
+    payload = (
+        '{"findings":['
+        '{"issue_type":"wrong_relationship","severity":"high",'
+        ' "description":"AI invents that ERA Department Store is operated by the same company as Era More Than Gold",'
+        ' "evidence":"ERA Department Store (Apollon) is operated by the same company",'
+        ' "fix":"Publish a clear disambiguation note on your homepage",'
+        ' "confidence":0.9},'
+        '{"issue_type":"name_confusion","severity":"medium",'
+        ' "description":"AI conflates Era More Than Gold with an unrelated ERA-branded department store",'
+        ' "evidence":"ERA Department Store (Apollon)","fix":"Disambiguate","confidence":0.85},'
+        '{"issue_type":"wrong_credentials","severity":"high",'
+        ' "description":"AI claims official Rolex retailer status not in homepage",'
+        ' "evidence":"official Rolex retailer","fix":"Correct AI\'s source","confidence":0.9},'
+        '{"issue_type":"wrong_ratings","severity":"medium",'
+        ' "description":"AI cites 100% recommendation from 18 reviews — unverifiable",'
+        ' "evidence":"100% recommendation rate from 18 reviews","fix":"Ask for review-source citations","confidence":0.75}'
+        ']}'
+    )
+    findings = m._parse_response(payload)
+    assert [f.issue_type for f in findings] == [
+        "wrong_relationship", "wrong_credentials", "name_confusion", "wrong_ratings",
+    ]  # sorted high → medium
+
+
 def test_parse_drops_unknown_issue_type():
     payload = (
         '{"findings":['

@@ -34,14 +34,21 @@ _TIMEOUT = 20.0
 _MAX_OUTPUT_CHARS = 10_000
 
 _VALID_ISSUE_TYPES = {
-    "wrong_brand",     # AI names a brand/product the business doesn't carry
-    "wrong_website",   # AI links to a different domain
-    "wrong_service",   # AI credits/omits a service they do/don't provide
-    "wrong_location",  # AI states wrong address/city/region
-    "wrong_status",    # AI says closed / online-only when they aren't
-    "wrong_contact",   # wrong phone / hours / email
-    "wrong_history",   # wrong founding year, ownership, etc.
-    "other",           # catch-all for edge cases
+    # ── Original: contradictions against the homepage ─────────────────────────
+    "wrong_brand",         # AI names a brand/product the business doesn't carry
+    "wrong_website",       # AI links to a different domain
+    "wrong_service",       # AI credits/omits a service they do/don't provide
+    "wrong_location",      # AI states wrong address / city / main-store claim
+    "wrong_status",        # AI says closed / online-only when they aren't
+    "wrong_contact",       # wrong phone / hours / email
+    "wrong_history",       # wrong founding year, ownership, etc.
+    # ── Coverage expansion (catch positive-sounding hallucinations) ───────────
+    "wrong_relationship",  # "sister store", "same company as X", "part of Y group"
+    "wrong_person",        # invented staff/owner names ("owner Alyssa" when owner is Kyriakos)
+    "wrong_credentials",   # unsubstantiated "official/authorised/certified" dealer status
+    "wrong_ratings",       # suspiciously precise numbers ("100% rating from 18 reviews")
+    "name_confusion",      # AI conflates the business with a similarly-named unrelated one
+    "other",               # catch-all for edge cases
 }
 
 _VALID_SEVERITY = {"high", "medium", "low"}
@@ -87,7 +94,7 @@ def build_prompt(
 Business: {name}
 Domain: {domain or 'unknown'}
 
-Homepage content (source of truth):
+Homepage content (source of truth for what the business ACTUALLY offers):
 ---
 {homepage_block[:4000]}
 ---
@@ -97,32 +104,71 @@ AI answers about this business:
 {joined[:8000]}
 ---
 
-TASK: For every FACT AI stated that is WRONG according to the homepage above,
-produce one entry. Focus on:
+TASK: Find every FACT AI stated about "{name}" that appears WRONG, INVENTED,
+or UNSUPPORTED. Include claims that sound POSITIVE — those are the ones that
+mislead the customer the most, and the ones AI most often fabricates.
 
-1. **wrong_brand** — AI says they carry a brand/product not in the homepage
-   (or omits a major one that IS in the homepage). Example: AI says they
-   carry Chopard but homepage doesn't list Chopard.
-2. **wrong_website** — AI links to a different domain. Example: AI says the
-   website is era-jewellers.com but the actual domain is eramorethangold.com.
-3. **wrong_service** — AI credits them with a service they don't offer
-   (or omits a service they do offer) — repair, appraisal, online shop, etc.
-4. **wrong_location** — AI states wrong address, city, or calls the wrong
-   location their "main store".
-5. **wrong_status** — AI says they're closed / online-only when the homepage
-   shows they're open and physical.
-6. **wrong_contact** — wrong phone / hours / email.
-7. **wrong_history** — wrong founding year, ownership, etc.
-8. **other** — anything else clearly contradicted by the homepage.
+Issue categories (use exactly these strings):
 
-Rules:
-- Base every finding on evidence from BOTH the homepage AND an AI answer.
-- The `evidence` field must be a direct quote from an AI answer.
-- If AI states something that isn't mentioned on the homepage but isn't clearly
-  contradicted (silence != wrong), DON'T flag it.
+1. **wrong_brand** — AI says they carry a brand/product not on the homepage.
+   Example: AI says "official Chopard dealer" but homepage doesn't list Chopard.
+
+2. **wrong_website** — AI publishes a different domain than the actual one.
+   Example: AI cites era-jewellers.com when the actual domain is eramorethangold.com.
+
+3. **wrong_service** — AI credits them with a service they don't offer, OR
+   omits a service they explicitly DO offer.
+
+4. **wrong_location** — Wrong address, wrong city, wrong "main store" claim.
+   Example: AI calls Paphos the "main store" when homepage shows Limassol.
+
+5. **wrong_status** — Closed/online-only when they aren't (or vice versa).
+
+6. **wrong_contact** — Wrong phone, wrong hours, wrong email.
+
+7. **wrong_history** — Wrong founding year, wrong ownership, wrong tenure.
+
+8. **wrong_relationship** — AI invents a relationship to another business.
+   Watch for phrases: "operated by the same company as", "sister store of",
+   "part of the X group", "flagship location of", "owned by X".
+   Example: AI says "ERA Department Store is operated by the same company as
+   ERA More Than Gold" — flag as wrong_relationship unless the homepage
+   explicitly confirms the relationship.
+
+9. **wrong_person** — AI names the wrong owner, founder, or staff.
+   Example: AI says "owner Alyssa" but homepage lists a different owner.
+
+10. **wrong_credentials** — Unsubstantiated "official / authorised / certified /
+    exclusive" dealer or partner status. Watch for words like "official
+    retailer", "authorised dealer", "certified partner", "exclusive
+    distributor". If the homepage doesn't confirm the exact credential, FLAG IT.
+
+11. **wrong_ratings** — Suspiciously precise ratings or review counts that
+    AI could have fabricated. Watch for "100% recommendation rate", "5-star
+    average", "X reviews", specific award names.
+
+12. **name_confusion** — AI conflates "{name}" with a different business that
+    shares part of its name (e.g. "ERA" prefix, "Jewellers" suffix). Watch for
+    AI describing a business with a similar name and treating it as this one.
+    Example: AI mentions "ERA Department Store" and treats it as related to
+    "{name}" — flag as name_confusion.
+
+13. **other** — anything else clearly false or unsupported.
+
+CRITICAL rules:
+- **Positive-sounding claims are still wrong if unsupported.** "Official Rolex
+  dealer" and "100% customer rating" sound good — but if the homepage doesn't
+  say them, they mislead customers walking through the door expecting it.
+- Silence on the homepage is NOT wrong on its own — but INVENTED SPECIFICS
+  (specific numbers, specific relationships, specific award names, specific
+  people) ARE flag-worthy even if the homepage doesn't explicitly refute them.
+- The `evidence` field MUST be a direct quote from an AI answer.
 - Confidence < 0.7 → don't include the row.
-- Return top 10 findings by severity (high first, then medium, then low).
-- Skip minor prose disagreements — focus on customer-impact facts.
+- Return the top 10 findings by severity (high first).
+- Skip minor prose disagreements — focus on things a walk-in customer would
+  be misled about.
+- The `fix` MUST be a specific, actionable step (update GBP, add schema,
+  publish canonical, contact reviewers, etc.).
 
 Return JSON EXACTLY like this (no extra keys, no trailing text):
 {{"findings":[{{"issue_type":"wrong_brand","severity":"high","description":"...","evidence":"...","fix":"...","confidence":0.9}}]}}
