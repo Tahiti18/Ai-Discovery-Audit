@@ -91,10 +91,13 @@ def test_probe_quota_enforced(client, org_key, monkeypatch):
     monkeypatch.setattr(runner, "run_prompt", _fake_run_prompt)
     eid = _make_entity(client, headers)
 
-    # free_probes_per_day defaults to 3 in test env.
+    # Free tier = 3 LIFETIME checks (not per day): 4th is blocked regardless of
+    # when it's attempted.
     statuses = [client.post(f"/v1/entities/{eid}/probes", headers=headers).status_code for _ in range(4)]
     assert statuses[:3] == [202, 202, 202]
     assert statuses[3] == 429
+    body = client.post(f"/v1/entities/{eid}/probes", headers=headers).json()
+    assert "Founding" in body["detail"] and "$29" in body["detail"]
 
 
 def test_probe_history_listed_for_entity(client, org_key, monkeypatch):

@@ -22,21 +22,34 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class PlanLimits:
     max_businesses: int
-    checks_per_day: int | None  # None = unlimited
-    technical_report: bool       # downloadable dev audit
-    history: bool                # trends over time
+    checks_per_day: int | None   # None = unlimited per day
+    checks_total: int | None     # None = no lifetime cap; free is capped forever
+    technical_report: bool        # downloadable dev audit
+    history: bool                 # trends over time
 
 
+# Free is a complete taste, not a free tier of daily service: 3 checks TOTAL
+# (baseline + one recheck + a spare), then a hard upgrade wall. A daily
+# allowance would let a motivated freeloader run a whole consulting practice on
+# our API budget. Paid plans have no lifetime cap.
 PLAN_LIMITS: dict[str, PlanLimits] = {
-    "free": PlanLimits(max_businesses=1, checks_per_day=3, technical_report=False, history=False),
-    "founding": PlanLimits(max_businesses=1, checks_per_day=None, technical_report=True, history=True),
-    "pro": PlanLimits(max_businesses=1, checks_per_day=None, technical_report=True, history=True),
-    "business": PlanLimits(max_businesses=5, checks_per_day=None, technical_report=True, history=True),
-    "agency": PlanLimits(max_businesses=100, checks_per_day=None, technical_report=True, history=True),
+    "free": PlanLimits(max_businesses=1, checks_per_day=None, checks_total=3, technical_report=False, history=False),
+    "founding": PlanLimits(max_businesses=1, checks_per_day=None, checks_total=None, technical_report=True, history=True),
+    "pro": PlanLimits(max_businesses=1, checks_per_day=None, checks_total=None, technical_report=True, history=True),
+    "business": PlanLimits(max_businesses=5, checks_per_day=None, checks_total=None, technical_report=True, history=True),
+    "agency": PlanLimits(max_businesses=100, checks_per_day=None, checks_total=None, technical_report=True, history=True),
     # Internal comped tier for the product owner / staff (GR_COMPED_EMAILS):
     # effectively unlimited so any business can be tested. Never sold.
-    "owner": PlanLimits(max_businesses=10_000, checks_per_day=None, technical_report=True, history=True),
+    "owner": PlanLimits(max_businesses=10_000, checks_per_day=None, checks_total=None, technical_report=True, history=True),
 }
+
+
+def is_gated(plan: str | None) -> bool:
+    """True when paid-only report content (fix text, full ranking rows) must be
+    redacted for this plan. Keyed off ``technical_report`` so the single free
+    tier is gated and every paid/owner tier is not — no plan-name string checks
+    scattered across the codebase."""
+    return not limits_for(plan).technical_report
 
 
 class PlanLimitExceededError(Exception):

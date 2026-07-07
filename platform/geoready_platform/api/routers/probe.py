@@ -11,12 +11,20 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from geoready_platform.api.deps import Principal, get_db, get_principal
-from geoready_platform.db.models import Perception, ProbeRun
+from geoready_platform.db.models import Org, Perception, ProbeRun
 from geoready_platform.schemas.probe import PerceptionOut, ProbeEnqueuedOut, ProbeRunOut
 from geoready_platform.services import entities as entity_svc
+from geoready_platform.services.plans import is_gated
+from geoready_platform.services.probe import redaction
 from geoready_platform.services.probe import runner as probe_svc
 
 router = APIRouter(tags=["probe"])
+
+
+def _org_is_gated(session: Session, org_id: str) -> bool:
+    """Whether this org's plan requires redaction of paid report content."""
+    org = session.get(Org, org_id)
+    return is_gated(org.plan if org else None)
 
 
 @router.post("/v1/entities/{entity_id}/probes", response_model=ProbeEnqueuedOut, status_code=202)
@@ -47,7 +55,10 @@ def get_probe(
         run = probe_svc.get_probe(session, org_id=principal.org_id, run_id=run_id)
     except probe_svc.ProbeRunNotFoundError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Probe run not found") from None
-    return ProbeRunOut.model_validate(run)
+    out = ProbeRunOut.model_validate(run)
+    if _org_is_gated(session, principal.org_id):
+        out.flags = redaction.redact_flags(out.flags)
+    return out
 
 
 @router.get("/v1/probes/{run_id}/responses", response_model=list[PerceptionOut])
@@ -71,7 +82,12 @@ def list_probe_responses(
         .scalars()
         .all()
     )
-    return [PerceptionOut.model_validate(r) for r in rows]
+    out = [PerceptionOut.model_validate(r) for r in rows]
+    if _org_is_gated(session, principal.org_id):
+        for r in out:
+            r.flags = redaction.redact_flags(r.flags)
+            r.details = redaction.redact_details(r.details)
+    return out
 
 
 @router.get("/v1/entities/{entity_id}/probes", response_model=list[ProbeRunOut])

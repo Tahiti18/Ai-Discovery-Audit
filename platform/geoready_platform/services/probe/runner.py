@@ -228,25 +228,38 @@ def _extract_competitors_or_fallback(
 
 
 def _check_quota(session: Session, org_id: str) -> None:
-    """Enforce the org's plan check allowance. Paid plans are unlimited
-    (``checks_per_day is None``); free is capped."""
+    """Enforce the org's plan check allowance. Free is capped at a LIFETIME
+    total (``checks_total``); paid plans have neither a lifetime nor a daily
+    cap. A daily cap (``checks_per_day``) is still supported for any future
+    tier that wants one, and is checked after the lifetime cap."""
     from geoready_platform.db.models import Org
     from geoready_platform.services.plans import limits_for
 
     org = session.get(Org, org_id)
     limits = limits_for(org.plan if org else None)
-    if limits.checks_per_day is None:
-        return  # unlimited
 
-    since = _utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    count = session.execute(
-        select(func.count(ProbeRun.id)).where(ProbeRun.org_id == org_id, ProbeRun.created_at >= since)
-    ).scalar_one()
-    if count >= limits.checks_per_day:
-        raise ProbeQuotaExceededError(
-            f"You've used all {limits.checks_per_day} of today's free checks. "
-            "Upgrade for unlimited checks, or try again tomorrow."
-        )
+    # Lifetime cap (free tier): count every run this org has ever made.
+    if limits.checks_total is not None:
+        total = session.execute(
+            select(func.count(ProbeRun.id)).where(ProbeRun.org_id == org_id)
+        ).scalar_one()
+        if total >= limits.checks_total:
+            raise ProbeQuotaExceededError(
+                f"You've used your {limits.checks_total} free checks. "
+                "Founding members get unlimited checks for $29/mo — locked for life."
+            )
+
+    # Daily cap (unused by current tiers, kept for flexibility).
+    if limits.checks_per_day is not None:
+        since = _utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        count = session.execute(
+            select(func.count(ProbeRun.id)).where(ProbeRun.org_id == org_id, ProbeRun.created_at >= since)
+        ).scalar_one()
+        if count >= limits.checks_per_day:
+            raise ProbeQuotaExceededError(
+                f"You've used all {limits.checks_per_day} of today's checks. "
+                "Upgrade for unlimited checks, or try again tomorrow."
+            )
 
 
 def _mark_dispatch_failure(run_id: str, exc: BaseException) -> None:

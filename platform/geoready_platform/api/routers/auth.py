@@ -16,9 +16,9 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
-from geoready_platform.api.deps import get_db
+from geoready_platform.api.deps import Principal, get_db, get_principal
 from geoready_platform.config import get_settings
-from geoready_platform.db.models import Org, OrgMember
+from geoready_platform.db.models import Org, OrgMember, User
 from geoready_platform.services import magic_link as ml
 from geoready_platform.services.auth import create_access_token
 
@@ -110,4 +110,37 @@ def verify(body: VerifyIn, session: Session = Depends(get_db)) -> VerifyOut:
         access_token=token,
         user=SessionUser(id=user.id, email=user.email, name=user.name),
         org=SessionOrg(id=org.id, name=org.name, plan=org.plan, role=role),
+    )
+
+
+class MeOut(BaseModel):
+    user: SessionUser | None = None
+    org: SessionOrg
+
+
+@router.get("/me", response_model=MeOut)
+def me(
+    session: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
+) -> MeOut:
+    """Fresh user + org + plan straight from the DB.
+
+    The frontend calls this on load and after checkout so a plan change (e.g.
+    a Stripe upgrade) is reflected without forcing a re-login. The JWT still
+    carries a plan-free identity; entitlements are always read live here."""
+    from fastapi import HTTPException, status
+
+    org = session.get(Org, principal.org_id)
+    if org is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Org not found")
+
+    user_out: SessionUser | None = None
+    if principal.user_id:  # api-key principals have no user
+        u = session.get(User, principal.user_id)
+        if u is not None:
+            user_out = SessionUser(id=u.id, email=u.email, name=u.name)
+
+    return MeOut(
+        user=user_out,
+        org=SessionOrg(id=org.id, name=org.name, plan=org.plan, role=principal.role),
     )
