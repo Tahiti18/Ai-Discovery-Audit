@@ -53,6 +53,15 @@ export function ReportContainer({ runId }: { runId: string }) {
               window.open(URL.createObjectURL(blob), "_blank");
             }
           },
+          // Present unconditionally: the backend only emits *_locked markers for
+          // gated (free) plans, so the CTA renders only where content is locked.
+          // If Stripe keys aren't set yet the checkout call returns a friendly
+          // 503 which we surface here.
+          onUpgrade: async () => {
+            const { data: co, error } = await api.createCheckout("founding");
+            if (co?.url) { window.location.href = co.url; return; }
+            alert(error || "Upgrades open soon — hang tight.");
+          },
         });
         setPhase("ready");
       },

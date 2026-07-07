@@ -115,10 +115,15 @@ export interface Perception {
   flags: unknown[] | null;
   details: {
     error?: string;
-    /** Ranked business names extracted from the AI answer (top ≤10, in order). */
+    /** Ranked business names extracted from the AI answer (top ≤10, in order).
+     *  On free plans this is truncated server-side to the first 3. */
     ranked_names?: string[];
     /** 1-indexed position of the entity in ``ranked_names``, or null. */
     you_position?: number | null;
+    /** Free-tier redaction markers (set server-side in redaction.py). */
+    ranked_locked?: boolean;
+    ranked_total?: number;
+    you_position_locked?: boolean;
   } | null;
   probed_at: string;
 }

@@ -35,6 +35,9 @@ export interface ReportData {
   /** Start a fresh check for this business (app only). When absent — the public
    *  sample — run-again affordances become a "check my business" signup CTA. */
   onRunAgain?: () => void;
+  /** Send the user to Stripe checkout (founding plan). Present only for gated
+   *  (free) plans; when set, locked paid content renders an unlock CTA. */
+  onUpgrade?: () => void;
 }
 
 // Discovery = no-name buyer questions (Share-of-Model is computed from these).
@@ -86,7 +89,7 @@ const TAG_GROUP_COPY: Record<Tag, { title: string; sub: string }> = {
 };
 
 export function ReportScreen({ data }: { data: ReportData }) {
-  const { entity, run, responses, moves, technicalReportHref, onDownloadTechnical, technicalScore, onRunAgain } = data;
+  const { entity, run, responses, moves, technicalReportHref, onDownloadTechnical, technicalScore, onRunAgain, onUpgrade } = data;
   const home = data.homeHref ?? "/app/";
 
   // Strip parenthetical labels from the entity name for report copy — the owner
@@ -288,6 +291,19 @@ export function ReportScreen({ data }: { data: ReportData }) {
                         <strong style={{ color: "var(--vta-text-primary)" }}>Fix:</strong> {m.fix}
                       </p>
                     )}
+                    {!m.fix && m.fix_locked && (
+                      <div className="flex flex-wrap items-center gap-3 mt-1" style={{ padding: "10px 12px", borderRadius: 8, background: "var(--vta-surface-2)", border: "1px solid var(--vta-border)" }}>
+                        <span style={{ fontSize: 14 }}>
+                          <strong style={{ color: "var(--vta-text-primary)" }}>🔒 Fix:</strong>{" "}
+                          <span className="v-text-muted" style={{ filter: "blur(3px)", userSelect: "none" }}>Update your Google Business Profile and add Organization schema so…</span>
+                        </span>
+                        {onUpgrade && (
+                          <button onClick={onUpgrade} className="v-btn v-btn-primary" style={{ padding: "6px 14px", fontSize: 13 }}>
+                            Unlock every fix — $29/mo
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -438,6 +454,18 @@ export function ReportScreen({ data }: { data: ReportData }) {
                                         );
                                       })}
                                     </ol>
+                                    {p.details?.ranked_locked && (
+                                      <div className="flex flex-wrap items-center gap-3 mt-2 pt-2 border-t v-border-hair">
+                                        <span className="v-text-muted" style={{ fontSize: 13 }}>
+                                          🔒 {(p.details.ranked_total ?? ranked.length) - ranked.length} more businesses AI ranked below these
+                                        </span>
+                                        {onUpgrade && (
+                                          <button onClick={onUpgrade} className="v-navlink" style={{ fontSize: 12.5, cursor: "pointer", color: "var(--vta-accent)" }}>
+                                            Unlock the full ranking →
+                                          </button>
+                                        )}
+                                      </div>
+                                    )}
                                   </>
                                 ) : (
                                   <p className="v-text-secondary" style={{ fontSize: 13.5 }}>
